@@ -1,0 +1,42 @@
+const API = process.env.REACT_APP_API_URL;
+
+const headers = () => ({
+  Accept: "application/json",
+  "Content-Type": "application/json"
+});
+
+const parseResponse = response =>
+  response.json().then(json => (response.ok ? json : Promise.reject(json)));
+
+const queryString = params => {
+  const query = Object.keys(params)
+    .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`)
+    .join("&");
+  return `${query.length ? "?" : ""}${query}`;
+};
+
+export const GET = (url, params = {}) =>
+  fetch(`${API}${url}${queryString(params)}`, {
+    method: "GET",
+    headers: headers()
+  }).then(parseResponse);
+
+export const POST = (url, data) =>
+  fetch(`${API}${url}`, {
+    method: "POST",
+    headers: headers(),
+    body: JSON.stringify(data)
+  }).then(parseResponse);
+
+export const PATCH = (url, data) =>
+  fetch(`${API}${url}`, {
+    method: "PATCH",
+    headers: headers(),
+    body: JSON.stringify(data)
+  }).then(parseResponse);
+
+export const DELETE = url =>
+  fetch(`${API}${url}`, {
+    method: "DELETE",
+    headers: headers()
+  }).then(parseResponse);
