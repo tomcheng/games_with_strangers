@@ -8,6 +8,6 @@ defmodule GamesWithStrangers.Router do
   scope "/api", GamesWithStrangers do
     pipe_through :api
 
-    get "/test", TestController, :test
+    post "/rooms", RoomController, :create
   end
 end

@@ -1,7 +1,7 @@
-defmodule GamesWithStrangers.TestController do
+defmodule GamesWithStrangers.RoomController do
   use GamesWithStrangers.Web, :controller
 
-  def test(conn, _params) do
+  def create(conn, _params) do
     conn
     |> json(%{ foo: "bar" })
   end
