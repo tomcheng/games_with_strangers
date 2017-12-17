@@ -36,5 +36,7 @@ defmodule GamesWithStrangers.Endpoint do
     key: "_games_with_strangers_key",
     signing_salt: "86w1bhoB"
 
+  plug CORSPlug
+
   plug GamesWithStrangers.Router
 end
