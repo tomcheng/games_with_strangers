@@ -21,7 +21,7 @@ export const GET = (url, params = {}) =>
     headers: headers()
   }).then(parseResponse);
 
-export const POST = (url, data) =>
+export const POST = (url, data = {}) =>
   fetch(`${API_URL}${url}`, {
     method: "POST",
     headers: headers(),
