@@ -1,4 +1,4 @@
-const API = process.env.REACT_APP_API_URL;
+const API_URL = process.env.REACT_APP_API_URL;
 
 const headers = () => ({
   Accept: "application/json",
@@ -16,27 +16,27 @@ const queryString = params => {
 };
 
 export const GET = (url, params = {}) =>
-  fetch(`${API}${url}${queryString(params)}`, {
+  fetch(`${API_URL}${url}${queryString(params)}`, {
     method: "GET",
     headers: headers()
   }).then(parseResponse);
 
 export const POST = (url, data) =>
-  fetch(`${API}${url}`, {
+  fetch(`${API_URL}${url}`, {
     method: "POST",
     headers: headers(),
     body: JSON.stringify(data)
   }).then(parseResponse);
 
 export const PATCH = (url, data) =>
-  fetch(`${API}${url}`, {
+  fetch(`${API_URL}${url}`, {
     method: "PATCH",
     headers: headers(),
     body: JSON.stringify(data)
   }).then(parseResponse);
 
 export const DELETE = url =>
-  fetch(`${API}${url}`, {
+  fetch(`${API_URL}${url}`, {
     method: "DELETE",
     headers: headers()
   }).then(parseResponse);
