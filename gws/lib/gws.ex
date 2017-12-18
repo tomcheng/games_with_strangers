@@ -1,18 +1,7 @@
 defmodule GWS do
-  @moduledoc """
-  Documentation for GWS.
-  """
+  use Application
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> GWS.hello
-      :world
-
-  """
-  def hello do
-    :world
+  def start(_type, _args) do
+    GWS.Supervisor.start_link(name: GWS.Supervisor)
   end
 end
