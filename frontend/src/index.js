@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
-import { GET, POST } from "./utils/api";
 import { Socket } from "phoenix";
 import registerServiceWorker from "./registerServiceWorker";
 
@@ -29,14 +28,8 @@ setTimeout(() => {
     .receive("timeout", () => console.log("Networking issue..."));
 }, 2000);
 
-const handleCreateRoom = () => {
-  POST("/rooms");
-};
-
 ReactDOM.render(
-  <App onCreateRoom={handleCreateRoom} />,
+  <App />,
   document.getElementById("root")
 );
 registerServiceWorker();
-
-GET("/test");

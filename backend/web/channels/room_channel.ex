@@ -1,15 +1,7 @@
 defmodule GamesWithStrangers.RoomChannel do
   use GamesWithStrangers.Web, :channel
 
-  def join("room:lobby", payload, socket) do
-    if authorized?(payload) do
-      {:ok, socket}
-    else
-      {:error, %{reason: "unauthorized"}}
-    end
-  end
-
-  def join("room:123", _payload, socket) do
+  def join("room:" <> code, _payload, socket) do
     {:ok, socket}
   end
 
@@ -30,8 +22,4 @@ defmodule GamesWithStrangers.RoomChannel do
     {:reply, {:ok, payload}, socket}
   end
 
-  # Add authorization logic here as required.
-  defp authorized?(_payload) do
-    true
-  end
 end
