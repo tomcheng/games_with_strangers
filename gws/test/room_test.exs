@@ -12,4 +12,8 @@ defmodule GWS.RoomTest do
     GWS.Room.update_state(room, fn state -> Map.put(state, :foo, "bar") end)
     assert GWS.Room.get_state(room) == %{foo: "bar"}
   end
+
+  test "are temporary workers" do
+    assert Supervisor.child_spec(GWS.Room, []).restart == :temporary
+  end
 end

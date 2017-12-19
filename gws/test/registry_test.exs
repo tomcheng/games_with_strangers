@@ -23,4 +23,12 @@ defmodule GWS.RegistryTest do
 
     assert GWS.Registry.lookup(registry, "foo") == :error
   end
+
+  test "removes room on crash", %{registry: registry} do
+    GWS.Registry.create(registry, "foo")
+    {:ok, room} = GWS.Registry.lookup(registry, "foo")
+
+    Agent.stop(room, :shutdown)
+    assert GWS.Registry.lookup(registry, "foo") == :error
+  end
 end

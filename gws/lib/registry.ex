@@ -27,7 +27,7 @@ defmodule GWS.Registry do
     if Map.has_key?(names, name) do
       {:noreply, {names, refs}}
     else
-      {:ok, room} = GWS.Room.start_link(%{})
+      {:ok, room} = GWS.RoomSupervisor.start_room()
       ref = Process.monitor(room)
       refs = Map.put(refs, ref, name)
       names = Map.put(names, name, room)
