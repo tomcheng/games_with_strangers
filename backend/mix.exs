@@ -19,7 +19,7 @@ defmodule GamesWithStrangers.Mixfile do
   def application do
     [
       mod: {GamesWithStrangers, []},
-      extra_applications: [:logger]
+      extra_applications: [:logger, :gws]
     ]
   end
 
@@ -36,7 +36,8 @@ defmodule GamesWithStrangers.Mixfile do
       {:phoenix_pubsub, "~> 1.0"},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
-      {:cors_plug, "~> 1.1"}
+      {:cors_plug, "~> 1.1"},
+      {:gws, path: "../gws"}
     ]
   end
 end

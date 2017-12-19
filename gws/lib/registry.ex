@@ -5,43 +5,56 @@ defmodule GWS.Registry do
     GenServer.start_link(__MODULE__, :ok, opts)
   end
 
-  def lookup(server, name) do
-    GenServer.call(server, {:lookup, name})
+  def create(server) do
+    GenServer.call(server, {:create})
   end
 
-  def create(server, name) do
-    GenServer.cast(server, {:create, name})
+  def get_room(server, code) do
+    GenServer.call(server, {:get_room, code})
+  end
+
+  def get_room_count(server) do
+    GenServer.call(server, {:get_room_count})
   end
 
   def init(:ok) do
-    names = %{}
+    codes = %{}
     refs = %{}
-    {:ok, {names, refs}}
+    {:ok, {codes, refs}}
   end
 
-  def handle_call({:lookup, name}, _from, {names, _} = state) do
-    {:reply, Map.fetch(names, name), state}
+  def handle_call({:create}, _from, {codes, refs}) do
+    {:ok, room} = GWS.RoomSupervisor.start_room()
+    ref = Process.monitor(room)
+    code = unique_code(codes)
+    {:reply, {:ok, code}, {Map.put(codes, code, room), Map.put(refs, ref, code)}}
   end
 
-  def handle_cast({:create, name}, {names, refs}) do
-    if Map.has_key?(names, name) do
-      {:noreply, {names, refs}}
-    else
-      {:ok, room} = GWS.RoomSupervisor.start_room()
-      ref = Process.monitor(room)
-      refs = Map.put(refs, ref, name)
-      names = Map.put(names, name, room)
-      {:noreply, {names, refs}}
-    end
+  def handle_call({:get_room, code}, _from, {codes, _} = state) do
+    {:reply, Map.fetch(codes, code), state}
   end
 
-  def handle_info({:DOWN, ref, :process, _pid, _reason}, {names, refs}) do
+  def handle_call({:get_room_count}, _from, {codes, _} = state) do
+    {:reply, Enum.count(codes), state}
+  end
+
+  def handle_info({:DOWN, ref, :process, _pid, _reason}, {codes, refs}) do
     {name, refs} = Map.pop(refs, ref)
-    names = Map.delete(names, name)
-    {:noreply, {names, refs}}
+    codes = Map.delete(codes, name)
+    {:noreply, {codes, refs}}
   end
 
   def handle_info(_msg, state) do
     {:noreply, state}
+  end
+
+  defp unique_code(codes) do
+    code = GWS.Code.generate()
+
+    if Map.has_key?(codes, code) do
+      unique_code(codes)
+    else
+      code
+    end
   end
 end
