@@ -11,29 +11,38 @@ class App extends Component {
     roomCode: null,
     channel: null,
     gameState: null,
-    game: null
+    game: null,
+    errorMessage: null
   };
 
   channel = null;
 
   handleClickCreateRoom = () => {
     POST("/rooms").then(({ code }) => {
-      this.channel = getChannel("room:" + code);
-      this.channel
-        .join()
-        .receive("ok", resp => {
-          console.log("Joined successfully", resp);
-        })
-        .receive("error", resp => {
-          console.log("Unable to join", resp);
+      this.joinRoom(code);
+    });
+  };
+
+  handleSubmitJoin = evt => {
+    evt.preventDefault();
+
+    this.joinRoom(this.state.roomCodeInput);
+  };
+
+  joinRoom = code => {
+    this.channel = getChannel("room:" + code);
+    this.channel
+      .join()
+      .receive("ok", ({ game, game_state }) => {
+        this.channel.on("new_state", ({ game, game_state }) => {
+          this.setState({ gameState: game_state, game, errorMessage: null });
         });
 
-      this.channel.on("new_state", ({ game, game_state }) => {
-        this.setState({ gameState: game_state, game });
+        this.setState({ roomCode: code, game, gameState: game_state });
+      })
+      .receive("error", msg => {
+        this.setState({ errorMessage: msg });
       });
-
-      this.setState({ roomCode: code });
-    });
   };
 
   handleSelectGame = game => {
@@ -44,29 +53,8 @@ class App extends Component {
     this.setState({ roomCodeInput: target.value });
   };
 
-  handleSubmitJoin = evt => {
-    evt.preventDefault();
-    const { roomCodeInput: code } = this.state;
-
-    this.channel = getChannel("room:" + code);
-    this.channel
-      .join()
-      .receive("ok", resp => {
-        console.log("Joined successfully", resp);
-      })
-      .receive("error", resp => {
-        console.log("Unable to join", resp);
-      });
-
-    this.channel.on("new_state", ({ game, game_state }) => {
-      this.setState({ gameState: game_state, game });
-    });
-
-    this.setState({ roomCode: code });
-  };
-
   renderEmpty = () => {
-    const { roomCodeInput } = this.state;
+    const { roomCodeInput, errorMessage } = this.state;
     return (
       <Fragment>
         <form onSubmit={this.handleSubmitJoin}>
@@ -78,6 +66,7 @@ class App extends Component {
             onChange={this.handleRoomCodeChange}
           />{" "}
           <button>Join Room</button>
+          {errorMessage && <div>{errorMessage}</div>}
         </form>
         <div>or</div>
         <div>

@@ -16,20 +16,23 @@ class Room extends Component {
     return (
       <Fragment>
         <div>{code}</div>
-        <div>Select a game:</div>
-        {!game &&
-          gamesList.map(({ id, displayName }) => (
-            <div key={id}>
-              <button
-                onClick={() => {
-                  onSelectGame(id);
-                }}
-              >
-                {displayName}
-              </button>
-            </div>
-          ))}
-        {game && <div>{game}</div>}
+        {!game && (
+          <Fragment>
+            <div>Select a game:</div>
+            {gamesList.map(({ id, displayName }) => (
+              <div key={id}>
+                <button
+                  onClick={() => {
+                    onSelectGame(id);
+                  }}
+                >
+                  {displayName}
+                </button>
+              </div>
+            ))}
+          </Fragment>
+        )}
+        {game && <div>Selected game: {game}</div>}
       </Fragment>
     );
   }
