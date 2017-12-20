@@ -1,5 +1,6 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
 import { POST, getChannel } from "../utils/api";
+import Lobby from "./Lobby";
 import Room from "./Room";
 import "./App.css";
 
@@ -7,7 +8,6 @@ class App extends Component {
   static propTypes = {};
 
   state = {
-    roomCodeInput: "",
     roomCode: null,
     channel: null,
     gameState: null,
@@ -17,16 +17,14 @@ class App extends Component {
 
   channel = null;
 
-  handleClickCreateRoom = () => {
+  handleCreateRoom = () => {
     POST("/rooms").then(({ code }) => {
       this.joinRoom(code);
     });
   };
 
-  handleSubmitJoin = evt => {
-    evt.preventDefault();
-
-    this.joinRoom(this.state.roomCodeInput);
+  handleJoinRoom = ({ code }) => {
+    this.joinRoom(code);
   };
 
   joinRoom = code => {
@@ -49,39 +47,18 @@ class App extends Component {
     this.channel.push("set_game", { game });
   };
 
-  handleRoomCodeChange = ({ target }) => {
-    this.setState({ roomCodeInput: target.value });
-  };
-
-  renderEmpty = () => {
-    const { roomCodeInput, errorMessage } = this.state;
-    return (
-      <Fragment>
-        <form onSubmit={this.handleSubmitJoin}>
-          <input
-            placeholder="Room Code"
-            type="text"
-            name="roomCode"
-            value={roomCodeInput}
-            onChange={this.handleRoomCodeChange}
-          />{" "}
-          <button>Join Room</button>
-          {errorMessage && <div>{errorMessage}</div>}
-        </form>
-        <div>or</div>
-        <div>
-          <button onClick={this.handleClickCreateRoom}>Create Room</button>
-        </div>
-      </Fragment>
-    );
-  };
-
   render() {
-    const { roomCode, game, gameState } = this.state;
+    const { roomCode, game, gameState, errorMessage } = this.state;
     return (
       <div>
         <h1>Games with Strangers</h1>
-        {!roomCode && this.renderEmpty()}
+        {!roomCode && (
+          <Lobby
+            onJoinRoom={this.handleJoinRoom}
+            onCreateRoom={this.handleCreateRoom}
+            errorMessage={errorMessage}
+          />
+        )}
         {roomCode && (
           <Room
             code={roomCode}
