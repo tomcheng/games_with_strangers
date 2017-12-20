@@ -6,7 +6,13 @@ import "./App.css";
 class App extends Component {
   static propTypes = {};
 
-  state = { roomCode: null, channel: null, gameState: null, game: null };
+  state = {
+    roomCodeInput: "",
+    roomCode: null,
+    channel: null,
+    gameState: null,
+    game: null
+  };
 
   channel = null;
 
@@ -34,17 +40,52 @@ class App extends Component {
     this.channel.push("set_game", { game });
   };
 
-  renderEmpty = () => (
-    <Fragment>
-      <div>
-        <input placeholder="Room Code" type="text" /> <button>Join Room</button>
-      </div>
-      <div>or</div>
-      <div>
-        <button onClick={this.handleClickCreateRoom}>Create Room</button>
-      </div>
-    </Fragment>
-  );
+  handleRoomCodeChange = ({ target }) => {
+    this.setState({ roomCodeInput: target.value });
+  };
+
+  handleSubmitJoin = evt => {
+    evt.preventDefault();
+    const { roomCodeInput: code } = this.state;
+
+    this.channel = getChannel("room:" + code);
+    this.channel
+      .join()
+      .receive("ok", resp => {
+        console.log("Joined successfully", resp);
+      })
+      .receive("error", resp => {
+        console.log("Unable to join", resp);
+      });
+
+    this.channel.on("new_state", ({ game, game_state }) => {
+      this.setState({ gameState: game_state, game });
+    });
+
+    this.setState({ roomCode: code });
+  };
+
+  renderEmpty = () => {
+    const { roomCodeInput } = this.state;
+    return (
+      <Fragment>
+        <form onSubmit={this.handleSubmitJoin}>
+          <input
+            placeholder="Room Code"
+            type="text"
+            name="roomCode"
+            value={roomCodeInput}
+            onChange={this.handleRoomCodeChange}
+          />{" "}
+          <button>Join Room</button>
+        </form>
+        <div>or</div>
+        <div>
+          <button onClick={this.handleClickCreateRoom}>Create Room</button>
+        </div>
+      </Fragment>
+    );
+  };
 
   render() {
     const { roomCode, game, gameState } = this.state;
