@@ -11,7 +11,8 @@ class App extends Component {
     roomCode: null,
     channel: null,
     gameState: null,
-    game: null
+    game: null,
+    players: null
   };
 
   channel = null;
@@ -30,12 +31,12 @@ class App extends Component {
     this.channel = getChannel("room:" + code);
     this.channel
       .join()
-      .receive("ok", ({ game, game_state }) => {
-        this.channel.on("new_state", ({ game, game_state }) => {
-          this.setState({ gameState: game_state, game });
+      .receive("ok", ({ game, players, game_state }) => {
+        this.channel.on("new_state", ({ game, players, game_state }) => {
+          this.setState({ game, players, gameState: game_state });
         });
 
-        this.setState({ roomCode: code, game, gameState: game_state });
+        this.setState({ game, players, gameState: game_state, roomCode: code });
       })
       .receive("error", message => {
         onError({ message });
@@ -47,7 +48,7 @@ class App extends Component {
   };
 
   render() {
-    const { roomCode, game, gameState } = this.state;
+    const { roomCode, game, players, gameState } = this.state;
     return (
       <div>
         <h1>Games with Strangers</h1>
@@ -61,6 +62,7 @@ class App extends Component {
           <Room
             code={roomCode}
             game={game}
+            players={players}
             gameState={gameState}
             onSelectGame={this.handleSelectGame}
           />

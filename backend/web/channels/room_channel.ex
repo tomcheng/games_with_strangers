@@ -4,7 +4,12 @@ defmodule GamesWithStrangers.RoomChannel do
   def join("room:" <> room_code, _payload, socket) do
     case GWS.get_room(room_code) do
       {:ok, room} ->
+        GWS.Room.add_player(room, "Harold")
+
         {:ok, room_state} = GWS.Room.get_state(room)
+
+        send(self, :after_join)
+
         {:ok, room_state, socket}
       :error ->
         {:error, "Room not found"}
@@ -23,4 +28,12 @@ defmodule GamesWithStrangers.RoomChannel do
     {:noreply, socket}
   end
 
+  def handle_info(:after_join, %{topic: "room:" <> room_code} = socket) do
+    {:ok, room} = GWS.get_room(room_code)
+    {:ok, room_state} = GWS.Room.get_state(room)
+
+    broadcast(socket, "new_state", room_state)
+
+    {:noreply, socket}
+  end
 end

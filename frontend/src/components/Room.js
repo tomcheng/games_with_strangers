@@ -7,11 +7,12 @@ class Room extends Component {
     code: PropTypes.string.isRequired,
     onSelectGame: PropTypes.func.isRequired,
     game: PropTypes.oneOf(gamesList.map(g => g.id)),
-    gameState: PropTypes.object
+    gameState: PropTypes.object,
+    players: PropTypes.arrayOf(PropTypes.string)
   };
 
   render() {
-    const { code, game, onSelectGame } = this.props;
+    const { code, game, onSelectGame, players } = this.props;
 
     return (
       <Fragment>
@@ -33,6 +34,12 @@ class Room extends Component {
           </Fragment>
         )}
         {game && <div>Selected game: {game}</div>}
+        {players && (
+          <Fragment>
+            <div>Players:</div>
+            {players.map((player, i) => <div key={i}>{player}</div>)}
+          </Fragment>
+        )}
       </Fragment>
     );
   }

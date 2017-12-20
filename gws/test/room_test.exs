@@ -18,7 +18,7 @@ defmodule GWS.RoomTest do
     assert state[:game] == "futbol"
   end
 
-  test "stores values by key", %{room: room} do
+  test "updates game state", %{room: room} do
     {:ok, state} = GWS.Room.get_state(room)
 
     assert state[:game_state] == nil
@@ -28,6 +28,18 @@ defmodule GWS.RoomTest do
     {:ok, state} = GWS.Room.get_state(room)
 
     assert state[:game_state] == %{foo: "bar"}
+  end
+
+  test "adds a player", %{room: room} do
+    {:ok, state} = GWS.Room.get_state(room)
+
+    assert state[:players] == []
+
+    GWS.Room.add_player(room, "Harold")
+
+    {:ok, state} = GWS.Room.get_state(room)
+
+    assert state[:players] == ["Harold"]
   end
 
   test "are temporary workers" do
