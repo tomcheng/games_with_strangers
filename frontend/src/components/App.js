@@ -11,35 +11,34 @@ class App extends Component {
     roomCode: null,
     channel: null,
     gameState: null,
-    game: null,
-    errorMessage: null
+    game: null
   };
 
   channel = null;
 
   handleCreateRoom = () => {
     POST("/rooms").then(({ code }) => {
-      this.joinRoom(code);
+      this.joinRoom({ code });
     });
   };
 
-  handleJoinRoom = ({ code }) => {
-    this.joinRoom(code);
+  handleJoinRoom = ({ code, onError }) => {
+    this.joinRoom({ code, onError });
   };
 
-  joinRoom = code => {
+  joinRoom = ({ code, onError }) => {
     this.channel = getChannel("room:" + code);
     this.channel
       .join()
       .receive("ok", ({ game, game_state }) => {
         this.channel.on("new_state", ({ game, game_state }) => {
-          this.setState({ gameState: game_state, game, errorMessage: null });
+          this.setState({ gameState: game_state, game });
         });
 
         this.setState({ roomCode: code, game, gameState: game_state });
       })
-      .receive("error", msg => {
-        this.setState({ errorMessage: msg });
+      .receive("error", message => {
+        onError({ message });
       });
   };
 
@@ -48,7 +47,7 @@ class App extends Component {
   };
 
   render() {
-    const { roomCode, game, gameState, errorMessage } = this.state;
+    const { roomCode, game, gameState } = this.state;
     return (
       <div>
         <h1>Games with Strangers</h1>
@@ -56,7 +55,6 @@ class App extends Component {
           <Lobby
             onJoinRoom={this.handleJoinRoom}
             onCreateRoom={this.handleCreateRoom}
-            errorMessage={errorMessage}
           />
         )}
         {roomCode && (

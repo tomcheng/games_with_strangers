@@ -4,16 +4,20 @@ import PropTypes from "prop-types";
 class Lobby extends Component {
   static propTypes = {
     onCreateRoom: PropTypes.func.isRequired,
-    onJoinRoom: PropTypes.func.isRequired,
-    errorMessage: PropTypes.string
+    onJoinRoom: PropTypes.func.isRequired
   };
 
-  state = { roomCode: "" }
+  state = { roomCode: "", errorMessage: null };
 
   handleSubmit = evt => {
     evt.preventDefault();
 
-    this.props.onJoinRoom({ code: this.state.roomCode });
+    this.props.onJoinRoom({
+      code: this.state.roomCode,
+      onError: ({ message }) => {
+        this.setState({ errorMessage: message });
+      }
+    });
   };
 
   handleChange = ({ target }) => {
@@ -21,8 +25,8 @@ class Lobby extends Component {
   };
 
   render() {
-    const { onCreateRoom, errorMessage } = this.props;
-    const { roomCode } = this.state;
+    const { onCreateRoom } = this.props;
+    const { roomCode, errorMessage } = this.state;
 
     return (
       <Fragment>
