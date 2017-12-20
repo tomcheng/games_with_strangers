@@ -1,4 +1,7 @@
+import { Socket } from "phoenix";
+
 const API_URL = process.env.REACT_APP_API_URL;
+const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL;
 
 const headers = () => ({
   Accept: "application/json",
@@ -40,3 +43,10 @@ export const DELETE = url =>
     method: "DELETE",
     headers: headers()
   }).then(parseResponse);
+
+export const getChannel = name => {
+  const socket = new Socket(`${WEBSOCKET_URL}/socket`);
+  socket.connect();
+
+  return socket.channel(name, {});
+};

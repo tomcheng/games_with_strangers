@@ -1,21 +1,33 @@
 import React, { Component, Fragment } from "react";
-import { POST } from "./utils/api";
+import { POST, getChannel } from "./utils/api";
 import Room from "./components/Room";
 import "./App.css";
 
 class App extends Component {
   static propTypes = {};
 
-  state = { roomCode: null };
+  state = { roomCode: null, channel: null };
+
+  channel = null;
 
   handleClickCreateRoom = () => {
     POST("/rooms").then(({ code }) => {
+      this.channel = getChannel("room:" + code);
+      this.channel
+        .join()
+        .receive("ok", resp => {
+          console.log("Joined successfully", resp);
+        })
+        .receive("error", resp => {
+          console.log("Unable to join", resp);
+        });
+
       this.setState({ roomCode: code });
     });
   };
 
   handleSelectGame = game => {
-    console.log("game:", game);
+    this.channel.push("set_game", { game });
   };
 
   renderEmpty = () => (
@@ -36,7 +48,9 @@ class App extends Component {
       <div>
         <h1>Games with Strangers</h1>
         {!roomCode && this.renderEmpty()}
-        {roomCode && <Room code={roomCode} onSelectGame={this.handleSelectGame} />}
+        {roomCode && (
+          <Room code={roomCode} onSelectGame={this.handleSelectGame} />
+        )}
       </div>
     );
   }

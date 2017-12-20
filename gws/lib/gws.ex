@@ -8,4 +8,8 @@ defmodule GWS do
   def create_room do
     GWS.Registry.create(GWS.Registry)
   end
+
+  def get_room(code) do
+    GWS.Registry.get_room(GWS.Registry, code)
+  end
 end

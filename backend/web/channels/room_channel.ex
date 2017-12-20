@@ -22,4 +22,12 @@ defmodule GamesWithStrangers.RoomChannel do
     {:reply, {:ok, payload}, socket}
   end
 
+  def handle_in("set_game", %{"game" => game}, %{topic: "room:" <> room_code} = socket) do
+    {:ok, room} = GWS.get_room(room_code)
+
+    GWS.Room.set_game(room, game)
+
+    {:noreply, socket}
+  end
+
 end
