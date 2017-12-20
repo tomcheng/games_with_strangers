@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
-import { POST, getChannel } from "./utils/api";
-import Room from "./components/Room";
+import { POST, getChannel } from "../utils/api";
+import Room from "./Room";
 import "./App.css";
 
 class App extends Component {
