@@ -6,7 +6,7 @@ import "./App.css";
 class App extends Component {
   static propTypes = {};
 
-  state = { roomCode: null, channel: null };
+  state = { roomCode: null, channel: null, gameState: null, game: null };
 
   channel = null;
 
@@ -21,6 +21,10 @@ class App extends Component {
         .receive("error", resp => {
           console.log("Unable to join", resp);
         });
+
+      this.channel.on("new_state", ({ game, game_state }) => {
+        this.setState({ gameState: game_state, game });
+      });
 
       this.setState({ roomCode: code });
     });
@@ -43,13 +47,18 @@ class App extends Component {
   );
 
   render() {
-    const { roomCode } = this.state;
+    const { roomCode, game, gameState } = this.state;
     return (
       <div>
         <h1>Games with Strangers</h1>
         {!roomCode && this.renderEmpty()}
         {roomCode && (
-          <Room code={roomCode} onSelectGame={this.handleSelectGame} />
+          <Room
+            code={roomCode}
+            game={game}
+            gameState={gameState}
+            onSelectGame={this.handleSelectGame}
+          />
         )}
       </div>
     );

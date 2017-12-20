@@ -27,6 +27,10 @@ defmodule GamesWithStrangers.RoomChannel do
 
     GWS.Room.set_game(room, game)
 
+    {:ok, room_state} = GWS.Room.get_state(room)
+
+    broadcast socket, "new_state", room_state
+
     {:noreply, socket}
   end
 
