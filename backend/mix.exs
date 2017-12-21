@@ -37,6 +37,7 @@ defmodule GamesWithStrangers.Mixfile do
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
       {:cors_plug, "~> 1.1"},
+      {:uuid, "~> 1.1"},
       {:gws, path: "../gws"}
     ]
   end

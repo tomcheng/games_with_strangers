@@ -33,13 +33,24 @@ defmodule GWS.RoomTest do
   test "adds a player", %{room: room} do
     {:ok, state} = GWS.Room.get_state(room)
 
-    assert state[:players] == []
+    assert state[:players] == %{}
 
-    GWS.Room.add_player(room, "Harold")
-
+    GWS.Room.add_player(room, "player-id-1", "Harold")
     {:ok, state} = GWS.Room.get_state(room)
 
-    assert state[:players] == ["Harold"]
+    assert state[:players] == %{
+      "player-id-1" => %{id: "player-id-1", name: "Harold"}
+    }
+  end
+
+  test "does not duplicate existing player", %{room: room} do
+    GWS.Room.add_player(room, "player-id-1", "Harold")
+    GWS.Room.add_player(room, "player-id-1", "Harold")
+    {:ok, state} = GWS.Room.get_state(room)
+
+    assert state[:players] == %{
+      "player-id-1" => %{id: "player-id-1", name: "Harold"}
+    }
   end
 
   test "are temporary workers" do

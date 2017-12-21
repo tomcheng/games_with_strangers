@@ -44,9 +44,9 @@ export const DELETE = url =>
     headers: headers()
   }).then(parseResponse);
 
-export const getChannel = name => {
-  const socket = new Socket(`${WEBSOCKET_URL}/socket`);
+export const getChannel = ({ topic, params }) => {
+  const socket = new Socket(`${WEBSOCKET_URL}/socket`, {});
   socket.connect();
 
-  return socket.channel(name, {});
+  return socket.channel(topic, params);
 };

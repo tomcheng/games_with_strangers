@@ -4,6 +4,14 @@ import Lobby from "./Lobby";
 import Room from "./Room";
 import "./App.css";
 
+const PLAYER_ID_KEY = "_gws_player_id";
+
+const setPlayerId = id => {
+  localStorage.setItem(PLAYER_ID_KEY, id);
+};
+
+const getPlayerId = () => localStorage.getItem(PLAYER_ID_KEY);
+
 class App extends Component {
   static propTypes = {};
 
@@ -28,15 +36,20 @@ class App extends Component {
   };
 
   joinRoom = ({ code, onError }) => {
-    this.channel = getChannel("room:" + code);
+    this.channel = getChannel({
+      topic: "room:" + code,
+      params: { player_id: getPlayerId(), player_name: "FooBar" }
+    });
     this.channel
       .join()
-      .receive("ok", ({ game, players, game_state }) => {
+      .receive("ok", ({ game, players, game_state, player_id }) => {
+        setPlayerId(player_id);
+
         this.channel.on("new_state", ({ game, players, game_state }) => {
-          this.setState({ game, players, gameState: game_state });
+          this.setState({ game, players: players, gameState: game_state });
         });
 
-        this.setState({ game, players, gameState: game_state, roomCode: code });
+        this.setState({ game, players: players, gameState: game_state, roomCode: code });
       })
       .receive("error", message => {
         onError({ message });
@@ -49,6 +62,7 @@ class App extends Component {
 
   render() {
     const { roomCode, game, players, gameState } = this.state;
+
     return (
       <div>
         <h1>Games with Strangers</h1>

@@ -1,16 +1,22 @@
 defmodule GamesWithStrangers.RoomChannel do
   use GamesWithStrangers.Web, :channel
 
-  def join("room:" <> room_code, _payload, socket) do
+  def join(
+    "room:" <> room_code,
+    %{"player_id" => player_id_in, "player_name" => player_name},
+    socket
+  ) do
     case GWS.get_room(room_code) do
       {:ok, room} ->
-        GWS.Room.add_player(room, "Harold")
+        player_id = player_id_in || UUID.uuid4()
+
+        GWS.Room.add_player(room, player_id, player_name)
 
         {:ok, room_state} = GWS.Room.get_state(room)
 
-        send(self, :after_join)
+        send(self(), :after_join)
 
-        {:ok, room_state, socket}
+        {:ok, Map.put(room_state, :player_id, player_id), socket}
       :error ->
         {:error, "Room not found"}
     end
