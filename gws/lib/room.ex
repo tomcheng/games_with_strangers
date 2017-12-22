@@ -15,6 +15,7 @@ defmodule GWS.Room do
       |> Map.put(:game, game)
       |> Map.put(:minimum_players, apply(game_module, :minimum_players, []))
     end)
+    room
   end
 
   defp get_game_module(game) do
@@ -30,6 +31,7 @@ defmodule GWS.Room do
       end)
       |> update_moderator
     end)
+    room
   end
 
   def remove_player_by_channel(room, channel) do
@@ -42,6 +44,7 @@ defmodule GWS.Room do
       end)
       |> update_moderator
     end)
+    room
   end
 
   defp update_moderator(%{players: players, moderator: moderator} = state) do
@@ -90,6 +93,7 @@ defmodule GWS.Room do
       game_module = get_game_module(game)
       Map.put(state, :game_state, apply(game_module, :initial_state, [players]))
     end)
+    room
   end
   def run_game_play(_, _), do: nil
 

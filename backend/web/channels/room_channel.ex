@@ -26,9 +26,10 @@ defmodule GamesWithStrangers.RoomChannel do
   def terminate(_reason, %{topic: "room:" <> room_code, channel_pid: channel} = socket) do
     {:ok, room} = GWS.get_room(room_code)
 
-    GWS.Room.remove_player_by_channel(room, channel)
-
-    {:ok, room_state} = GWS.Room.get_state(room)
+    {:ok, room_state} =
+      room
+      |> GWS.Room.remove_player_by_channel(channel)
+      |> GWS.Room.get_state
 
     broadcast(socket, "new_state", room_state)
 
@@ -40,9 +41,10 @@ defmodule GamesWithStrangers.RoomChannel do
   def handle_in("set_game", %{"game" => game}, %{topic: "room:" <> room_code} = socket) do
     {:ok, room} = GWS.get_room(room_code)
 
-    GWS.Room.set_game(room, game)
-
-    {:ok, room_state} = GWS.Room.get_state(room)
+    {:ok, room_state} =
+      room
+      |> GWS.Room.set_game(game)
+      |> GWS.Room.get_state
 
     broadcast(socket, "new_state", room_state)
 
@@ -52,9 +54,10 @@ defmodule GamesWithStrangers.RoomChannel do
   def handle_in("game_play", game_play, %{topic: "room:" <> room_code} = socket) do
     {:ok, room} = GWS.get_room(room_code)
 
-    GWS.Room.run_game_play(room, game_play)
-
-    {:ok, room_state} = GWS.Room.get_state(room)
+    {:ok, room_state} =
+      room
+      |> GWS.Room.run_game_play(game_play)
+      |> GWS.Room.get_state
 
     broadcast(socket, "new_state", room_state)
 

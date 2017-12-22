@@ -20,13 +20,14 @@ defmodule GWS.RoomTest do
   end
 
   test "runs game play", %{room: room} do
-    GWS.Room.set_game(room, "you_bet")
-    GWS.Room.add_player(room, "player-id-1", "Harold", 1)
-    GWS.Room.add_player(room, "player-id-2", "Bob", 2)
-    GWS.Room.add_player(room, "player-id-3", "Andy", 3)
-    GWS.Room.run_game_play(room, %{ "play" => "start_game" })
-
-    {:ok, state} = GWS.Room.get_state(room)
+    {:ok, state} =
+      room
+      |> GWS.Room.set_game("you_bet")
+      |> GWS.Room.add_player("player-id-1", "Harold", 1)
+      |> GWS.Room.add_player("player-id-2", "Bob", 2)
+      |> GWS.Room.add_player("player-id-3", "Andy", 3)
+      |> GWS.Room.run_game_play(%{"play" => "start_game"})
+      |> GWS.Room.get_state
 
     assert state[:game_state] == YouBet.initial_state(state[:players])
   end
@@ -36,9 +37,11 @@ defmodule GWS.RoomTest do
 
     assert state[:players] == %{}
 
-    GWS.Room.add_player(room, "player-id-1", "Harold", 1)
-    GWS.Room.add_player(room, "player-id-2", "Bob", 2)
-    {:ok, state} = GWS.Room.get_state(room)
+    {:ok, state} =
+      room
+      |> GWS.Room.add_player("player-id-1", "Harold", 1)
+      |> GWS.Room.add_player("player-id-2", "Bob", 2)
+      |> GWS.Room.get_state
 
     assert state[:players] == %{
       "player-id-1" => %{id: "player-id-1", name: "Harold", is_moderator: true},
@@ -47,9 +50,11 @@ defmodule GWS.RoomTest do
   end
 
   test "does not duplicate existing player", %{room: room} do
-    GWS.Room.add_player(room, "player-id-1", "Harold", 1)
-    GWS.Room.add_player(room, "player-id-1", "Harold", 1)
-    {:ok, state} = GWS.Room.get_state(room)
+    {:ok, state} =
+      room
+      |> GWS.Room.add_player("player-id-1", "Harold", 1)
+      |> GWS.Room.add_player("player-id-1", "Harold", 1)
+      |> GWS.Room.get_state
 
     assert state[:players] == %{
       "player-id-1" => %{id: "player-id-1", name: "Harold", is_moderator: true}
@@ -57,20 +62,22 @@ defmodule GWS.RoomTest do
   end
 
   test "removes a player", %{room: room} do
-    GWS.Room.add_player(room, "player-id-1", "Harold", 1)
-    GWS.Room.remove_player_by_channel(room, 1)
-
-    {:ok, state} = GWS.Room.get_state(room)
+    {:ok, state} =
+      room
+      |> GWS.Room.add_player("player-id-1", "Harold", 1)
+      |> GWS.Room.remove_player_by_channel(1)
+      |> GWS.Room.get_state
 
     assert state[:players] == %{}
   end
 
   test "reassigns moderator when moderator leaves", %{room: room} do
-    GWS.Room.add_player(room, "player-id-1", "Harold", 1)
-    GWS.Room.add_player(room, "player-id-2", "Bob", 2)
-    GWS.Room.remove_player_by_channel(room, 1)
-
-    {:ok, state} = GWS.Room.get_state(room)
+    {:ok, state} =
+      room
+      |> GWS.Room.add_player("player-id-1", "Harold", 1)
+      |> GWS.Room.add_player("player-id-2", "Bob", 2)
+      |> GWS.Room.remove_player_by_channel(1)
+      |> GWS.Room.get_state
 
     assert state[:players] == %{
       "player-id-2" => %{id: "player-id-2", name: "Bob", is_moderator: true}
