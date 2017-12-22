@@ -15,13 +15,7 @@ defmodule GWS.Room do
       |> Map.update!(:players, fn ps ->
         Map.put(ps, player_id, %{ id: player_id, name: name, channel: channel })
       end)
-      |> (fn new_state ->
-        if Enum.count(new_state[:players]) == 1 do
-          Map.put(new_state, :moderator, player_id)
-        else
-          new_state
-        end
-      end).()
+      |> update_moderator
     end)
   end
 
@@ -33,19 +27,21 @@ defmodule GWS.Room do
         |> Enum.reject(fn {_k, %{channel: c}} -> c == channel end)
         |> Enum.into(%{})
       end)
-      |> (fn new_state ->
-        %{players: ps, moderator: m} = new_state
-
-        if !moderator_exists?(ps, m) && Enum.count(ps) > 0 do
-          %{id: next_player_id} = ps
-            |> Map.values
-            |> List.first
-          Map.put(new_state, :moderator, next_player_id)
-        else
-          new_state
-        end
-      end).()
+      |> update_moderator
     end)
+  end
+
+  defp update_moderator(%{players: players, moderator: moderator} = state) do
+    if Enum.count(players) == 0 || moderator_exists?(players, moderator) do
+      state
+    else
+      new_moderator =
+        players
+        |> Map.values
+        |> List.first
+        |> Map.get(:id)
+      Map.put(state, :moderator, new_moderator)
+    end
   end
 
   defp moderator_exists?(players, moderator) do
