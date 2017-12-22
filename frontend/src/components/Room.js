@@ -2,6 +2,7 @@ import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import omit from "lodash/omit";
 import values from "lodash/values";
+import find from "lodash/find";
 import gamesList from "../gamesList";
 import Player from "./Player";
 
@@ -9,34 +10,31 @@ const pluralize = (str, count) => str + (count === 1 ? "" : "s");
 
 class Room extends Component {
   static propTypes = {
+    players: PropTypes.objectOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired
+      })
+    ).isRequired,
     roomCode: PropTypes.string.isRequired,
     onSelectGame: PropTypes.func.isRequired,
     onStartGame: PropTypes.func.isRequired,
     playerId: PropTypes.string.isRequired,
     game: PropTypes.oneOf(gamesList.map(g => g.id)),
     gameState: PropTypes.object,
-    minimumPlayers: PropTypes.number,
-    players: PropTypes.objectOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired
-      })
-    )
+    minimumPlayers: PropTypes.number
   };
 
   render() {
     const {
-      roomCode,
       game,
+      gameState,
+      minimumPlayers,
       players,
       playerId,
-      minimumPlayers,
+      roomCode,
       onSelectGame,
       onStartGame
     } = this.props;
-
-    if (!players) {
-      return null;
-    }
 
     const currentPlayer = players[playerId];
     const otherPlayers = omit(players, [playerId]);
@@ -44,6 +42,11 @@ class Room extends Component {
       minimumPlayers && players
         ? Math.max(minimumPlayers - values(players).length, 0)
         : null;
+
+    if (gameState && game) {
+      const GameComponent = find(gamesList, g => g.id === game).component;
+      return <GameComponent state={gameState} />
+    }
 
     return (
       <Fragment>

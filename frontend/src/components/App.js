@@ -93,20 +93,21 @@ class App extends Component {
       players,
       playerId,
       roomCode,
-      savedPlayerName,
+      savedPlayerName
     } = this.state;
+    const roomReady = !!(roomCode && players);
 
     return (
       <div>
         <h1>Games with Strangers</h1>
-        {!roomCode && (
+        {!roomReady && (
           <Lobby
             onJoinRoom={this.handleJoinRoom}
             onCreateRoom={this.handleCreateRoom}
             savedPlayerName={savedPlayerName}
           />
         )}
-        {roomCode && (
+        {roomReady && (
           <Room
             roomCode={roomCode}
             game={game}
