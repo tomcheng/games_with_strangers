@@ -47,6 +47,10 @@ class App extends Component {
     this.channel.push("set_game", { game });
   };
 
+  handleStartGame = () => {
+    this.channel.push("game_play", { play: "start_game" });
+  };
+
   joinRoom = ({ playerName, roomCode, onError }) => {
     this.channel = getChannel({
       topic: "room:" + roomCode,
@@ -111,6 +115,7 @@ class App extends Component {
             playerId={playerId}
             minimumPlayers={minimumPlayers}
             onSelectGame={this.handleSelectGame}
+            onStartGame={this.handleStartGame}
           />
         )}
       </div>

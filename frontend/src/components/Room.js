@@ -11,6 +11,7 @@ class Room extends Component {
   static propTypes = {
     roomCode: PropTypes.string.isRequired,
     onSelectGame: PropTypes.func.isRequired,
+    onStartGame: PropTypes.func.isRequired,
     playerId: PropTypes.string.isRequired,
     game: PropTypes.oneOf(gamesList.map(g => g.id)),
     gameState: PropTypes.object,
@@ -23,26 +24,27 @@ class Room extends Component {
   };
 
   render() {
-
     const {
       roomCode,
       game,
       players,
       playerId,
       minimumPlayers,
-      onSelectGame
+      onSelectGame,
+      onStartGame
     } = this.props;
+
     if (!players) {
       return null;
     }
 
     const currentPlayer = players[playerId];
     const otherPlayers = omit(players, [playerId]);
-
     const playersNeeded =
       minimumPlayers && players
         ? Math.max(minimumPlayers - values(players).length, 0)
         : null;
+
     return (
       <Fragment>
         <div>{roomCode}</div>
@@ -66,12 +68,13 @@ class Room extends Component {
         <div>You:</div>
         <Player player={currentPlayer} />
         <div>Others Players:</div>
-      </Fragment>
         {values(otherPlayers).map(player => (
           <Player key={player.id} player={player} />
         ))}
         {!!playersNeeded &&
           `${playersNeeded} ${pluralize("player", playersNeeded)} needed`}
+        {playersNeeded === 0 && <button onClick={onStartGame}>Start Game</button>}
+      </Fragment>
     );
   }
 }

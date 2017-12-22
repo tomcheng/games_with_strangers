@@ -19,16 +19,16 @@ defmodule GWS.RoomTest do
     assert state[:minimum_players] == YouBet.minimum_players
   end
 
-  test "updates game state", %{room: room} do
+  test "runs game play", %{room: room} do
+    GWS.Room.set_game(room, "you_bet")
+    GWS.Room.add_player(room, "player-id-1", "Harold", 1)
+    GWS.Room.add_player(room, "player-id-2", "Bob", 2)
+    GWS.Room.add_player(room, "player-id-3", "Andy", 3)
+    GWS.Room.run_game_play(room, %{ "play" => "start_game" })
+
     {:ok, state} = GWS.Room.get_state(room)
 
-    assert state[:game_state] == nil
-
-    GWS.Room.update_game_state(room, %{foo: "bar"})
-
-    {:ok, state} = GWS.Room.get_state(room)
-
-    assert state[:game_state] == %{foo: "bar"}
+    assert state[:game_state] == YouBet.initial_state(state[:players])
   end
 
   test "adds a player", %{room: room} do

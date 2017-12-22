@@ -9,9 +9,11 @@ defmodule GWS.Room do
 
   def set_game(room, game) do
     Agent.update(room, fn state ->
+      game_module = get_game_module(game)
+
       state
       |> Map.put(:game, game)
-      |> Map.put(:minimum_players, apply(get_game_module(game), :minimum_players, []))
+      |> Map.put(:minimum_players, apply(game_module, :minimum_players, []))
     end)
   end
 
@@ -82,6 +84,14 @@ defmodule GWS.Room do
       |> Enum.into(%{})
     Map.put(state, :players, new_players)
   end
+
+  def run_game_play(room, %{"play" => "start_game"}) do
+    Agent.update(room, fn %{game: game, players: players} = state ->
+      game_module = get_game_module(game)
+      Map.put(state, :game_state, apply(game_module, :initial_state, [players]))
+    end)
+  end
+  def run_game_play(_, _), do: nil
 
   def destroy_room(room) do
     Agent.stop(room)
