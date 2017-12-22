@@ -40,10 +40,9 @@ defmodule GWS.RoomTest do
     {:ok, state} = GWS.Room.get_state(room)
 
     assert state[:players] == %{
-      "player-id-1" => %{id: "player-id-1", name: "Harold"},
-      "player-id-2" => %{id: "player-id-2", name: "Bob"}
+      "player-id-1" => %{id: "player-id-1", name: "Harold", is_moderator: true},
+      "player-id-2" => %{id: "player-id-2", name: "Bob", is_moderator: false}
     }
-    assert state[:moderator] == "player-id-1"
   end
 
   test "does not duplicate existing player", %{room: room} do
@@ -52,7 +51,7 @@ defmodule GWS.RoomTest do
     {:ok, state} = GWS.Room.get_state(room)
 
     assert state[:players] == %{
-      "player-id-1" => %{id: "player-id-1", name: "Harold"}
+      "player-id-1" => %{id: "player-id-1", name: "Harold", is_moderator: true}
     }
   end
 
@@ -72,7 +71,9 @@ defmodule GWS.RoomTest do
 
     {:ok, state} = GWS.Room.get_state(room)
 
-    assert state[:moderator] == "player-id-2"
+    assert state[:players] == %{
+      "player-id-2" => %{id: "player-id-2", name: "Bob", is_moderator: true}
+    }
   end
 
   test "removes a room", %{room: room} do

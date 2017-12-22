@@ -5,17 +5,6 @@ defmodule GWS.Room do
     Agent.start_link(fn -> %{game: nil, game_state: nil, players: %{}, moderator: nil} end)
   end
 
-  def get_state(room) do
-    {:ok, Agent.get(room, fn state ->
-      state
-      |> Map.update!(:players, fn ps ->
-        ps
-        |> Enum.map(fn {k, v} -> {k, Map.drop(v, [:channel])} end)
-        |> Enum.into(%{})
-      end)
-    end)}
-  end
-
   def set_game(room, game) do
     Agent.update(room, &Map.put(&1, :game, game))
   end
@@ -65,6 +54,25 @@ defmodule GWS.Room do
 
   def update_game_state(room, new_state) do
     Agent.update(room, fn state -> Map.put(state, :game_state, new_state) end)
+  end
+
+  def get_state(room) do
+    {:ok, Agent.get(room, fn state ->
+      state
+      |> Map.update!(:players, fn ps ->
+        ps
+        |> Enum.map(fn {k, v} ->
+          {
+            k,
+            v
+            |> Map.drop([:channel])
+            |> Map.put(:is_moderator, k == state[:moderator])
+          }
+        end)
+        |> Enum.into(%{})
+      end)
+      |> Map.drop([:moderator])
+    end)}
   end
 
   def destroy_room(room) do
