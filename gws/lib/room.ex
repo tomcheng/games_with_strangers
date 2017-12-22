@@ -59,20 +59,22 @@ defmodule GWS.Room do
   def get_state(room) do
     {:ok, Agent.get(room, fn state ->
       state
-      |> Map.update!(:players, fn ps ->
-        ps
-        |> Enum.map(fn {k, v} ->
-          {
-            k,
-            v
-            |> Map.drop([:channel])
-            |> Map.put(:is_moderator, k == state[:moderator])
-          }
-        end)
-        |> Enum.into(%{})
-      end)
+      |> normalize_players
       |> Map.drop([:moderator])
     end)}
+  end
+
+  defp normalize_players(state) do
+    state
+    |> Map.update!(:players, fn players ->
+      players
+      |> Enum.map(fn {id, player} ->
+        {id, player
+          |> Map.drop([:channel])
+          |> Map.put(:is_moderator, id == state[:moderator])}
+      end)
+      |> Enum.into(%{})
+    end)
   end
 
   def destroy_room(room) do
