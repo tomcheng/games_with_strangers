@@ -7,7 +7,15 @@ class Lobby extends Component {
     onJoinRoom: PropTypes.func.isRequired
   };
 
-  state = { playerName: "", roomCode: "", errorMessage: null };
+  constructor(props) {
+    super();
+
+    this.state = {
+      playerName: props.savedPlayerName,
+      roomCode: "",
+      errorMessage: null
+    };
+  }
 
   handleSubmit = evt => {
     evt.preventDefault();

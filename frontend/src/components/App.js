@@ -5,12 +5,12 @@ import Room from "./Room";
 import "./App.css";
 
 const PLAYER_ID_KEY = "_gws_player_id";
+const PLAYER_NAME_KEY = "_gws_player_name";
 
-const setPlayerId = id => {
-  localStorage.setItem(PLAYER_ID_KEY, id);
-};
-
+const setPlayerId = id => localStorage.setItem(PLAYER_ID_KEY, id);
 const getPlayerId = () => localStorage.getItem(PLAYER_ID_KEY);
+const setPlayerName = name => localStorage.setItem(PLAYER_NAME_KEY, name);
+const getPlayerName = () => localStorage.getItem(PLAYER_NAME_KEY);
 
 class App extends Component {
   static propTypes = {};
@@ -20,7 +20,8 @@ class App extends Component {
     channel: null,
     gameState: null,
     game: null,
-    players: null
+    players: null,
+    savedPlayerName: getPlayerName() || ""
   };
 
   channel = null;
@@ -29,10 +30,16 @@ class App extends Component {
     POST("/rooms").then(({ room_code }) => {
       this.joinRoom({ playerName, roomCode: room_code });
     });
+    this.savePlayerName(playerName);
   };
 
   handleJoinRoom = ({ playerName, roomCode, onError }) => {
     this.joinRoom({ playerName, roomCode, onError });
+    this.savePlayerName(playerName);
+  };
+
+  handleSelectGame = game => {
+    this.channel.push("set_game", { game });
   };
 
   joinRoom = ({ playerName, roomCode, onError }) => {
@@ -40,6 +47,7 @@ class App extends Component {
       topic: "room:" + roomCode,
       params: { player_id: getPlayerId(), player_name: playerName }
     });
+
     this.channel
       .join()
       .receive("ok", ({ game, players, game_state, player_id }) => {
@@ -56,12 +64,13 @@ class App extends Component {
       });
   };
 
-  handleSelectGame = game => {
-    this.channel.push("set_game", { game });
+  savePlayerName = name => {
+    setPlayerName(name);
+    this.setState({ savedPlayerName: name });
   };
 
   render() {
-    const { roomCode, game, players, gameState } = this.state;
+    const { savedPlayerName, roomCode, game, players, gameState } = this.state;
 
     return (
       <div>
@@ -70,6 +79,7 @@ class App extends Component {
           <Lobby
             onJoinRoom={this.handleJoinRoom}
             onCreateRoom={this.handleCreateRoom}
+            savedPlayerName={savedPlayerName}
           />
         )}
         {roomCode && (
