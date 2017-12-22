@@ -6,16 +6,31 @@ defmodule GWS.Room do
   end
 
   def get_state(room) do
-    {:ok, Agent.get(room, &(&1))}
+    {:ok, Agent.get(room, fn state ->
+      state
+      |> Map.update!(:players, fn ps ->
+        ps
+        |> Enum.map(fn {k, v} -> {k, Map.drop(v, [:channel])} end)
+        |> Enum.into(%{})
+      end)
+    end)}
   end
 
   def set_game(room, game) do
     Agent.update(room, &Map.put(&1, :game, game))
   end
 
-  def add_player(room, player_id, name) do
+  def add_player(room, player_id, name, channel) do
     Agent.update(room, &Map.update!(&1, :players, fn ps ->
-      Map.put(ps, player_id, %{ id: player_id, name: name })
+      Map.put(ps, player_id, %{ id: player_id, name: name, channel: channel })
+    end))
+  end
+
+  def remove_player_by_channel(room, channel) do
+    Agent.update(room, &Map.update!(&1, :players, fn ps ->
+      ps
+      |> Enum.reject(fn {_k, %{channel: c}} -> c == channel end)
+      |> Enum.into(%{})
     end))
   end
 

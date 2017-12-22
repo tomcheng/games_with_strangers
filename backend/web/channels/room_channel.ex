@@ -1,19 +1,19 @@
 defmodule GamesWithStrangers.RoomChannel do
   use GamesWithStrangers.Web, :channel
 
-  def join(_, %{"player_name" => ""}, socket) do
+  def join(_, %{"player_name" => ""}, _socket) do
     {:error, "Name is required"}
   end
   def join(
     "room:" <> room_code,
     %{"player_id" => player_id_in, "player_name" => player_name},
-    socket
+    %{channel_pid: channel} = socket
   ) do
     case GWS.get_room(room_code) do
       {:ok, room} ->
         player_id = player_id_in || UUID.uuid4()
 
-        GWS.Room.add_player(room, player_id, player_name)
+        GWS.Room.add_player(room, player_id, player_name, channel)
 
         {:ok, room_state} = GWS.Room.get_state(room)
 
@@ -23,6 +23,16 @@ defmodule GamesWithStrangers.RoomChannel do
       :error ->
         {:error, "Room not found"}
     end
+  end
+
+  def terminate(_reason, %{topic: "room:" <> room_code, channel_pid: channel} = socket) do
+    {:ok, room} = GWS.get_room(room_code)
+
+    GWS.Room.remove_player_by_channel(room, channel)
+
+    {:ok, room_state} = GWS.Room.get_state(room)
+
+    broadcast(socket, "new_state", room_state)
   end
 
   def handle_in("set_game", %{"game" => game}, %{topic: "room:" <> room_code} = socket) do
