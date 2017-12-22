@@ -26,13 +26,13 @@ defmodule GWS.RoomTest do
       |> GWS.Room.add_player("player-id-1", "Harold", 1)
       |> GWS.Room.add_player("player-id-2", "Bob", 2)
       |> GWS.Room.add_player("player-id-3", "Andy", 3)
-      |> GWS.Room.run_game_play(%{"play" => "start_game"})
+      |> GWS.Room.start_game
       |> GWS.Room.get_state
 
     assert state[:game_state] == YouBet.initial_state(state[:players])
   end
 
-  test "adds a player", %{room: room} do
+  test "adds players", %{room: room} do
     {:ok, state} = GWS.Room.get_state(room)
 
     assert state[:players] == %{}

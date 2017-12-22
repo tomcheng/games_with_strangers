@@ -48,7 +48,7 @@ class App extends Component {
   };
 
   handleStartGame = () => {
-    this.channel.push("game_play", { play: "start_game" });
+    this.channel.push("start_game");
   };
 
   joinRoom = ({ playerName, roomCode, onError }) => {

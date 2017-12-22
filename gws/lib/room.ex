@@ -88,14 +88,21 @@ defmodule GWS.Room do
     Map.put(state, :players, new_players)
   end
 
-  def run_game_play(room, %{"play" => "start_game"}) do
+  def start_game(room) do
     Agent.update(room, fn %{game: game, players: players} = state ->
       game_module = get_game_module(game)
       Map.put(state, :game_state, apply(game_module, :initial_state, [players]))
     end)
     room
   end
-  def run_game_play(_, _), do: nil
+
+  def run_game_play(room, play) do
+    Agent.update(room, fn %{game: game} = state ->
+      game_module = get_game_module(game)
+      Map.put(state, :game_state, apply(game_module, :play, [play]))
+    end)
+    room
+  end
 
   def destroy_room(room) do
     Agent.stop(room)
