@@ -15,11 +15,9 @@ defmodule GamesWithStrangers.RoomChannel do
 
         GWS.Room.add_player(room, player_id, player_name, channel)
 
-        {:ok, room_state} = GWS.Room.get_state(room)
-
         send(self(), :after_join)
 
-        {:ok, Map.put(room_state, :player_id, player_id), socket}
+        {:ok, %{player_id: player_id}, socket}
       :error ->
         {:error, "Room not found"}
     end

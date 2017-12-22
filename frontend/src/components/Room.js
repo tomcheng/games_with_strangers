@@ -5,21 +5,33 @@ import values from "lodash/values";
 import gamesList from "../gamesList";
 import Player from "./Player";
 
+const pluralize = (str, count) => str + (count === 1 ? "" : "s");
+
 class Room extends Component {
   static propTypes = {
-    code: PropTypes.string.isRequired,
+    roomCode: PropTypes.string.isRequired,
     onSelectGame: PropTypes.func.isRequired,
     playerId: PropTypes.string.isRequired,
     game: PropTypes.oneOf(gamesList.map(g => g.id)),
     gameState: PropTypes.object,
-    players: PropTypes.objectOf(PropTypes.shape({
-      id: PropTypes.string.isRequired
-    })),
+    minimumPlayers: PropTypes.number,
+    players: PropTypes.objectOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired
+      })
+    )
   };
 
   render() {
-    const { code, game, onSelectGame, players, playerId } = this.props;
 
+    const {
+      roomCode,
+      game,
+      players,
+      playerId,
+      minimumPlayers,
+      onSelectGame
+    } = this.props;
     if (!players) {
       return null;
     }
@@ -27,9 +39,13 @@ class Room extends Component {
     const currentPlayer = players[playerId];
     const otherPlayers = omit(players, [playerId]);
 
+    const playersNeeded =
+      minimumPlayers && players
+        ? Math.max(minimumPlayers - values(players).length, 0)
+        : null;
     return (
       <Fragment>
-        <div>{code}</div>
+        <div>{roomCode}</div>
         {!game && (
           <Fragment>
             <div>Select a game:</div>
@@ -50,8 +66,12 @@ class Room extends Component {
         <div>You:</div>
         <Player player={currentPlayer} />
         <div>Others Players:</div>
-        {values(otherPlayers).map(player => <Player key={player.id} player={player} />)}
       </Fragment>
+        {values(otherPlayers).map(player => (
+          <Player key={player.id} player={player} />
+        ))}
+        {!!playersNeeded &&
+          `${playersNeeded} ${pluralize("player", playersNeeded)} needed`}
     );
   }
 }

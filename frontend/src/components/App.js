@@ -19,13 +19,14 @@ class App extends Component {
   static propTypes = {};
 
   state = {
-    roomCode: null,
     channel: null,
-    gameState: null,
     game: null,
+    gameState: null,
+    minimumPlayers: null,
     players: null,
-    savedPlayerName: getPlayerName() || "",
-    playerId: null
+    playerId: null,
+    roomCode: null,
+    savedPlayerName: getPlayerName() || ""
   };
 
   channel = null;
@@ -54,26 +55,24 @@ class App extends Component {
 
     this.channel
       .join()
-      .receive("ok", ({ game, players, game_state, player_id }) => {
+      .receive("ok", ({ player_id }) => {
         setPlayerId(player_id);
-
         this.channel.on("new_state", this.updateRoomState);
-
         this.setState({ roomCode, playerId: player_id });
-        this.updateRoomState({ game, players, gameState: game_state });
       })
       .receive("error", message => {
         onError({ message });
       });
   };
 
-  updateRoomState = ({ game, players, gameState }) => {
+  updateRoomState = ({ game, game_state, minimum_players, players }) => {
     this.setState({
       game,
+      gameState: game_state,
+      minimumPlayers: minimum_players,
       players: mapValues(players, player =>
         mapKeys(player, (value, key) => camelCase(key))
-      ),
-      gameState
+      )
     });
   };
 
@@ -84,12 +83,13 @@ class App extends Component {
 
   render() {
     const {
-      savedPlayerName,
-      roomCode,
       game,
-      players,
       gameState,
-      playerId
+      minimumPlayers,
+      players,
+      playerId,
+      roomCode,
+      savedPlayerName,
     } = this.state;
 
     return (
@@ -104,11 +104,12 @@ class App extends Component {
         )}
         {roomCode && (
           <Room
-            code={roomCode}
+            roomCode={roomCode}
             game={game}
             players={players}
             gameState={gameState}
             playerId={playerId}
+            minimumPlayers={minimumPlayers}
             onSelectGame={this.handleSelectGame}
           />
         )}
