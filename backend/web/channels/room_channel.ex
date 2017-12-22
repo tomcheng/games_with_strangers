@@ -33,6 +33,10 @@ defmodule GamesWithStrangers.RoomChannel do
     {:ok, room_state} = GWS.Room.get_state(room)
 
     broadcast(socket, "new_state", room_state)
+
+    if Enum.count(room_state[:players]) == 0 do
+      GWS.Room.destroy_room(room)
+    end
   end
 
   def handle_in("set_game", %{"game" => game}, %{topic: "room:" <> room_code} = socket) do

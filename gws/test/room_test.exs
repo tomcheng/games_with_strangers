@@ -62,6 +62,12 @@ defmodule GWS.RoomTest do
     assert state[:players] == %{}
   end
 
+  test "removes a room", %{room: room} do
+    GWS.Room.destroy_room(room)
+
+    refute Process.alive?(room)
+  end
+
   test "are temporary workers" do
     assert Supervisor.child_spec(GWS.Room, []).restart == :temporary
   end

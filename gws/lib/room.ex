@@ -37,4 +37,8 @@ defmodule GWS.Room do
   def update_game_state(room, new_state) do
     Agent.update(room, fn state -> Map.put(state, :game_state, new_state) end)
   end
+
+  def destroy_room(room) do
+    Agent.stop(room)
+  end
 end
