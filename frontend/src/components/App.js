@@ -25,20 +25,20 @@ class App extends Component {
 
   channel = null;
 
-  handleCreateRoom = () => {
-    POST("/rooms").then(({ code }) => {
-      this.joinRoom({ code });
+  handleCreateRoom = ({ playerName }) => {
+    POST("/rooms").then(({ room_code }) => {
+      this.joinRoom({ playerName, roomCode: room_code });
     });
   };
 
-  handleJoinRoom = ({ code, onError }) => {
-    this.joinRoom({ code, onError });
+  handleJoinRoom = ({ playerName, roomCode, onError }) => {
+    this.joinRoom({ playerName, roomCode, onError });
   };
 
-  joinRoom = ({ code, onError }) => {
+  joinRoom = ({ playerName, roomCode, onError }) => {
     this.channel = getChannel({
-      topic: "room:" + code,
-      params: { player_id: getPlayerId(), player_name: "FooBar" }
+      topic: "room:" + roomCode,
+      params: { player_id: getPlayerId(), player_name: playerName }
     });
     this.channel
       .join()
@@ -49,7 +49,7 @@ class App extends Component {
           this.setState({ game, players: players, gameState: game_state });
         });
 
-        this.setState({ game, players: players, gameState: game_state, roomCode: code });
+        this.setState({ roomCode, game, players: players, gameState: game_state });
       })
       .receive("error", message => {
         onError({ message });

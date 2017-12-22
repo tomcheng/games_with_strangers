@@ -7,17 +7,24 @@ class Lobby extends Component {
     onJoinRoom: PropTypes.func.isRequired
   };
 
-  state = { roomCode: "", errorMessage: null };
+  state = { playerName: "", roomCode: "", errorMessage: null };
 
   handleSubmit = evt => {
     evt.preventDefault();
+    const { playerName, roomCode } = this.state;
+    const { onCreateRoom, onJoinRoom } = this.props;
 
-    this.props.onJoinRoom({
-      code: this.state.roomCode,
-      onError: ({ message }) => {
-        this.setState({ errorMessage: message });
-      }
-    });
+    if (roomCode.trim().length === 0) {
+      onCreateRoom({ playerName });
+    } else {
+      onJoinRoom({
+        playerName,
+        roomCode,
+        onError: ({ message }) => {
+          this.setState({ errorMessage: message });
+        }
+      });
+    }
   };
 
   handleChange = ({ target }) => {
@@ -25,26 +32,28 @@ class Lobby extends Component {
   };
 
   render() {
-    const { onCreateRoom } = this.props;
-    const { roomCode, errorMessage } = this.state;
+    const { playerName, roomCode, errorMessage } = this.state;
 
     return (
       <Fragment>
         <form onSubmit={this.handleSubmit}>
+          <input
+            placeholder="Screen Name"
+            type="text"
+            name="playerName"
+            value={playerName}
+            onChange={this.handleChange}
+          />
           <input
             placeholder="Room Code"
             type="text"
             name="roomCode"
             value={roomCode}
             onChange={this.handleChange}
-          />{" "}
-          <button>Join Room</button>
+          />
+          <button>Create/Join Room</button>
           {errorMessage && <div>{errorMessage}</div>}
         </form>
-        <div>or</div>
-        <div>
-          <button onClick={onCreateRoom}>Create Room</button>
-        </div>
       </Fragment>
     );
   }
