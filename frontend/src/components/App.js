@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import mapValues from "lodash/mapValues";
+import mapKeys from "lodash/mapKeys";
+import camelCase from "lodash/camelCase";
 import { POST, getChannel } from "../utils/api";
 import Lobby from "./Lobby";
 import Room from "./Room";
@@ -54,21 +57,24 @@ class App extends Component {
       .receive("ok", ({ game, players, game_state, player_id }) => {
         setPlayerId(player_id);
 
-        this.channel.on("new_state", ({ game, players, game_state }) => {
-          this.setState({ game, players: players, gameState: game_state });
-        });
+        this.channel.on("new_state", this.updateRoomState);
 
-        this.setState({
-          roomCode,
-          game,
-          players: players,
-          gameState: game_state,
-          playerId: player_id
-        });
+        this.setState({ roomCode, playerId: player_id });
+        this.updateRoomState({ game, players, gameState: game_state });
       })
       .receive("error", message => {
         onError({ message });
       });
+  };
+
+  updateRoomState = ({ game, players, gameState }) => {
+    this.setState({
+      game,
+      players: mapValues(players, player =>
+        mapKeys(player, (value, key) => camelCase(key))
+      ),
+      gameState
+    });
   };
 
   savePlayerName = name => {

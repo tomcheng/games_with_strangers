@@ -1,8 +1,9 @@
 import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import omit from "lodash/omit";
-import gamesList from "../gamesList";
 import values from "lodash/values";
+import gamesList from "../gamesList";
+import Player from "./Player";
 
 class Room extends Component {
   static propTypes = {
@@ -12,8 +13,7 @@ class Room extends Component {
     game: PropTypes.oneOf(gamesList.map(g => g.id)),
     gameState: PropTypes.object,
     players: PropTypes.objectOf(PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired
+      id: PropTypes.string.isRequired
     })),
   };
 
@@ -48,9 +48,9 @@ class Room extends Component {
         )}
         {game && <div>Selected game: {game}</div>}
         <div>You:</div>
-        {currentPlayer.name}
+        <Player player={currentPlayer} />
         <div>Others Players:</div>
-        {values(otherPlayers).map(({ id, name }) => <div key={id}>{name}</div>)}
+        {values(otherPlayers).map(player => <Player key={player.id} player={player} />)}
       </Fragment>
     );
   }
