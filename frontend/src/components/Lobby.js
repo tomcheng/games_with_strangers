@@ -19,8 +19,14 @@ class Lobby extends Component {
 
   handleSubmit = evt => {
     evt.preventDefault();
-    const { playerName, roomCode } = this.state;
+    const { playerName: playerNameRaw, roomCode } = this.state;
     const { onCreateRoom, onJoinRoom } = this.props;
+    const playerName = playerNameRaw.trim();
+
+    if (playerName === "") {
+      this.setState({ errorMessage: "Name is required" });
+      return;
+    }
 
     if (roomCode.trim().length === 0) {
       onCreateRoom({ playerName });
@@ -28,11 +34,13 @@ class Lobby extends Component {
       onJoinRoom({
         playerName,
         roomCode,
-        onError: ({ message }) => {
-          this.setState({ errorMessage: message });
-        }
+        onError: this.handleError
       });
     }
+  };
+
+  handleError = ({ message }) => {
+    this.setState({ errorMessage: message });
   };
 
   handleChange = ({ target }) => {

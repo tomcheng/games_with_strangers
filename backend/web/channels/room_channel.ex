@@ -1,6 +1,9 @@
 defmodule GamesWithStrangers.RoomChannel do
   use GamesWithStrangers.Web, :channel
 
+  def join(_, %{"player_name" => ""}, socket) do
+    {:error, "Name is required"}
+  end
   def join(
     "room:" <> room_code,
     %{"player_id" => player_id_in, "player_name" => player_name},
