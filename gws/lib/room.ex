@@ -45,7 +45,7 @@ defmodule GWS.Room do
   end
 
   defp moderator_exists?(players, moderator) do
-    Enum.any?(players, fn {_, p} -> p[:id] == moderator end)
+    Enum.any?(players, fn {_, player} -> player[:id] == moderator end)
   end
 
   def update_game_state(room, new_state) do
@@ -60,17 +60,16 @@ defmodule GWS.Room do
     end)}
   end
 
-  defp normalize_players(state) do
-    state
-    |> Map.update!(:players, fn players ->
+  defp normalize_players(%{players: players, moderator: moderator} = state) do
+    new_players =
       players
       |> Enum.map(fn {id, player} ->
         {id, player
-          |> Map.drop([:channel])
-          |> Map.put(:is_moderator, id == state[:moderator])}
+          |> Map.put(:is_moderator, id == moderator)
+          |> Map.drop([:channel])}
       end)
       |> Enum.into(%{})
-    end)
+    Map.put(state, :players, new_players)
   end
 
   def destroy_room(room) do
