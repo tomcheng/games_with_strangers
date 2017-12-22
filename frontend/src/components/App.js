@@ -21,7 +21,8 @@ class App extends Component {
     gameState: null,
     game: null,
     players: null,
-    savedPlayerName: getPlayerName() || ""
+    savedPlayerName: getPlayerName() || "",
+    playerId: null
   };
 
   channel = null;
@@ -57,7 +58,13 @@ class App extends Component {
           this.setState({ game, players: players, gameState: game_state });
         });
 
-        this.setState({ roomCode, game, players: players, gameState: game_state });
+        this.setState({
+          roomCode,
+          game,
+          players: players,
+          gameState: game_state,
+          playerId: player_id
+        });
       })
       .receive("error", message => {
         onError({ message });
@@ -70,7 +77,14 @@ class App extends Component {
   };
 
   render() {
-    const { savedPlayerName, roomCode, game, players, gameState } = this.state;
+    const {
+      savedPlayerName,
+      roomCode,
+      game,
+      players,
+      gameState,
+      playerId
+    } = this.state;
 
     return (
       <div>
@@ -88,6 +102,7 @@ class App extends Component {
             game={game}
             players={players}
             gameState={gameState}
+            playerId={playerId}
             onSelectGame={this.handleSelectGame}
           />
         )}
