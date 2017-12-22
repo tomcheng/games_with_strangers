@@ -17,9 +17,9 @@ defmodule GWS.RegistryTest do
 
     {:ok, room} = GWS.Registry.get_room(registry, code)
 
-    GWS.Room.set_game(room, "futbol")
+    GWS.Room.set_game(room, "you_bet")
     {:ok, state} = GWS.Room.get_state(room)
-    assert state[:game] == "futbol"
+    assert state[:game] == "you_bet"
   end
 
   test "removes rooms on exit", %{registry: registry} do

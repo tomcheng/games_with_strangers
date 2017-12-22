@@ -2,11 +2,22 @@ defmodule GWS.Room do
   use Agent, restart: :temporary
 
   def start_link(_opts) do
-    Agent.start_link(fn -> %{game: nil, game_state: nil, players: %{}, moderator: nil} end)
+    Agent.start_link(fn ->
+      %{players: %{}, game: nil, minimum_players: nil, game_state: nil, moderator: nil}
+    end)
   end
 
   def set_game(room, game) do
-    Agent.update(room, &Map.put(&1, :game, game))
+    Agent.update(room, fn state ->
+      state
+      |> Map.put(:game, game)
+      |> Map.put(:minimum_players, apply(get_game_module(game), :minimum_players, []))
+    end)
+  end
+
+  defp get_game_module(game) do
+    "Elixir." <> Macro.camelize(game)
+    |> String.to_atom
   end
 
   def add_player(room, player_id, name, channel) do

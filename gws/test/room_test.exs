@@ -11,11 +11,12 @@ defmodule GWS.RoomTest do
 
     assert state[:game] == nil
 
-    GWS.Room.set_game(room, "futbol")
+    GWS.Room.set_game(room, "you_bet")
 
     {:ok, state} = GWS.Room.get_state(room)
 
-    assert state[:game] == "futbol"
+    assert state[:game] == "you_bet"
+    assert state[:minimum_players] == YouBet.minimum_players
   end
 
   test "updates game state", %{room: room} do
