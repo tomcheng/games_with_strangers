@@ -64,6 +64,19 @@ defmodule GamesWithStrangers.RoomChannel do
     {:noreply, socket}
   end
 
+  def handle_in("make_play", args, %{topic: "room:" <> room_code} = socket) do
+    {:ok, room} = GWS.get_room(room_code)
+
+    {:ok, room_state} =
+      room
+      |> GWS.Room.make_play(args)
+      |> GWS.Room.get_state
+
+    broadcast(socket, "new_state", room_state)
+
+    {:noreply, socket}
+  end
+
   def handle_info(:after_join, %{topic: "room:" <> room_code} = socket) do
     {:ok, room} = GWS.get_room(room_code)
     {:ok, room_state} = GWS.Room.get_state(room)

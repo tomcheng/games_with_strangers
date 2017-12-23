@@ -9,7 +9,7 @@ defmodule GWS.Room do
 
   def set_game(room, game) do
     Agent.update(room, fn state ->
-      game_module = get_game_module(game)
+      game_module = game_module(game)
 
       state
       |> Map.put(:game, game)
@@ -18,10 +18,7 @@ defmodule GWS.Room do
     room
   end
 
-  defp get_game_module(game) do
-    "Elixir." <> Macro.camelize(game)
-    |> String.to_atom
-  end
+  defp game_module(game), do: String.to_atom("Elixir." <> Macro.camelize(game))
 
   def add_player(room, player_id, name, channel) do
     Agent.update(room, fn state ->
@@ -64,10 +61,6 @@ defmodule GWS.Room do
     Enum.any?(players, fn {_, player} -> player[:id] == moderator end)
   end
 
-  def update_game_state(room, new_state) do
-    Agent.update(room, fn state -> Map.put(state, :game_state, new_state) end)
-  end
-
   def get_state(room) do
     {:ok, Agent.get(room, fn state ->
       state
@@ -89,17 +82,20 @@ defmodule GWS.Room do
   end
 
   def start_game(room) do
-    Agent.update(room, fn %{game: game, players: players} = state ->
-      game_module = get_game_module(game)
-      Map.put(state, :game_state, apply(game_module, :initial_state, [players]))
+    Agent.update(room, fn %{game: game} = state ->
+      %{players: normal_players} = normalize_players(state)
+      game_module = game_module(game)
+
+      Map.put(state, :game_state, apply(game_module, :initial_state, [normal_players]))
     end)
     room
   end
 
-  def run_game_play(room, play) do
-    Agent.update(room, fn %{game: game} = state ->
-      game_module = get_game_module(game)
-      Map.put(state, :game_state, apply(game_module, :play, [play]))
+  def make_play(room, play) do
+    Agent.update(room, fn %{game: game, game_state: game_state} = state ->
+      game_module = game_module(game)
+
+      Map.put(state, :game_state, apply(game_module, :play, [game_state, play]))
     end)
     room
   end
