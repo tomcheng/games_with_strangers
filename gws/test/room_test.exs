@@ -40,10 +40,13 @@ defmodule GWS.RoomTest do
       |> GWS.Room.add_player("player-id-2", "Bob", 2)
       |> GWS.Room.add_player("player-id-3", "Andy", 3)
       |> GWS.Room.start_game
-      |> GWS.Room.make_play(%{})
+      |> GWS.Room.make_play("player-id-1", "guess", "20")
       |> GWS.Room.get_state
 
-    assert game_state == players |> YouBet.initial_state |> YouBet.play(%{}) |> YouBet.sanitize_state
+    assert game_state == players
+      |> YouBet.initial_state
+      |> YouBet.play("player-id-1", "guess", "20")
+      |> YouBet.sanitize_state
   end
 
   test "adds players", %{room: room} do

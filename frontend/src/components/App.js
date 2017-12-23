@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import mapValues from "lodash/mapValues";
 import mapKeys from "lodash/mapKeys";
 import camelCase from "lodash/camelCase";
+import omit from "lodash/omit";
 import { POST, getChannel } from "../utils/api";
 import Lobby from "./Lobby";
 import Room from "./Room";
@@ -115,9 +116,9 @@ class App extends Component {
           <Room
             roomCode={roomCode}
             game={game}
-            players={players}
+            you={players[playerId]}
+            others={omit(players, [playerId])}
             gameState={gameState}
-            playerId={playerId}
             minimumPlayers={minimumPlayers}
             onSelectGame={this.handleSelectGame}
             onStartGame={this.handleStartGame}

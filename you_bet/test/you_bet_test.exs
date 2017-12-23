@@ -19,15 +19,16 @@ defmodule YouBetTest do
     state =
       players
       |> YouBet.initial_state
+      |> YouBet.sanitize_state
 
     assert state == %{
       round: 1,
       stage: :guessing,
       question: "how much?",
       players: %{
-        "1" => %{id: "1", score: 200},
-        "2" => %{id: "2", score: 200},
-        "3" => %{id: "3", score: 200}
+        "1" => %{id: "1", score: 200, guessed: false},
+        "2" => %{id: "2", score: 200, guessed: false},
+        "3" => %{id: "3", score: 200, guessed: false}
       }
     }
   end
@@ -36,16 +37,36 @@ defmodule YouBetTest do
     state =
       players
       |> YouBet.initial_state
-      |> YouBet.play(%{})
+      |> YouBet.play("1", "foo")
+      |> YouBet.sanitize_state
 
     assert state == %{
       round: 1,
       stage: :guessing,
       question: "how much?",
       players: %{
-        "1" => %{id: "1", score: 200},
-        "2" => %{id: "2", score: 200},
-        "3" => %{id: "3", score: 200}
+        "1" => %{id: "1", score: 200, guessed: false},
+        "2" => %{id: "2", score: 200, guessed: false},
+        "3" => %{id: "3", score: 200, guessed: false}
+      }
+    }
+  end
+
+  test "handles a guess", %{players: players} do
+    state =
+      players
+      |> YouBet.initial_state
+      |> YouBet.play("1", "guess", "20")
+      |> YouBet.sanitize_state
+
+    assert state == %{
+      round: 1,
+      stage: :guessing,
+      question: "how much?",
+      players: %{
+        "1" => %{id: "1", score: 200, guessed: true},
+        "2" => %{id: "2", score: 200, guessed: false},
+        "3" => %{id: "3", score: 200, guessed: false}
       }
     }
   end

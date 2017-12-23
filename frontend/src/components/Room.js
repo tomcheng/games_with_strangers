@@ -1,6 +1,5 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
-import omit from "lodash/omit";
 import values from "lodash/values";
 import find from "lodash/find";
 import gamesList from "../gamesList";
@@ -12,23 +11,28 @@ const Room = ({
   game,
   gameState,
   minimumPlayers,
-  players,
-  playerId,
+  you,
+  others,
   roomCode,
   onSelectGame,
   onStartGame,
   onPlay
 }) => {
-  const currentPlayer = players[playerId];
-  const otherPlayers = omit(players, [playerId]);
   const playersNeeded =
-    minimumPlayers && players
-      ? Math.max(minimumPlayers - values(players).length, 0)
+    minimumPlayers
+      ? Math.max(minimumPlayers - values(others).length - 1, 0)
       : null;
 
   if (gameState && game) {
     const GameComponent = find(gamesList, g => g.id === game).component;
-    return <GameComponent gameState={gameState} onPlay={onPlay} />;
+    return (
+      <GameComponent
+        gameState={gameState}
+        onPlay={onPlay}
+        you={you}
+        others={others}
+      />
+    );
   }
 
   return (
@@ -52,9 +56,9 @@ const Room = ({
       )}
       {game && <div>Selected game: {game}</div>}
       <div>You:</div>
-      <Player player={currentPlayer} />
-      <div>Others Players:</div>
-      {values(otherPlayers).map(player => (
+      <Player player={you} />
+      <div>Others:</div>
+      {values(others).map(player => (
         <Player key={player.id} player={player} />
       ))}
       {!!playersNeeded &&
@@ -65,15 +69,17 @@ const Room = ({
 };
 
 Room.propTypes = {
-  players: PropTypes.objectOf(
+  others: PropTypes.objectOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired
     })
   ).isRequired,
   roomCode: PropTypes.string.isRequired,
+  you: PropTypes.shape({
+    id: PropTypes.string.isRequired
+  }).isRequired,
   onSelectGame: PropTypes.func.isRequired,
   onStartGame: PropTypes.func.isRequired,
-  playerId: PropTypes.string.isRequired,
   game: PropTypes.oneOf(gamesList.map(g => g.id)),
   gameState: PropTypes.object,
   minimumPlayers: PropTypes.number
