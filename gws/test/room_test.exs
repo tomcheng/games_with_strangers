@@ -20,7 +20,7 @@ defmodule GWS.RoomTest do
   end
 
   test "starts game", %{room: room} do
-    {:ok, state} =
+    {:ok, %{game_state: game_state, players: players}} =
       room
       |> GWS.Room.set_game("you_bet")
       |> GWS.Room.add_player("player-id-1", "Harold", 1)
@@ -29,11 +29,11 @@ defmodule GWS.RoomTest do
       |> GWS.Room.start_game
       |> GWS.Room.get_state
 
-    assert state[:game_state] == YouBet.initial_state(state[:players])
+    assert game_state == players |> YouBet.initial_state |> YouBet.sanitize_state
   end
 
   test "makes play", %{room: room} do
-    {:ok, state} =
+    {:ok, %{game_state: game_state, players: players}} =
       room
       |> GWS.Room.set_game("you_bet")
       |> GWS.Room.add_player("player-id-1", "Harold", 1)
@@ -43,7 +43,7 @@ defmodule GWS.RoomTest do
       |> GWS.Room.make_play(%{})
       |> GWS.Room.get_state
 
-    assert state[:game_state] == YouBet.initial_state(state[:players]) |> YouBet.play(%{})
+    assert game_state == players |> YouBet.initial_state |> YouBet.play(%{}) |> YouBet.sanitize_state
   end
 
   test "adds players", %{room: room} do

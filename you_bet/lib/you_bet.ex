@@ -12,6 +12,10 @@ defmodule YouBet do
     }
   end
 
+  def sanitize_state(state) do
+    Map.put(state, :sanitized, true)
+  end
+
   def play(state, _) do
     state
   end

@@ -9,16 +9,14 @@ defmodule GWS.Room do
 
   def set_game(room, game) do
     Agent.update(room, fn state ->
-      game_module = game_module(game)
-
       state
       |> Map.put(:game, game)
-      |> Map.put(:minimum_players, apply(game_module, :minimum_players, []))
+      |> Map.put(:minimum_players, game |> get_module |> apply(:minimum_players, []))
     end)
     room
   end
 
-  defp game_module(game), do: String.to_atom("Elixir." <> Macro.camelize(game))
+  defp get_module(game), do: String.to_atom("Elixir." <> Macro.camelize(game))
 
   def add_player(room, player_id, name, channel) do
     Agent.update(room, fn state ->
@@ -36,7 +34,7 @@ defmodule GWS.Room do
       state
       |> Map.update!(:players, fn ps ->
         ps
-        |> Enum.reject(fn {_k, %{channel: c}} -> c == channel end)
+        |> Enum.reject(fn {_, %{channel: c}} -> c == channel end)
         |> Enum.into(%{})
       end)
       |> update_moderator
@@ -65,6 +63,7 @@ defmodule GWS.Room do
     {:ok, Agent.get(room, fn state ->
       state
       |> normalize_players
+      |> sanitize_game_state
       |> Map.drop([:moderator])
     end)}
   end
@@ -81,21 +80,25 @@ defmodule GWS.Room do
     Map.put(state, :players, new_players)
   end
 
+  defp sanitize_game_state(%{game_state: game_state, game: game} = state) do
+    if game_state do
+      Map.update!(state, :game_state, &apply(get_module(game), :sanitize_state, [&1]))
+    else
+      state
+    end
+  end
+
   def start_game(room) do
     Agent.update(room, fn %{game: game} = state ->
       %{players: normal_players} = normalize_players(state)
-      game_module = game_module(game)
-
-      Map.put(state, :game_state, apply(game_module, :initial_state, [normal_players]))
+      Map.put(state, :game_state, game |> get_module |> apply(:initial_state, [normal_players]))
     end)
     room
   end
 
   def make_play(room, play) do
     Agent.update(room, fn %{game: game, game_state: game_state} = state ->
-      game_module = game_module(game)
-
-      Map.put(state, :game_state, apply(game_module, :play, [game_state, play]))
+      Map.put(state, :game_state, game |> get_module |> apply(:play, [game_state, play]))
     end)
     room
   end
