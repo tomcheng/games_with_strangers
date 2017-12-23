@@ -26,9 +26,9 @@ defmodule YouBetTest do
       stage: :guessing,
       question: "how much?",
       players: %{
-        "1" => %{id: "1", score: 200, guessed: false},
-        "2" => %{id: "2", score: 200, guessed: false},
-        "3" => %{id: "3", score: 200, guessed: false}
+        "1" => %{id: "1", name: "foo", score: 200, guessed: false},
+        "2" => %{id: "2", name: "bar", score: 200, guessed: false},
+        "3" => %{id: "3", name: "baz", score: 200, guessed: false}
       }
     }
   end
@@ -45,9 +45,9 @@ defmodule YouBetTest do
       stage: :guessing,
       question: "how much?",
       players: %{
-        "1" => %{id: "1", score: 200, guessed: false},
-        "2" => %{id: "2", score: 200, guessed: false},
-        "3" => %{id: "3", score: 200, guessed: false}
+        "1" => %{id: "1", name: "foo", score: 200, guessed: false},
+        "2" => %{id: "2", name: "bar", score: 200, guessed: false},
+        "3" => %{id: "3", name: "baz", score: 200, guessed: false}
       }
     }
   end
@@ -64,9 +64,9 @@ defmodule YouBetTest do
       stage: :guessing,
       question: "how much?",
       players: %{
-        "1" => %{id: "1", score: 200, guessed: true},
-        "2" => %{id: "2", score: 200, guessed: false},
-        "3" => %{id: "3", score: 200, guessed: false}
+        "1" => %{id: "1", name: "foo", score: 200, guessed: true},
+        "2" => %{id: "2", name: "bar", score: 200, guessed: false},
+        "3" => %{id: "3", name: "baz", score: 200, guessed: false}
       }
     }
   end
@@ -85,14 +85,14 @@ defmodule YouBetTest do
       stage: :betting,
       question: "how much?",
       players: %{
-        "1" => %{id: "1", score: 200, bet: nil},
-        "2" => %{id: "2", score: 200, bet: nil},
-        "3" => %{id: "3", score: 200, bet: nil}
+        "1" => %{id: "1", name: "foo", score: 200, bet: nil},
+        "2" => %{id: "2", name: "bar", score: 200, bet: nil},
+        "3" => %{id: "3", name: "baz", score: 200, bet: nil}
       },
       guesses: [
-        %{guess: 10, odds: 3, players: ["3"]},
-        %{guess: 20, odds: 2, players: ["2"]},
-        %{guess: 30, odds: 3, players: ["1"]}
+        %{guess: 10, odds: 3, players: ["baz"]},
+        %{guess: 20, odds: 2, players: ["bar"]},
+        %{guess: 30, odds: 3, players: ["foo"]}
       ]
     }
   end
@@ -111,13 +111,13 @@ defmodule YouBetTest do
       stage: :betting,
       question: "how much?",
       players: %{
-        "1" => %{id: "1", score: 200, bet: nil},
-        "2" => %{id: "2", score: 200, bet: nil},
-        "3" => %{id: "3", score: 200, bet: nil}
+        "1" => %{id: "1", name: "foo", score: 200, bet: nil},
+        "2" => %{id: "2", name: "bar", score: 200, bet: nil},
+        "3" => %{id: "3", name: "baz", score: 200, bet: nil}
       },
       guesses: [
-        %{guess: 10, odds: 3, players: ["3"]},
-        %{guess: 20, odds: 3, players: ["1", "2"]},
+        %{guess: 10, odds: 3, players: ["baz"]},
+        %{guess: 20, odds: 3, players: ["bar", "foo"]},
       ]
     }
   end

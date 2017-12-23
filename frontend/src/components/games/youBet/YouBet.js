@@ -4,7 +4,7 @@ import values from "lodash/values";
 import GuessForm from "./GuessForm";
 import Bets from "./Bets";
 
-const YouBet = ({ gameState, onPlay, you, others }) => {
+const YouBet = ({ gameState, onPlay, you }) => {
   const { round, stage, question, players, guesses } = gameState;
   const youGuessed = players[you.id].guessed;
 
@@ -25,12 +25,18 @@ const YouBet = ({ gameState, onPlay, you, others }) => {
           Waiting on:{" "}
           {values(players)
             .filter(p => !p.guessed)
-            .map(p => others[p.id].name)
+            .map(p => p.name)
             .join(", ")}
         </div>
       )}
       {stage === "betting" && (
-        <Bets guesses={guesses} players={{ ...others, [you.id]: you }} />
+        <Bets
+          guesses={guesses}
+          gameStatePlayers={players}
+          onBet={payload => {
+            onPlay({ type: "bet", payload });
+          }}
+        />
       )}
     </div>
   );
@@ -56,12 +62,6 @@ YouBet.propTypes = {
       })
     )
   }).isRequired,
-  others: PropTypes.objectOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired
-    })
-  ).isRequired,
   you: PropTypes.shape({
     id: PropTypes.string.isRequired
   }).isRequired,

@@ -30,7 +30,6 @@ const Room = ({
         gameState={gameState}
         onPlay={onPlay}
         you={you}
-        others={others}
       />
     );
   }

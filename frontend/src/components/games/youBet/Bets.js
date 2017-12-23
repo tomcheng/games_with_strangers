@@ -1,16 +1,19 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const Bets = ({ guesses, players }) => (
-  <div>
-    {guesses.map(({ guess, odds, players: playerIds }) => (
-      <div key={guess}>
-        Guess: {guess}, odds: {odds}, players:{" "}
-        {playerIds.map(id => players[id].name)}
-      </div>
-    ))}
-  </div>
-);
+const Bets = ({ guesses }) => {
+  return (
+    <div>
+      {guesses.map(({ guess, odds, players }) => (
+        <div key={guess}>
+          Guess: {guess}, odds: {odds}, players:{" "}
+          {players.join(", ")}
+          <button>Bet on this</button>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 Bets.propTypes = {
   guesses: PropTypes.arrayOf(
@@ -18,11 +21,6 @@ Bets.propTypes = {
       guess: PropTypes.number,
       players: PropTypes.arrayOf(PropTypes.string),
       odds: PropTypes.number
-    })
-  ),
-  players: PropTypes.objectOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired
     })
   )
 };

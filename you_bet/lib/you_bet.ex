@@ -7,7 +7,9 @@ defmodule YouBet do
       stage: :guessing,
       question: "how much?",
       players: players
-        |> Enum.map(fn {id, _} -> {id, %{id: id, guess: nil, bet: nil, score: 200}} end)
+        |> Enum.map(fn {id, %{name: name}} ->
+          {id, %{id: id, name: name, guess: nil, bet: nil, score: 200}}
+        end)
         |> Enum.into(%{})
     }
   end
@@ -57,7 +59,13 @@ defmodule YouBet do
     |> Enum.group_by(fn {_, %{guess: guess}} -> guess end, fn {id, _} -> id end)
     |> Enum.sort_by(fn {guess, _} -> guess end)
     |> Enum.map(fn {guess, player_ids} ->
-      %{guess: guess, players: player_ids}
+      %{
+        guess: guess,
+        players:
+          player_ids
+          |> Enum.map(fn id -> Map.get(players[id], :name) end)
+          |> Enum.sort
+      }
     end)
     |> add_odds
   end
