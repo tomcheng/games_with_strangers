@@ -121,4 +121,17 @@ defmodule YouBetTest do
       ]
     }
   end
+
+  test "handles a bet", %{players: players} do
+    state =
+      players
+      |> YouBet.initial_state
+      |> YouBet.play("1", "guess", "30")
+      |> YouBet.play("2", "guess", "20")
+      |> YouBet.play("3", "guess", "10")
+      |> YouBet.play("1", "bet", %{foo: "bar"})
+      |> YouBet.sanitize_state
+
+    assert state[:players]["1"] == %{id: "1", name: "foo", score: 200, bet: %{foo: "bar"}}
+  end
 end

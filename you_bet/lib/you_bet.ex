@@ -34,6 +34,10 @@ defmodule YouBet do
     |> update_player(player_id, &Map.put(&1, :guess, elem(Integer.parse(payload), 0)))
     |> update_if_all_guesses_in
   end
+  def play(state, player_id, "bet", payload) do
+    state
+    |> update_player(player_id, &Map.put(&1, :bet, payload))
+  end
   def play(state, _, _, _), do: state
   def play(state, _, _), do: state
 
