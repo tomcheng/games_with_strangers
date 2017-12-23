@@ -2,9 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 import values from "lodash/values";
 import GuessForm from "./GuessForm";
+import Bets from "./Bets";
 
 const YouBet = ({ gameState, onPlay, you, others }) => {
-  const { round, stage, question, players } = gameState;
+  const { round, stage, question, players, guesses } = gameState;
   const youGuessed = players[you.id].guessed;
 
   return (
@@ -28,11 +29,14 @@ const YouBet = ({ gameState, onPlay, you, others }) => {
             .join(", ")}
         </div>
       )}
+      {stage === "betting" && (
+        <Bets guesses={guesses} players={{ ...others, [you.id]: you }} />
+      )}
     </div>
   );
 };
 
-YouBet.propsTypes = {
+YouBet.propTypes = {
   gameState: PropTypes.shape({
     round: PropTypes.number.isRequired,
     stage: PropTypes.oneOf(["guessing", "betting"]).isRequired,
@@ -40,14 +44,24 @@ YouBet.propsTypes = {
     players: PropTypes.objectOf(
       PropTypes.shape({
         id: PropTypes.string.isRequired,
-        guess: PropTypes.bool.isRequired
+        bet: PropTypes.number,
+        guessed: PropTypes.bool
       })
-    ).isRequired
+    ).isRequired,
+    guesses: PropTypes.arrayOf(
+      PropTypes.shape({
+        guess: PropTypes.number,
+        players: PropTypes.arrayOf(PropTypes.string),
+        odds: PropTypes.number
+      })
+    )
   }).isRequired,
-  others: PropTypes.objectOf({
-    id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired
-  }).isRequired,
+  others: PropTypes.objectOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired
+    })
+  ).isRequired,
   you: PropTypes.shape({
     id: PropTypes.string.isRequired
   }).isRequired,

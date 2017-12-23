@@ -15,14 +15,13 @@ defmodule YouBet do
   def sanitize_state(%{stage: stage} = state) do
     state
     |> add_guesses_if_betting
-    |> update_all_players(fn %{guess: guess, bet: bet} = player ->
+    |> update_all_players(fn %{guess: guess} = player ->
       if stage == :guessing do
         player
         |> Map.put(:guessed, !is_nil(guess))
         |> Map.drop([:guess, :bet])
       else
         player
-        |> Map.put(:bet, !is_nil(bet))
         |> Map.drop([:guess])
       end
     end)

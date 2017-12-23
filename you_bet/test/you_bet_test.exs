@@ -85,9 +85,9 @@ defmodule YouBetTest do
       stage: :betting,
       question: "how much?",
       players: %{
-        "1" => %{id: "1", score: 200, bet: false},
-        "2" => %{id: "2", score: 200, bet: false},
-        "3" => %{id: "3", score: 200, bet: false}
+        "1" => %{id: "1", score: 200, bet: nil},
+        "2" => %{id: "2", score: 200, bet: nil},
+        "3" => %{id: "3", score: 200, bet: nil}
       },
       guesses: [
         %{guess: 10, odds: 3, players: ["3"]},
@@ -111,9 +111,9 @@ defmodule YouBetTest do
       stage: :betting,
       question: "how much?",
       players: %{
-        "1" => %{id: "1", score: 200, bet: false},
-        "2" => %{id: "2", score: 200, bet: false},
-        "3" => %{id: "3", score: 200, bet: false}
+        "1" => %{id: "1", score: 200, bet: nil},
+        "2" => %{id: "2", score: 200, bet: nil},
+        "3" => %{id: "3", score: 200, bet: nil}
       },
       guesses: [
         %{guess: 10, odds: 3, players: ["3"]},
