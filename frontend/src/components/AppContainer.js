@@ -29,7 +29,6 @@ class App extends Component {
   static propTypes = {};
 
   state = {
-    channel: null,
     game: null,
     gameState: null,
     minimumPlayers: null,
