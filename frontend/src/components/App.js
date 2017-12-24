@@ -21,6 +21,9 @@ const getPlayerName = () => localStorage.getItem(PLAYER_NAME_KEY);
 const Container = styled.div`
   padding: 40px 50px;
 `;
+const Header = styled.div`
+  margin-bottom: 40px;
+`;
 
 class App extends Component {
   static propTypes = {};
@@ -110,7 +113,9 @@ class App extends Component {
 
     return (
       <Container>
-        <Wordmark />
+        <Header>
+          <Wordmark />
+        </Header>
         {!roomReady && (
           <Lobby
             onJoinRoom={this.handleJoinRoom}

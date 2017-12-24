@@ -1,5 +1,28 @@
-import React, { Component, Fragment } from "react";
+import React, { Component } from "react";
+import styled from "styled-components";
 import PropTypes from "prop-types";
+import TextInput from "./common/TextInput";
+import Button from "./common/Button";
+
+const Fields = styled.div`
+  margin: 0 -8px;
+  display: flex;
+  margin-bottom: 40px;
+`;
+
+const NameField = styled(TextInput)`
+  flex-grow: 1;
+  margin: 0 8px;
+`;
+
+const CodeField = styled(TextInput)`
+  max-width: 160px;
+  margin: 0 8px;
+`;
+
+const ButtonContainer = styled.div`
+  text-align: center;
+`;
 
 class Lobby extends Component {
   static propTypes = {
@@ -51,26 +74,26 @@ class Lobby extends Component {
     const { playerName, roomCode, errorMessage } = this.state;
 
     return (
-      <Fragment>
-        <form onSubmit={this.handleSubmit}>
-          <input
+      <form onSubmit={this.handleSubmit}>
+        <Fields>
+          <NameField
             placeholder="Screen Name"
-            type="text"
             name="playerName"
             value={playerName}
             onChange={this.handleChange}
           />
-          <input
+          <CodeField
             placeholder="Room Code"
-            type="text"
             name="roomCode"
             value={roomCode}
             onChange={this.handleChange}
           />
-          <button>Create/Join Room</button>
-          {errorMessage && <div>{errorMessage}</div>}
-        </form>
-      </Fragment>
+        </Fields>
+        <ButtonContainer>
+          <Button>Create or Join Room</Button>
+        </ButtonContainer>
+        {errorMessage && <div>{errorMessage}</div>}
+      </form>
     );
   }
 }
