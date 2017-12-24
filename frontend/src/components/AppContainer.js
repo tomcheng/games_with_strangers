@@ -4,6 +4,7 @@ import mapValues from "lodash/mapValues";
 import mapKeys from "lodash/mapKeys";
 import camelCase from "lodash/camelCase";
 import omit from "lodash/omit";
+import pick from "lodash/pick";
 import values from "lodash/values";
 import { POST, getChannel } from "../utils/api";
 import AppHeader from "./AppHeader";
@@ -16,7 +17,7 @@ const Container = styled.div`
   padding: 40px 50px;
 `;
 
-class App extends Component {
+class AppContainer extends Component {
   static propTypes = {};
 
   state = {
@@ -78,7 +79,7 @@ class App extends Component {
     const players = mapValues(rawPlayers, player =>
       mapKeys(player, (value, key) => camelCase(key))
     );
-    const playersNeeded = Math.max(minimum_players - values(players).length, 0)
+    const playersNeeded = Math.max(minimum_players - values(players).length, 0);
 
     this.setState({
       roomReady: true,
@@ -91,27 +92,19 @@ class App extends Component {
   };
 
   render() {
-    const {
-      roomCode,
-      roomReady,
-      you,
-      others,
-      game,
-      playersNeeded,
-      gameState
-    } = this.state;
-
     return (
       <Container>
         <AppHeader />
-        {roomReady ? (
+        {this.state.roomReady ? (
           <Room
-            roomCode={roomCode}
-            you={you}
-            others={others}
-            game={game}
-            playersNeeded={playersNeeded}
-            gameState={gameState}
+            {...pick(this.state, [
+              "roomCode",
+              "you",
+              "others",
+              "game",
+              "playersNeeded",
+              "gameState"
+            ])}
             onSelectGame={this.handleSelectGame}
             onStartGame={this.handleStartGame}
             onPlay={this.handlePlay}
@@ -127,4 +120,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default AppContainer;
