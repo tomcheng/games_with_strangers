@@ -31,10 +31,6 @@ class AppContainer extends Component {
     });
   };
 
-  handleSelectGame = game => {
-    this.channel.push("set_game", { game });
-  };
-
   handleStartGame = () => {
     this.channel.push("start_game");
   };
@@ -95,7 +91,6 @@ class AppContainer extends Component {
           "playersNeeded",
           "gameState"
         ])}
-        onSelectGame={this.handleSelectGame}
         onStartGame={this.handleStartGame}
         onPlay={this.handlePlay}
         onCreateRoom={this.handleCreateRoom}

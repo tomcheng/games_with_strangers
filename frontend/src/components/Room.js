@@ -13,11 +13,10 @@ const Room = ({
   you,
   others,
   roomCode,
-  onSelectGame,
   onStartGame,
   onPlay
 }) => {
-  if (gameState && game) {
+  if (gameState) {
     const GameComponent = find(gamesList, g => g.id === game).component;
     return <GameComponent gameState={gameState} onPlay={onPlay} you={you} />;
   }
@@ -25,23 +24,7 @@ const Room = ({
   return (
     <Fragment>
       <div>{roomCode}</div>
-      {!game && (
-        <Fragment>
-          <div>Select a game:</div>
-          {gamesList.map(({ id, displayName }) => (
-            <div key={id}>
-              <button
-                onClick={() => {
-                  onSelectGame(id);
-                }}
-              >
-                {displayName}
-              </button>
-            </div>
-          ))}
-        </Fragment>
-      )}
-      {game && <div>Selected game: {game}</div>}
+      <div>Selected game: {game}</div>
       <div>You:</div>
       <Player player={you} />
       <div>Others:</div>
@@ -54,6 +37,7 @@ const Room = ({
 };
 
 Room.propTypes = {
+  game: PropTypes.oneOf(gamesList.map(g => g.id)).isRequired,
   others: PropTypes.objectOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired
@@ -63,9 +47,7 @@ Room.propTypes = {
   you: PropTypes.shape({
     id: PropTypes.string.isRequired
   }).isRequired,
-  onSelectGame: PropTypes.func.isRequired,
   onStartGame: PropTypes.func.isRequired,
-  game: PropTypes.oneOf(gamesList.map(g => g.id)),
   gameState: PropTypes.object,
   playersNeeded: PropTypes.number
 };

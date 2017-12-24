@@ -24,7 +24,6 @@ const App = ({
   game,
   playersNeeded,
   gameState,
-  onSelectGame,
   onStartGame,
   onPlay,
   onCreateRoom,
@@ -41,7 +40,6 @@ const App = ({
           game={game}
           playersNeeded={playersNeeded}
           gameState={gameState}
-          onSelectGame={onSelectGame}
           onStartGame={onStartGame}
           onPlay={onPlay}
         />
