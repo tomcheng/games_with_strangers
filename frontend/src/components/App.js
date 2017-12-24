@@ -6,7 +6,14 @@ import Room from "./Room";
 import "./App.css";
 
 const Container = styled.div`
-  padding: 40px 50px;
+  display: flex;
+  justify-content: center;
+  padding: 30px;
+`;
+
+const Content = styled.div`
+  width: 100%;
+  max-width: 800px;
 `;
 
 const App = ({
@@ -24,22 +31,24 @@ const App = ({
   onJoinRoom
 }) => (
   <Container>
-    <AppHeader />
-    {roomReady ? (
-      <Room
-        roomCode={roomCode}
-        you={you}
-        others={others}
-        game={game}
-        playersNeeded={playersNeeded}
-        gameState={gameState}
-        onSelectGame={onSelectGame}
-        onStartGame={onStartGame}
-        onPlay={onPlay}
-      />
-    ) : (
-      <Lobby onCreateRoom={onCreateRoom} onJoinRoom={onJoinRoom} />
-    )}
+    <Content>
+      <AppHeader />
+      {roomReady ? (
+        <Room
+          roomCode={roomCode}
+          you={you}
+          others={others}
+          game={game}
+          playersNeeded={playersNeeded}
+          gameState={gameState}
+          onSelectGame={onSelectGame}
+          onStartGame={onStartGame}
+          onPlay={onPlay}
+        />
+      ) : (
+        <Lobby onCreateRoom={onCreateRoom} onJoinRoom={onJoinRoom} />
+      )}
+    </Content>
   </Container>
 );
 
