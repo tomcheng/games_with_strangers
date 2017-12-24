@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import styled from "styled-components";
 import mapValues from "lodash/mapValues";
 import mapKeys from "lodash/mapKeys";
 import camelCase from "lodash/camelCase";
@@ -7,15 +6,8 @@ import omit from "lodash/omit";
 import pick from "lodash/pick";
 import values from "lodash/values";
 import { POST, getChannel } from "../utils/api";
-import AppHeader from "./AppHeader";
-import Lobby from "./Lobby";
-import Room from "./Room";
-import "./App.css";
 import { setPlayerId, getPlayerId } from "../utils/localStorage";
-
-const Container = styled.div`
-  padding: 40px 50px;
-`;
+import App from "./App";
 
 class AppContainer extends Component {
   static propTypes = {};
@@ -93,29 +85,22 @@ class AppContainer extends Component {
 
   render() {
     return (
-      <Container>
-        <AppHeader />
-        {this.state.roomReady ? (
-          <Room
-            {...pick(this.state, [
-              "roomCode",
-              "you",
-              "others",
-              "game",
-              "playersNeeded",
-              "gameState"
-            ])}
-            onSelectGame={this.handleSelectGame}
-            onStartGame={this.handleStartGame}
-            onPlay={this.handlePlay}
-          />
-        ) : (
-          <Lobby
-            onCreateRoom={this.handleCreateRoom}
-            onJoinRoom={this.handleJoinRoom}
-          />
-        )}
-      </Container>
+      <App
+        {...pick(this.state, [
+          "roomReady",
+          "roomCode",
+          "you",
+          "others",
+          "game",
+          "playersNeeded",
+          "gameState"
+        ])}
+        onSelectGame={this.handleSelectGame}
+        onStartGame={this.handleStartGame}
+        onPlay={this.handlePlay}
+        onCreateRoom={this.handleCreateRoom}
+        onJoinRoom={this.handleJoinRoom}
+      />
     );
   }
 }
