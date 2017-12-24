@@ -9,7 +9,7 @@ import AppHeader from "./AppHeader";
 import Lobby from "./Lobby";
 import Room from "./Room";
 import "./App.css";
-import { setPlayerId, getPlayerId, setPlayerName, getPlayerName } from "../utils/localStorage";
+import { setPlayerId, getPlayerId } from "../utils/localStorage";
 
 const Container = styled.div`
   padding: 40px 50px;
@@ -24,8 +24,7 @@ class App extends Component {
     minimumPlayers: null,
     players: null,
     playerId: null,
-    roomCode: null,
-    savedPlayerName: getPlayerName() || ""
+    roomCode: null
   };
 
   channel = null;
@@ -34,12 +33,10 @@ class App extends Component {
     POST("/rooms").then(({ room_code }) => {
       this.joinRoom({ playerName, roomCode: room_code });
     });
-    this.savePlayerName(playerName);
   };
 
   handleJoinRoom = ({ playerName, roomCode, onError }) => {
     this.joinRoom({ playerName, roomCode, onError });
-    this.savePlayerName(playerName);
   };
 
   handleSelectGame = game => {
@@ -83,11 +80,6 @@ class App extends Component {
     });
   };
 
-  savePlayerName = name => {
-    setPlayerName(name);
-    this.setState({ savedPlayerName: name });
-  };
-
   render() {
     const {
       game,
@@ -95,8 +87,7 @@ class App extends Component {
       minimumPlayers,
       players,
       playerId,
-      roomCode,
-      savedPlayerName
+      roomCode
     } = this.state;
     const roomReady = !!(roomCode && players);
 
@@ -107,7 +98,6 @@ class App extends Component {
           <Lobby
             onJoinRoom={this.handleJoinRoom}
             onCreateRoom={this.handleCreateRoom}
-            savedPlayerName={savedPlayerName}
           />
         )}
         {roomReady && (

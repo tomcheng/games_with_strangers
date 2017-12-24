@@ -3,6 +3,7 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import TextInput from "./common/TextInput";
 import Button from "./common/Button";
+import { setPlayerName, getPlayerName } from "../utils/localStorage";
 
 const Fields = styled.div`
   margin: 0 -8px;
@@ -30,15 +31,11 @@ class Lobby extends Component {
     onJoinRoom: PropTypes.func.isRequired
   };
 
-  constructor(props) {
-    super();
-
-    this.state = {
-      playerName: props.savedPlayerName,
-      roomCode: "",
-      errorMessage: null
-    };
-  }
+  state = {
+    playerName: getPlayerName() || "",
+    roomCode: "",
+    errorMessage: null
+  };
 
   handleSubmit = evt => {
     evt.preventDefault();
@@ -50,6 +47,8 @@ class Lobby extends Component {
       this.setState({ errorMessage: "Name is required" });
       return;
     }
+
+    setPlayerName(playerName);
 
     if (roomCode.trim().length === 0) {
       onCreateRoom({ playerName });
