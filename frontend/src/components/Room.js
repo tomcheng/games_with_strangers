@@ -4,8 +4,7 @@ import values from "lodash/values";
 import find from "lodash/find";
 import gamesList from "../gamesList";
 import Player from "./Player";
-
-const pluralize = (str, count) => str + (count === 1 ? "" : "s");
+import { pluralize } from "../utils/strings";
 
 const Room = ({
   game,
@@ -18,20 +17,13 @@ const Room = ({
   onStartGame,
   onPlay
 }) => {
-  const playersNeeded =
-    minimumPlayers
-      ? Math.max(minimumPlayers - values(others).length - 1, 0)
-      : null;
+  const playersNeeded = minimumPlayers
+    ? Math.max(minimumPlayers - values(others).length - 1, 0)
+    : null;
 
   if (gameState && game) {
     const GameComponent = find(gamesList, g => g.id === game).component;
-    return (
-      <GameComponent
-        gameState={gameState}
-        onPlay={onPlay}
-        you={you}
-      />
-    );
+    return <GameComponent gameState={gameState} onPlay={onPlay} you={you} />;
   }
 
   return (
@@ -57,9 +49,7 @@ const Room = ({
       <div>You:</div>
       <Player player={you} />
       <div>Others:</div>
-      {values(others).map(player => (
-        <Player key={player.id} player={player} />
-      ))}
+      {values(others).map(player => <Player key={player.id} player={player} />)}
       {!!playersNeeded &&
         `${playersNeeded} ${pluralize("player", playersNeeded)} needed`}
       {playersNeeded === 0 && <button onClick={onStartGame}>Start Game</button>}
