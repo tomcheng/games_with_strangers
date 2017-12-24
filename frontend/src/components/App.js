@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import styled from "styled-components";
 import mapValues from "lodash/mapValues";
 import mapKeys from "lodash/mapKeys";
 import camelCase from "lodash/camelCase";
@@ -6,6 +7,7 @@ import omit from "lodash/omit";
 import { POST, getChannel } from "../utils/api";
 import Lobby from "./Lobby";
 import Room from "./Room";
+import Wordmark from "../svgs/Wordmark";
 import "./App.css";
 
 const PLAYER_ID_KEY = "_gws_player_id";
@@ -15,6 +17,10 @@ const setPlayerId = id => localStorage.setItem(PLAYER_ID_KEY, id);
 const getPlayerId = () => localStorage.getItem(PLAYER_ID_KEY);
 const setPlayerName = name => localStorage.setItem(PLAYER_NAME_KEY, name);
 const getPlayerName = () => localStorage.getItem(PLAYER_NAME_KEY);
+
+const Container = styled.div`
+  padding: 40px 50px;
+`;
 
 class App extends Component {
   static propTypes = {};
@@ -103,8 +109,8 @@ class App extends Component {
     const roomReady = !!(roomCode && players);
 
     return (
-      <div>
-        <h1>Games with Strangers</h1>
+      <Container>
+        <Wordmark />
         {!roomReady && (
           <Lobby
             onJoinRoom={this.handleJoinRoom}
@@ -125,7 +131,7 @@ class App extends Component {
             onPlay={this.handlePlay}
           />
         )}
-      </div>
+      </Container>
     );
   }
 }
