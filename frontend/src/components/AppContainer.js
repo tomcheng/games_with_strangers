@@ -9,14 +9,7 @@ import AppHeader from "./AppHeader";
 import Lobby from "./Lobby";
 import Room from "./Room";
 import "./App.css";
-
-const PLAYER_ID_KEY = "_gws_player_id";
-const PLAYER_NAME_KEY = "_gws_player_name";
-
-const setPlayerId = id => localStorage.setItem(PLAYER_ID_KEY, id);
-const getPlayerId = () => localStorage.getItem(PLAYER_ID_KEY);
-const setPlayerName = name => localStorage.setItem(PLAYER_NAME_KEY, name);
-const getPlayerName = () => localStorage.getItem(PLAYER_NAME_KEY);
+import { setPlayerId, getPlayerId, setPlayerName, getPlayerName } from "../utils/localStorage";
 
 const Container = styled.div`
   padding: 40px 50px;
