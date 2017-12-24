@@ -9,7 +9,7 @@ import { pluralize } from "../utils/strings";
 const Room = ({
   game,
   gameState,
-  minimumPlayers,
+  playersNeeded,
   you,
   others,
   roomCode,
@@ -17,10 +17,6 @@ const Room = ({
   onStartGame,
   onPlay
 }) => {
-  const playersNeeded = minimumPlayers
-    ? Math.max(minimumPlayers - values(others).length - 1, 0)
-    : null;
-
   if (gameState && game) {
     const GameComponent = find(gamesList, g => g.id === game).component;
     return <GameComponent gameState={gameState} onPlay={onPlay} you={you} />;
@@ -71,7 +67,7 @@ Room.propTypes = {
   onStartGame: PropTypes.func.isRequired,
   game: PropTypes.oneOf(gamesList.map(g => g.id)),
   gameState: PropTypes.object,
-  minimumPlayers: PropTypes.number
+  playersNeeded: PropTypes.number
 };
 
 export default Room;

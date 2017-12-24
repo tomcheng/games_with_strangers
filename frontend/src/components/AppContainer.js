@@ -4,6 +4,7 @@ import mapValues from "lodash/mapValues";
 import mapKeys from "lodash/mapKeys";
 import camelCase from "lodash/camelCase";
 import omit from "lodash/omit";
+import values from "lodash/values";
 import { POST, getChannel } from "../utils/api";
 import AppHeader from "./AppHeader";
 import Lobby from "./Lobby";
@@ -25,7 +26,7 @@ class App extends Component {
     you: null,
     others: null,
     game: null,
-    minimumPlayers: null,
+    playersNeeded: null,
     gameState: null
   };
 
@@ -77,13 +78,14 @@ class App extends Component {
     const players = mapValues(rawPlayers, player =>
       mapKeys(player, (value, key) => camelCase(key))
     );
+    const playersNeeded = Math.max(minimum_players - values(players).length, 0)
 
     this.setState({
       roomReady: true,
       you: players[yourId],
       others: omit(players, [yourId]),
       game,
-      minimumPlayers: minimum_players,
+      playersNeeded,
       gameState: game_state
     });
   };
@@ -95,7 +97,7 @@ class App extends Component {
       you,
       others,
       game,
-      minimumPlayers,
+      playersNeeded,
       gameState
     } = this.state;
 
@@ -108,7 +110,7 @@ class App extends Component {
             you={you}
             others={others}
             game={game}
-            minimumPlayers={minimumPlayers}
+            playersNeeded={playersNeeded}
             gameState={gameState}
             onSelectGame={this.handleSelectGame}
             onStartGame={this.handleStartGame}
