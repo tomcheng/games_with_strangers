@@ -5,9 +5,9 @@ import mapKeys from "lodash/mapKeys";
 import camelCase from "lodash/camelCase";
 import omit from "lodash/omit";
 import { POST, getChannel } from "../utils/api";
+import AppHeader from "./AppHeader";
 import Lobby from "./Lobby";
 import Room from "./Room";
-import Wordmark from "../svgs/Wordmark";
 import "./App.css";
 
 const PLAYER_ID_KEY = "_gws_player_id";
@@ -20,9 +20,6 @@ const getPlayerName = () => localStorage.getItem(PLAYER_NAME_KEY);
 
 const Container = styled.div`
   padding: 40px 50px;
-`;
-const Header = styled.div`
-  margin-bottom: 40px;
 `;
 
 class App extends Component {
@@ -112,9 +109,7 @@ class App extends Component {
 
     return (
       <Container>
-        <Header>
-          <Wordmark />
-        </Header>
+        <AppHeader />
         {!roomReady && (
           <Lobby
             onJoinRoom={this.handleJoinRoom}
