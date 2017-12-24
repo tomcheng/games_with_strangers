@@ -8,7 +8,7 @@ import "./App.css";
 const Container = styled.div`
   display: flex;
   justify-content: center;
-  padding: 30px;
+  padding: 24px;
 `;
 
 const Content = styled.div`

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Wordmark from "../svgs/Wordmark";
 
 const Header = styled.div`
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 `;
 const TitleContainer = styled.div`
   width: 80%;

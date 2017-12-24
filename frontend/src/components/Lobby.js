@@ -2,13 +2,14 @@ import React, { Component, Fragment } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import gamesList from "../gamesList";
+import SectionHeader from "./common/SectionHeader";
 import TextInput from "./common/TextInput";
 import Button from "./common/Button";
 import GameCard from "./GameCard";
 import { setPlayerName, getPlayerName } from "../utils/localStorage";
 
-const Row = styled.div`
-  margin: 30px 0;
+const Section = styled.div`
+  margin-bottom: 24px;
 `;
 
 const JoinGameForm = styled.form`
@@ -95,20 +96,20 @@ class Lobby extends Component {
 
     return (
       <Fragment>
-        <Row>
+        <Section>
+          <SectionHeader>Enter your Name</SectionHeader>
           <TextInput
-            label="Enter your Screen Name"
             placeholder="Screen Name"
             name="playerName"
             value={playerName}
             onChange={this.handleChange}
           />
           {nameError && <Error>{nameError}</Error>}
-        </Row>
-        <Row>
+        </Section>
+        <Section>
+          <SectionHeader>Join a Game</SectionHeader>
           <JoinGameForm onSubmit={this.handleSubmitJoin}>
             <CodeInput
-              label="Join a Game"
               placeholder="Game Code"
               name="roomCode"
               value={roomCode}
@@ -117,21 +118,23 @@ class Lobby extends Component {
             <JoinButton>Join Game</JoinButton>
           </JoinGameForm>
           {roomCodeError && <Error>{roomCodeError}</Error>}
-        </Row>
-        <Row>
-          <div>Or Start a New Game</div>
-          {gamesList.map(({ id, displayName, description, playerRequirements }) => (
-            <GameCard
-              key={id}
-              title={displayName}
-              description={description}
-              playerRequirements={playerRequirements}
-              onSelect={() => {
-                this.handleSelectGame(id);
-              }}
-            />
-          ))}
-        </Row>
+        </Section>
+        <Section>
+          <SectionHeader>Start a New Game</SectionHeader>
+          {gamesList.map(
+            ({ id, displayName, description, playerRequirements }) => (
+              <GameCard
+                key={id}
+                title={displayName}
+                description={description}
+                playerRequirements={playerRequirements}
+                onSelect={() => {
+                  this.handleSelectGame(id);
+                }}
+              />
+            )
+          )}
+        </Section>
       </Fragment>
     );
   }
