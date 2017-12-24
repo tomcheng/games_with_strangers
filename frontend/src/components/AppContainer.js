@@ -19,24 +19,22 @@ class App extends Component {
   static propTypes = {};
 
   state = {
+    roomCode: null,
+    roomReady: false,
+    yourId: null,
+    you: null,
+    others: null,
     game: null,
-    gameState: null,
     minimumPlayers: null,
-    players: null,
-    playerId: null,
-    roomCode: null
+    gameState: null
   };
 
   channel = null;
 
   handleCreateRoom = ({ playerName }) => {
     POST("/rooms").then(({ room_code }) => {
-      this.joinRoom({ playerName, roomCode: room_code });
+      this.handleJoinRoom({ playerName, roomCode: room_code });
     });
-  };
-
-  handleJoinRoom = ({ playerName, roomCode, onError }) => {
-    this.joinRoom({ playerName, roomCode, onError });
   };
 
   handleSelectGame = game => {
@@ -48,10 +46,10 @@ class App extends Component {
   };
 
   handlePlay = args => {
-    this.channel.push("make_play", { ...args, player_id: this.state.playerId });
+    this.channel.push("make_play", { ...args, player_id: this.state.yourId });
   };
 
-  joinRoom = ({ playerName, roomCode, onError }) => {
+  handleJoinRoom = ({ playerName, roomCode, onError }) => {
     this.channel = getChannel({
       topic: "room:" + roomCode,
       params: { player_id: getPlayerId(), player_name: playerName }
@@ -62,55 +60,64 @@ class App extends Component {
       .receive("ok", ({ player_id }) => {
         setPlayerId(player_id);
         this.channel.on("new_state", this.updateRoomState);
-        this.setState({ roomCode, playerId: player_id });
+        this.setState({ roomCode, yourId: player_id });
       })
       .receive("error", message => {
         onError({ message });
       });
   };
 
-  updateRoomState = ({ game, game_state, minimum_players, players }) => {
+  updateRoomState = ({
+    game,
+    game_state,
+    minimum_players,
+    players: rawPlayers
+  }) => {
+    const { yourId } = this.state;
+    const players = mapValues(rawPlayers, player =>
+      mapKeys(player, (value, key) => camelCase(key))
+    );
+
     this.setState({
+      roomReady: true,
+      you: players[yourId],
+      others: omit(players, [yourId]),
       game,
-      gameState: game_state,
       minimumPlayers: minimum_players,
-      players: mapValues(players, player =>
-        mapKeys(player, (value, key) => camelCase(key))
-      )
+      gameState: game_state
     });
   };
 
   render() {
     const {
+      roomCode,
+      roomReady,
+      you,
+      others,
       game,
-      gameState,
       minimumPlayers,
-      players,
-      playerId,
-      roomCode
+      gameState
     } = this.state;
-    const roomReady = !!(roomCode && players);
 
     return (
       <Container>
         <AppHeader />
-        {!roomReady && (
-          <Lobby
-            onJoinRoom={this.handleJoinRoom}
-            onCreateRoom={this.handleCreateRoom}
-          />
-        )}
-        {roomReady && (
+        {roomReady ? (
           <Room
             roomCode={roomCode}
+            you={you}
+            others={others}
             game={game}
-            you={players[playerId]}
-            others={omit(players, [playerId])}
-            gameState={gameState}
             minimumPlayers={minimumPlayers}
+            gameState={gameState}
             onSelectGame={this.handleSelectGame}
             onStartGame={this.handleStartGame}
             onPlay={this.handlePlay}
+          />
+        ) : (
+          <Lobby
+            onCreateRoom={this.handleCreateRoom}
+            onJoinRoom={this.handleJoinRoom}
           />
         )}
       </Container>
