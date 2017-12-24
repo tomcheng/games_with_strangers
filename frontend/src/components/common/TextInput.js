@@ -1,6 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 
+const Label = styled.label`
+  display: block;
+  margin-bottom: 5px;
+`;
+
 const Input = styled.input`
   display: block;
   width: 100%;
@@ -12,11 +17,13 @@ const Input = styled.input`
   border-radius: 3px;
   height: 60px;
   padding: 0 15px;
-  margin: 15px 0;
 `;
 
-const TextInput = props => (
-  <Input {...props} type="text" />
+const TextInput = ({ label, name, ...props }) => (
+  <div>
+    {label && <Label htmlFor={name}>{label}</Label>}
+    <Input {...props} name={name} type="text" />
+  </div>
 );
 
 export default TextInput;

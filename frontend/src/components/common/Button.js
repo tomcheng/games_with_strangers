@@ -4,6 +4,7 @@ import { lighten, darken } from "polished";
 const BASE_COLOR = "#dca424";
 
 const Button = styled.button`
+  display: block;
   background-color: ${BASE_COLOR};
   background-image: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.15));
   background-clip: padding-box;

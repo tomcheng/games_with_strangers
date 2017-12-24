@@ -25,8 +25,8 @@ class AppContainer extends Component {
 
   channel = null;
 
-  handleCreateRoom = ({ playerName }) => {
-    POST("/rooms").then(({ room_code }) => {
+  handleCreateRoom = ({ playerName, game }) => {
+    POST("/rooms", { game }).then(({ room_code }) => {
       this.handleJoinRoom({ playerName, roomCode: room_code });
     });
   };
