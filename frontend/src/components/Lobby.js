@@ -5,23 +5,12 @@ import TextInput from "./common/TextInput";
 import Button from "./common/Button";
 import { setPlayerName, getPlayerName } from "../utils/localStorage";
 
-const Fields = styled.div`
-  margin: 0 -8px;
-  display: flex;
-  margin-bottom: 40px;
-`;
-
-const NameField = styled(TextInput)`
-  flex-grow: 1;
-  margin: 0 8px;
-`;
-
-const CodeField = styled(TextInput)`
-  max-width: 160px;
-  margin: 0 8px;
+const CodeInput = styled(TextInput)`
+  width: 160px;
 `;
 
 const ButtonContainer = styled.div`
+  margin-top: 30px;
   text-align: center;
 `;
 
@@ -74,20 +63,18 @@ class Lobby extends Component {
 
     return (
       <form onSubmit={this.handleSubmit}>
-        <Fields>
-          <NameField
-            placeholder="Screen Name"
-            name="playerName"
-            value={playerName}
-            onChange={this.handleChange}
-          />
-          <CodeField
-            placeholder="Room Code"
-            name="roomCode"
-            value={roomCode}
-            onChange={this.handleChange}
-          />
-        </Fields>
+        <TextInput
+          placeholder="Screen Name"
+          name="playerName"
+          value={playerName}
+          onChange={this.handleChange}
+        />
+        <CodeInput
+          placeholder="Room Code"
+          name="roomCode"
+          value={roomCode}
+          onChange={this.handleChange}
+        />
         <ButtonContainer>
           <Button>Create or Join Room</Button>
         </ButtonContainer>
