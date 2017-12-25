@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import createHistory from "history/createBrowserHistory"
 import mapValues from "lodash/mapValues";
 import mapKeys from "lodash/mapKeys";
 import camelCase from "lodash/camelCase";
@@ -9,21 +10,32 @@ import { POST, getChannel } from "../utils/api";
 import { setPlayerId, getPlayerId } from "../utils/localStorage";
 import App from "./App";
 
+const INITIAL_STATE = {
+  roomCode: null,
+  roomReady: false,
+  yourId: null,
+  you: null,
+  others: null,
+  game: null,
+  playersNeeded: null,
+  gameState: null
+};
+
 class AppContainer extends Component {
-  static propTypes = {};
+  constructor() {
+    super();
 
-  state = {
-    roomCode: null,
-    roomReady: false,
-    yourId: null,
-    you: null,
-    others: null,
-    game: null,
-    playersNeeded: null,
-    gameState: null
-  };
+    this.history = createHistory();
+    this.history.listen(({ search }) => {
+      if (search === "") {
+        this.handleLeaveRoom();
+      }
+    });
 
-  channel = null;
+    this.channel = null;
+
+    this.state = INITIAL_STATE;
+  }
 
   handleCreateRoom = ({ playerName, game }) => {
     POST("/rooms", { game }).then(({ room_code }) => {
@@ -40,6 +52,7 @@ class AppContainer extends Component {
   };
 
   handleJoinRoom = ({ playerName, roomCode, onError }) => {
+    this.history.push(`?c=${roomCode}`);
     this.channel = getChannel({
       topic: "room:" + roomCode,
       params: { player_id: getPlayerId(), player_name: playerName }
@@ -54,6 +67,14 @@ class AppContainer extends Component {
       })
       .receive("error", message => {
         onError({ message });
+      });
+  };
+
+  handleLeaveRoom = () => {
+    this.channel
+      .leave()
+      .receive("ok", () => {
+        this.setState(INITIAL_STATE);
       });
   };
 
