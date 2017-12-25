@@ -22,7 +22,7 @@ const getRoomCodeFromLocation = ({ search }) => {
 
 const INITIAL_STATE = {
   roomCode: null,
-  roomReady: false,
+  roomJoined: false,
   yourId: null,
   you: null,
   others: null,
@@ -121,7 +121,7 @@ class AppContainer extends Component {
     const playersNeeded = Math.max(minimum_players - values(players).length, 0);
 
     this.setState({
-      roomReady: true,
+      roomJoined: true,
       you: players[yourId],
       others: omit(players, [yourId]),
       game,
@@ -135,7 +135,7 @@ class AppContainer extends Component {
       <App
         {...pick(this.state, [
           "previousRoomCode",
-          "roomReady",
+          "roomJoined",
           "roomCode",
           "you",
           "others",

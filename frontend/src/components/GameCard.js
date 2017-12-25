@@ -1,11 +1,10 @@
 import React from "react";
 import styled from "styled-components";
+import SecondaryText from "./common/SecondaryText";
 import Button from "./common/Button";
 
-const FootNote = styled.div`
+const FootNote = styled(SecondaryText)`
   margin-top: 4px;
-  color: rgba(255,255,255,0.4);
-  font-size: 14px;
 `;
 
 const ActionContainer = styled.div`
