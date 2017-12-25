@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import values from "lodash/values";
+import SectionHeader from "../../common/SectionHeader";
 import GuessForm from "./GuessForm";
 import Bets from "./Bets";
 
@@ -10,7 +11,7 @@ const YouBet = ({ gameState, onPlay, you }) => {
 
   return (
     <div>
-      <div>Round: {round}</div>
+      <SectionHeader>Round {round}</SectionHeader>
       <div>{question}</div>
       {stage === "guessing" &&
         !youGuessed && (
