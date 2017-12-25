@@ -83,7 +83,7 @@ class Lobby extends Component {
     this.setState({ [target.name]: target.value.trim().toUpperCase() });
   };
 
-  handleSelectGame = game => {
+  handleSelectGame = gameId => {
     const { onCreateRoom } = this.props;
     const { playerName: playerNameRaw } = this.state;
     const playerName = playerNameRaw.trim();
@@ -93,7 +93,7 @@ class Lobby extends Component {
       return;
     }
 
-    onCreateRoom({ playerName, game });
+    onCreateRoom({ playerName, gameId });
   };
 
   render() {

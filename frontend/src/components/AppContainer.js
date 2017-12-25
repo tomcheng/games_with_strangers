@@ -26,7 +26,7 @@ const INITIAL_STATE = {
   yourId: null,
   you: null,
   others: null,
-  game: null,
+  gameId: null,
   playersNeeded: null,
   gameState: null
 };
@@ -65,8 +65,9 @@ class AppContainer extends Component {
     this.handleLeaveRoom();
   };
 
-  handleCreateRoom = ({ playerName, game }) => {
-    POST("/rooms", { game }).then(({ room_code }) => {
+  handleCreateRoom = ({ playerName, gameId }) => {
+    POST("/rooms", { game: gameId }).then(({ room_code }) => {
+      this.setState({ gameId });
       this.handleJoinRoom({ playerName, roomCode: room_code });
     });
   };
@@ -109,7 +110,6 @@ class AppContainer extends Component {
   };
 
   updateRoomState = ({
-    game,
     game_state,
     minimum_players,
     players: rawPlayers
@@ -124,7 +124,6 @@ class AppContainer extends Component {
       roomJoined: true,
       you: players[yourId],
       others: omit(players, [yourId]),
-      game,
       playersNeeded,
       gameState: game_state
     });
@@ -139,7 +138,7 @@ class AppContainer extends Component {
           "roomCode",
           "you",
           "others",
-          "game",
+          "gameId",
           "playersNeeded",
           "gameState"
         ])}

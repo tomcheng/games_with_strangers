@@ -22,7 +22,7 @@ const App = ({
   roomCode,
   you,
   others,
-  game,
+  gameId,
   playersNeeded,
   gameState,
   onStartGame,
@@ -42,10 +42,9 @@ const App = ({
       )}
       {roomJoined && (
         <Room
-          roomCode={roomCode}
           you={you}
           others={others}
-          game={game}
+          gameId={gameId}
           playersNeeded={playersNeeded}
           gameState={gameState}
           onStartGame={onStartGame}

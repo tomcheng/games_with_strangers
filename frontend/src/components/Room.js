@@ -7,24 +7,22 @@ import Player from "./Player";
 import { pluralize } from "../utils/strings";
 
 const Room = ({
-  game,
+  gameId,
   gameState,
   playersNeeded,
   you,
   others,
-  roomCode,
   onStartGame,
   onPlay
 }) => {
   if (gameState) {
-    const GameComponent = find(gamesList, g => g.id === game).component;
+    const GameComponent = find(gamesList, g => g.id === gameId).component;
     return <GameComponent gameState={gameState} onPlay={onPlay} you={you} />;
   }
 
   return (
     <Fragment>
-      <div>{roomCode}</div>
-      <div>Selected game: {game}</div>
+      <div>Selected game: {gameId}</div>
       <div>You:</div>
       <Player player={you} />
       <div>Others:</div>
@@ -37,13 +35,12 @@ const Room = ({
 };
 
 Room.propTypes = {
-  game: PropTypes.oneOf(gamesList.map(g => g.id)).isRequired,
+  gameId: PropTypes.oneOf(gamesList.map(g => g.id)).isRequired,
   others: PropTypes.objectOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired
     })
   ).isRequired,
-  roomCode: PropTypes.string.isRequired,
   you: PropTypes.shape({
     id: PropTypes.string.isRequired
   }).isRequired,
