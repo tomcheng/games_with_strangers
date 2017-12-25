@@ -1,6 +1,8 @@
 defmodule GamesWithStrangers.RoomChannel do
   use GamesWithStrangers.Web, :channel
 
+  intercept ["new_state"]
+
   def join(_, %{"player_name" => ""}, _socket) do
     {:error, "Name is required"}
   end
@@ -29,9 +31,9 @@ defmodule GamesWithStrangers.RoomChannel do
     {:ok, room_state} =
       room
       |> GWS.Room.remove_player_by_channel(channel)
-      |> GWS.Room.get_state
+      |> GWS.Room.get_state(channel)
 
-    broadcast(socket, "new_state", room_state)
+    broadcast(socket, "new_state", %{room: room})
 
     if Enum.count(room_state[:players]) == 0 do
       GWS.Room.destroy_room(room)
@@ -41,12 +43,9 @@ defmodule GamesWithStrangers.RoomChannel do
   def handle_in("start_game", _, %{topic: "room:" <> room_code} = socket) do
     {:ok, room} = GWS.get_room(room_code)
 
-    {:ok, room_state} =
-      room
-      |> GWS.Room.start_game
-      |> GWS.Room.get_state
+     GWS.Room.start_game(room)
 
-    broadcast(socket, "new_state", room_state)
+    broadcast(socket, "new_state", %{room: room})
 
     {:noreply, socket}
   end
@@ -54,21 +53,25 @@ defmodule GamesWithStrangers.RoomChannel do
   def handle_in("make_play", %{"player_id" => player_id, "type" => type, "payload" => payload}, %{topic: "room:" <> room_code} = socket) do
     {:ok, room} = GWS.get_room(room_code)
 
-    {:ok, room_state} =
-      room
-      |> GWS.Room.make_play(player_id, type, payload)
-      |> GWS.Room.get_state
+    GWS.Room.make_play(room, player_id, type, payload)
 
-    broadcast(socket, "new_state", room_state)
+    broadcast(socket, "new_state", %{room: room})
+
+    {:noreply, socket}
+  end
+
+  def handle_out("new_state", %{room: room}, %{channel_pid: channel} = socket) do
+    {:ok, room_state} = GWS.Room.get_state(room, channel)
+
+    push(socket, "new_state", room_state)
 
     {:noreply, socket}
   end
 
   def handle_info(:after_join, %{topic: "room:" <> room_code} = socket) do
     {:ok, room} = GWS.get_room(room_code)
-    {:ok, room_state} = GWS.Room.get_state(room)
 
-    broadcast(socket, "new_state", room_state)
+    broadcast(socket, "new_state", %{room: room})
 
     {:noreply, socket}
   end

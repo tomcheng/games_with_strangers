@@ -27,9 +27,9 @@ defmodule GWS.RoomTest do
       |> GWS.Room.add_player("player-id-2", "Bob", 2)
       |> GWS.Room.add_player("player-id-3", "Andy", 3)
       |> GWS.Room.start_game
-      |> GWS.Room.get_state
+      |> GWS.Room.get_state(1)
 
-    assert game_state == players |> YouBet.initial_state |> YouBet.sanitize_state
+    assert game_state == players |> YouBet.initial_state |> YouBet.sanitize_state("player-id-1")
   end
 
   test "makes play", %{room: room} do
@@ -41,12 +41,12 @@ defmodule GWS.RoomTest do
       |> GWS.Room.add_player("player-id-3", "Andy", 3)
       |> GWS.Room.start_game
       |> GWS.Room.make_play("player-id-1", "guess", "20")
-      |> GWS.Room.get_state
+      |> GWS.Room.get_state(1)
 
     assert game_state == players
       |> YouBet.initial_state
       |> YouBet.play("player-id-1", "guess", "20")
-      |> YouBet.sanitize_state
+      |> YouBet.sanitize_state("player-id-1")
   end
 
   test "adds players", %{room: room} do
@@ -58,7 +58,7 @@ defmodule GWS.RoomTest do
       room
       |> GWS.Room.add_player("player-id-1", "Harold", 1)
       |> GWS.Room.add_player("player-id-2", "Bob", 2)
-      |> GWS.Room.get_state
+      |> GWS.Room.get_state(1)
 
     assert state[:players] == %{
       "player-id-1" => %{id: "player-id-1", name: "Harold", is_moderator: true},

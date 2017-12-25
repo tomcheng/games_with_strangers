@@ -59,13 +59,23 @@ defmodule GWS.Room do
     Enum.any?(players, fn {_, player} -> player[:id] == moderator end)
   end
 
-  def get_state(room) do
+  def get_state(room, channel \\ nil) do
     {:ok, Agent.get(room, fn state ->
+      player_id = get_player_id_from_channel(state, channel)
+
       state
       |> normalize_players
-      |> sanitize_game_state
+      |> sanitize_game_state(player_id)
       |> Map.drop([:moderator])
     end)}
+  end
+
+  defp get_player_id_from_channel(_, nil), do: nil
+  defp get_player_id_from_channel(state, channel) do
+    state
+    |> Map.get(:players)
+    |> Enum.find({nil, nil}, fn {_, player} -> player[:channel] == channel end)
+    |> elem(0)
   end
 
   defp normalize_players(%{players: players, moderator: moderator} = state) do
@@ -80,9 +90,9 @@ defmodule GWS.Room do
     Map.put(state, :players, new_players)
   end
 
-  defp sanitize_game_state(%{game_state: game_state, game: game} = state) do
+  defp sanitize_game_state(%{game_state: game_state, game: game} = state, player_id) do
     if game_state do
-      Map.update!(state, :game_state, &apply(get_module(game), :sanitize_state, [&1]))
+      Map.update!(state, :game_state, &apply(get_module(game), :sanitize_state, [&1, player_id]))
     else
       state
     end

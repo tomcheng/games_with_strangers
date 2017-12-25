@@ -33,7 +33,7 @@ const Room = ({
 
   if (gameState) {
     const GameComponent = game.component;
-    return <GameComponent gameState={gameState} onPlay={onPlay} you={you} />;
+    return <GameComponent gameState={gameState} onPlay={onPlay} />;
   }
 
   return (
