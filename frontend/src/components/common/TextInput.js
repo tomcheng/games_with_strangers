@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
 
 const Input = styled.input`
@@ -14,6 +15,16 @@ const Input = styled.input`
   padding: 0 15px;
 `;
 
-const TextInput = props => <Input {...props} type="text" />;
+export const TextInput = ({ type, ...other }) => (
+  <Input {...other} type={type} />
+);
+
+TextInput.propTypes = {
+  type: PropTypes.oneOf(["text", "number"])
+};
+
+TextInput.defaultProps = {
+  type: "text"
+};
 
 export default TextInput;

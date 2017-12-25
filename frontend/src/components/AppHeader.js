@@ -19,12 +19,9 @@ const RoomCodeContainer = styled.div`
   text-align: center;
 `;
 
-const CodeLabel = styled(SecondaryText)`
-  margin-bottom: 4px;
-`;
-
 const Code = styled.h1`
   margin-bottom: 0;
+  line-height: 1em;
 `;
 
 const AppHeader = ({ roomCode }) => (
@@ -34,7 +31,7 @@ const AppHeader = ({ roomCode }) => (
     </WordmarkContainer>
     {roomCode && (
       <RoomCodeContainer>
-        <CodeLabel>Game Code:</CodeLabel>
+        <SecondaryText>Game Code:</SecondaryText>
         <Code>{roomCode}</Code>
       </RoomCodeContainer>
     )}

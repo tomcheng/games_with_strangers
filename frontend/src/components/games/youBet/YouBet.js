@@ -1,9 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
+import styled from "styled-components";
 import values from "lodash/values";
 import SectionHeader from "../../common/SectionHeader";
 import GuessForm from "./GuessForm";
 import Bets from "./Bets";
+
+const Question = styled.h1`
+  text-align: center;
+  margin-bottom: 24px;
+`;
 
 const YouBet = ({ gameState, onPlay, you }) => {
   const { round, stage, question, players, guesses } = gameState;
@@ -12,7 +18,7 @@ const YouBet = ({ gameState, onPlay, you }) => {
   return (
     <div>
       <SectionHeader>Round {round}</SectionHeader>
-      <div>{question}</div>
+      <Question>{question}</Question>
       {stage === "guessing" &&
         !youGuessed && (
           <GuessForm
