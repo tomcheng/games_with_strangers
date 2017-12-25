@@ -1,7 +1,7 @@
 import React from "react";
 
 const Wordmark = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 335.57 96.74" style={{filter: "drop-shadow( 0 2px 3px rgba(0,0,0,0.2) )"}}>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 335.57 96.74" style={{filter: "drop-shadow(0 2px 1px rgba(0,0,0,0.3))"}}>
     <defs>
       <style>{`.cls-1{fill:#fff;}`}</style>
     </defs>
