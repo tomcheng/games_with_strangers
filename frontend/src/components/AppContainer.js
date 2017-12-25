@@ -45,10 +45,7 @@ class AppContainer extends Component {
       previousRoomCode: codeFromLocation
     };
 
-    if (codeFromLocation) {
-      this.history.replace("/");
-    }
-
+    this.history.replace("/");
     this.history.listen(this.handleLocationChange);
   }
 

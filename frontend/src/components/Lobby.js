@@ -80,7 +80,7 @@ class Lobby extends Component {
   };
 
   handleChange = ({ target }) => {
-    this.setState({ [target.name]: target.value });
+    this.setState({ [target.name]: target.value.trim().toUpperCase() });
   };
 
   handleSelectGame = game => {
