@@ -1,10 +1,24 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
+import styled from "styled-components";
 import values from "lodash/values";
 import find from "lodash/find";
-import gamesList from "../gamesList";
-import Player from "./Player";
 import { pluralize } from "../utils/strings";
+import gamesList from "../gamesList";
+import SectionHeader from "./common/SectionHeader";
+import Button from "./common/Button";
+import SecondaryText from "./common/SecondaryText";
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const Players = styled.div`
+  text-align: center;
+  margin-bottom: 24px;
+`;
 
 const Room = ({
   gameId,
@@ -15,21 +29,33 @@ const Room = ({
   onStartGame,
   onPlay
 }) => {
+  const game = find(gamesList, g => g.id === gameId);
+
   if (gameState) {
-    const GameComponent = find(gamesList, g => g.id === gameId).component;
+    const GameComponent = game.component;
     return <GameComponent gameState={gameState} onPlay={onPlay} you={you} />;
   }
 
   return (
     <Fragment>
-      <div>Selected game: {gameId}</div>
-      <div>You:</div>
-      <Player player={you} />
-      <div>Others:</div>
-      {values(others).map(player => <Player key={player.id} player={player} />)}
-      {!!playersNeeded &&
-        `${playersNeeded} ${pluralize("player", playersNeeded)} needed`}
-      {playersNeeded === 0 && <button onClick={onStartGame}>Start Game</button>}
+      <SectionHeader>About to Play: {game.displayName}</SectionHeader>
+      <Content>
+        <Players>
+          <h1>{you.name}</h1>
+          {values(others).map(player => <h1 key={player.id}>{player.name}</h1>)}
+          {!!playersNeeded && (
+            <SecondaryText>
+              {`Waiting for ${playersNeeded} more ${pluralize(
+                "player",
+                playersNeeded
+              )}`}&hellip;
+            </SecondaryText>
+          )}
+        </Players>
+        <Button onClick={onStartGame} disabled={playersNeeded > 0}>
+          Start Game
+        </Button>
+      </Content>
     </Fragment>
   );
 };

@@ -110,6 +110,7 @@ class AppContainer extends Component {
   };
 
   updateRoomState = ({
+    game,
     game_state,
     minimum_players,
     players: rawPlayers
@@ -122,6 +123,7 @@ class AppContainer extends Component {
 
     this.setState({
       roomJoined: true,
+      gameId: game,
       you: players[yourId],
       others: omit(players, [yourId]),
       playersNeeded,
