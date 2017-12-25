@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import createHistory from "history/createBrowserHistory";
-import mapValues from "lodash/mapValues";
 import mapKeys from "lodash/mapKeys";
 import camelCase from "lodash/camelCase";
-import omit from "lodash/omit";
 import pick from "lodash/pick";
 import values from "lodash/values";
 import { POST, getChannel } from "../utils/api";
@@ -113,21 +111,22 @@ class AppContainer extends Component {
     game,
     game_state,
     minimum_players,
-    players: rawPlayers
+    you: youRaw,
+    others: othersRaw
   }) => {
-    const { yourId } = this.state;
-    const players = mapValues(rawPlayers, player =>
+    const you = mapKeys(youRaw, (value, key) => camelCase(key));
+    const others = othersRaw.map(player =>
       mapKeys(player, (value, key) => camelCase(key))
     );
-    const playersNeeded = Math.max(minimum_players - values(players).length, 0);
+    const playersNeeded = Math.max(minimum_players - others.length - 1, 0);
 
     this.setState({
       roomJoined: true,
       gameId: game,
-      you: players[yourId],
-      others: omit(players, [yourId]),
-      playersNeeded,
-      gameState: game_state
+      gameState: game_state,
+      you,
+      others,
+      playersNeeded
     });
   };
 

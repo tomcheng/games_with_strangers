@@ -20,7 +20,7 @@ defmodule GWS.RoomTest do
   end
 
   test "starts game", %{room: room} do
-    {:ok, %{game_state: game_state, players: players}} =
+    {:ok, %{game_state: game_state}} =
       room
       |> GWS.Room.set_game("you_bet")
       |> GWS.Room.add_player("player-id-1", "Harold", 1)
@@ -29,11 +29,17 @@ defmodule GWS.RoomTest do
       |> GWS.Room.start_game
       |> GWS.Room.get_state(1)
 
-    assert game_state == players |> YouBet.initial_state |> YouBet.sanitize_state("player-id-1")
+    assert game_state == %{
+      "player-id-1" => %{id: "player-id-1", name: "Harold"},
+      "player-id-2" => %{id: "player-id-2", name: "Bob"},
+      "player-id-3" => %{id: "player-id-3", name: "Andy"}
+    }
+    |> YouBet.initial_state
+    |> YouBet.sanitize_state("player-id-1")
   end
 
   test "makes play", %{room: room} do
-    {:ok, %{game_state: game_state, players: players}} =
+    {:ok, %{game_state: game_state}} =
       room
       |> GWS.Room.set_game("you_bet")
       |> GWS.Room.add_player("player-id-1", "Harold", 1)
@@ -43,16 +49,21 @@ defmodule GWS.RoomTest do
       |> GWS.Room.make_play("player-id-1", "guess", "20")
       |> GWS.Room.get_state(1)
 
-    assert game_state == players
-      |> YouBet.initial_state
-      |> YouBet.play("player-id-1", "guess", "20")
-      |> YouBet.sanitize_state("player-id-1")
+    assert game_state == %{
+      "player-id-1" => %{id: "player-id-1", name: "Harold"},
+      "player-id-2" => %{id: "player-id-2", name: "Bob"},
+      "player-id-3" => %{id: "player-id-3", name: "Andy"}
+    }
+    |> YouBet.initial_state
+    |> YouBet.play("player-id-1", "guess", "20")
+    |> YouBet.sanitize_state("player-id-1")
   end
 
   test "adds players", %{room: room} do
     {:ok, state} = GWS.Room.get_state(room)
 
-    assert state[:players] == %{}
+    assert state[:you] == nil
+    assert state[:others] == []
 
     {:ok, state} =
       room
@@ -60,10 +71,8 @@ defmodule GWS.RoomTest do
       |> GWS.Room.add_player("player-id-2", "Bob", 2)
       |> GWS.Room.get_state(1)
 
-    assert state[:players] == %{
-      "player-id-1" => %{id: "player-id-1", name: "Harold", is_moderator: true},
-      "player-id-2" => %{id: "player-id-2", name: "Bob", is_moderator: false}
-    }
+    assert state[:you] == %{id: "player-id-1", name: "Harold", is_moderator: true}
+    assert state[:others] == [%{id: "player-id-2", name: "Bob", is_moderator: false}]
   end
 
   test "does not duplicate existing player", %{room: room} do
@@ -71,11 +80,10 @@ defmodule GWS.RoomTest do
       room
       |> GWS.Room.add_player("player-id-1", "Harold", 1)
       |> GWS.Room.add_player("player-id-1", "Harold", 1)
-      |> GWS.Room.get_state
+      |> GWS.Room.get_state(1)
 
-    assert state[:players] == %{
-      "player-id-1" => %{id: "player-id-1", name: "Harold", is_moderator: true}
-    }
+    assert state[:you] == %{id: "player-id-1", name: "Harold", is_moderator: true}
+    assert state[:others] == []
   end
 
   test "removes a player", %{room: room} do
@@ -85,7 +93,8 @@ defmodule GWS.RoomTest do
       |> GWS.Room.remove_player_by_channel(1)
       |> GWS.Room.get_state
 
-    assert state[:players] == %{}
+    assert state[:you] == nil
+    assert state[:others] == []
   end
 
   test "reassigns moderator when moderator leaves", %{room: room} do
@@ -96,9 +105,7 @@ defmodule GWS.RoomTest do
       |> GWS.Room.remove_player_by_channel(1)
       |> GWS.Room.get_state
 
-    assert state[:players] == %{
-      "player-id-2" => %{id: "player-id-2", name: "Bob", is_moderator: true}
-    }
+    assert state[:others] == [%{id: "player-id-2", name: "Bob", is_moderator: true}]
   end
 
   test "removes a room", %{room: room} do

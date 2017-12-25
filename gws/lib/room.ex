@@ -64,8 +64,9 @@ defmodule GWS.Room do
       player_id = get_player_id_from_channel(state, channel)
 
       state
-      |> normalize_players
       |> sanitize_game_state(player_id)
+      |> normalize_players
+      |> split_players_between_you_and_others(player_id)
       |> Map.drop([:moderator])
     end)}
   end
@@ -88,6 +89,13 @@ defmodule GWS.Room do
       end)
       |> Enum.into(%{})
     Map.put(state, :players, new_players)
+  end
+
+  defp split_players_between_you_and_others(%{players: players} = state, player_id) do
+    state
+    |> Map.put(:you, players |> Enum.find({nil, nil}, fn {id, _} -> id == player_id end) |> elem(1))
+    |> Map.put(:others, players |> Enum.reject(fn {id, _} -> id == player_id end) |> Enum.map(&elem(&1, 1)))
+    |> Map.drop([:players])
   end
 
   defp sanitize_game_state(%{game_state: game_state, game: game} = state, player_id) do

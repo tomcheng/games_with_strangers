@@ -28,14 +28,14 @@ defmodule GamesWithStrangers.RoomChannel do
   def terminate(_reason, %{topic: "room:" <> room_code, channel_pid: channel} = socket) do
     {:ok, room} = GWS.get_room(room_code)
 
-    {:ok, room_state} =
+    {:ok, %{others: others, you: you}} =
       room
       |> GWS.Room.remove_player_by_channel(channel)
       |> GWS.Room.get_state(channel)
 
     broadcast(socket, "new_state", %{room: room})
 
-    if Enum.count(room_state[:players]) == 0 do
+    if Enum.count(others) == 0 && is_nil(you) do
       GWS.Room.destroy_room(room)
     end
   end

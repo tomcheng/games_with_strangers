@@ -1,7 +1,6 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import values from "lodash/values";
 import find from "lodash/find";
 import { pluralize } from "../utils/strings";
 import gamesList from "../gamesList";
@@ -42,7 +41,7 @@ const Room = ({
       <Content>
         <Players>
           <h1>{you.name}</h1>
-          {values(others).map(player => <h1 key={player.id}>{player.name}</h1>)}
+          {others.map(player => <h1 key={player.id}>{player.name}</h1>)}
           {!!playersNeeded && (
             <SecondaryText>
               {`Waiting for ${playersNeeded} more ${pluralize(
@@ -62,7 +61,7 @@ const Room = ({
 
 Room.propTypes = {
   gameId: PropTypes.oneOf(gamesList.map(g => g.id)).isRequired,
-  others: PropTypes.objectOf(
+  others: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired
     })
