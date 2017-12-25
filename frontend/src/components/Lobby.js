@@ -80,6 +80,10 @@ class Lobby extends Component {
   };
 
   handleChange = ({ target }) => {
+    this.setState({ [target.name]: target.value });
+  };
+
+  handleChangeCode = ({ target }) => {
     this.setState({ [target.name]: target.value.trim().toUpperCase() });
   };
 
@@ -118,7 +122,7 @@ class Lobby extends Component {
               placeholder="Game Code"
               name="roomCode"
               value={roomCode}
-              onChange={this.handleChange}
+              onChange={this.handleChangeCode}
             />
             <JoinButton>Join Game</JoinButton>
           </JoinGameForm>
