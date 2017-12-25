@@ -34,15 +34,20 @@ const Error = styled.div`
 class Lobby extends Component {
   static propTypes = {
     onCreateRoom: PropTypes.func.isRequired,
-    onJoinRoom: PropTypes.func.isRequired
+    onJoinRoom: PropTypes.func.isRequired,
+    previousRoomCode: PropTypes.string
   };
 
-  state = {
-    playerName: getPlayerName() || "",
-    roomCode: "",
-    nameError: null,
-    roomCodeError: null
-  };
+  constructor(props) {
+    super();
+
+    this.state = {
+      playerName: getPlayerName() || "",
+      roomCode: props.previousRoomCode || "",
+      nameError: null,
+      roomCodeError: null
+    };
+  }
 
   handleSubmitJoin = evt => {
     evt.preventDefault();

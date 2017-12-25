@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import createHistory from "history/createBrowserHistory"
+import createHistory from "history/createBrowserHistory";
 import mapValues from "lodash/mapValues";
 import mapKeys from "lodash/mapKeys";
 import camelCase from "lodash/camelCase";
@@ -28,6 +28,10 @@ class AppContainer extends Component {
     this.history = createHistory();
     this.history.listen(({ search }) => {
       if (search === "") {
+        const { others, roomCode } = this.state;
+        this.setState({
+          previousRoomCode: values(others).length > 0 ? roomCode : null
+        });
         this.handleLeaveRoom();
       }
     });
@@ -71,11 +75,9 @@ class AppContainer extends Component {
   };
 
   handleLeaveRoom = () => {
-    this.channel
-      .leave()
-      .receive("ok", () => {
-        this.setState(INITIAL_STATE);
-      });
+    this.channel.leave().receive("ok", () => {
+      this.setState(INITIAL_STATE);
+    });
   };
 
   updateRoomState = ({
@@ -104,6 +106,7 @@ class AppContainer extends Component {
     return (
       <App
         {...pick(this.state, [
+          "previousRoomCode",
           "roomReady",
           "roomCode",
           "you",

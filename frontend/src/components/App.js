@@ -17,6 +17,7 @@ const Content = styled.div`
 `;
 
 const App = ({
+  previousRoomCode,
   roomReady,
   roomCode,
   you,
@@ -44,7 +45,11 @@ const App = ({
           onPlay={onPlay}
         />
       ) : (
-        <Lobby onCreateRoom={onCreateRoom} onJoinRoom={onJoinRoom} />
+        <Lobby
+          previousRoomCode={previousRoomCode}
+          onCreateRoom={onCreateRoom}
+          onJoinRoom={onJoinRoom}
+        />
       )}
     </Content>
   </Container>
