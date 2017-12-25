@@ -45,7 +45,7 @@ class GuessForm extends Component {
           value={guess}
           onChange={this.handleChange}
         />
-        <Button>Make Guess</Button>
+        <Button>Submit Answer</Button>
       </StyledForm>
     );
   }

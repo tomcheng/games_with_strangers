@@ -1,19 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 import GuessForm from "./GuessForm";
+import Guessed from "./Guessed";
 
 const Guesses = ({ yourGuess, onSubmitGuess, others }) =>
   yourGuess === null ? (
     <GuessForm onSubmitGuess={onSubmitGuess} />
   ) : (
-    <div>
-      <div>You Guessed: {yourGuess}</div>
-      Waiting on:{" "}
-      {others
-        .filter(p => !p.guessed)
-        .map(p => p.name)
-        .join(", ")}
-    </div>
+    <Guessed yourGuess={yourGuess} others={others} />
   );
 
 Guesses.propTypes = {
