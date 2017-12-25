@@ -52,14 +52,20 @@ class AppContainer extends Component {
     this.history.listen(this.handleLocationChange);
   }
 
-  handleLocationChange = ({ search }) => {
-    if (search === "") {
-      const { others, roomCode } = this.state;
-      this.setState({
-        previousRoomCode: values(others).length > 0 ? roomCode : null
-      });
-      this.handleLeaveRoom();
+  handleLocationChange = location => {
+    const newRoomCode = getRoomCodeFromLocation(location);
+
+    if (newRoomCode) {
+      return;
     }
+
+    const { others, roomCode } = this.state;
+
+    this.setState({
+      previousRoomCode: values(others).length > 0 ? roomCode : null
+    });
+
+    this.handleLeaveRoom();
   };
 
   handleCreateRoom = ({ playerName, game }) => {
