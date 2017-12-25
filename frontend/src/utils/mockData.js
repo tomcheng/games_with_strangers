@@ -6,18 +6,15 @@ export const FAKE_STATE = {
     id: "1",
     name: "Foo"
   },
-  others: {
-    2: { id: "2", name: "Bar" },
-    3: { id: "3", name: "Baz" }
-  },
+  others: [{ id: "2", name: "Bar" }, { id: "3", name: "Baz" }],
   gameId: "you_bet",
   playersNeeded: 3,
   gameState: {
-    players: {
-      "1": { guessed: false },
-      "2": { guessed: false },
-      "3": { guessed: false }
-    },
+    you: { id: "1", name: "Foo", guessed: true },
+    others: [
+      { id: "2", name: "Bar", guessed: false },
+      { id: "3", name: "Baz", guessed: false }
+    ],
     question: "How many roads must a man walk down?",
     round: 1,
     stage: "guessing"
