@@ -10,6 +10,16 @@ import { POST, getChannel } from "../utils/api";
 import { setPlayerId, getPlayerId } from "../utils/localStorage";
 import App from "./App";
 
+const getRoomCodeFromLocation = ({ search }) => {
+  const match = search.match(/[?&]c=([A-Z]{4})/);
+
+  if (!match) {
+    return null;
+  }
+
+  return match[1];
+};
+
 const INITIAL_STATE = {
   roomCode: null,
   roomReady: false,
@@ -25,21 +35,32 @@ class AppContainer extends Component {
   constructor() {
     super();
 
-    this.history = createHistory();
-    this.history.listen(({ search }) => {
-      if (search === "") {
-        const { others, roomCode } = this.state;
-        this.setState({
-          previousRoomCode: values(others).length > 0 ? roomCode : null
-        });
-        this.handleLeaveRoom();
-      }
-    });
-
     this.channel = null;
 
-    this.state = INITIAL_STATE;
+    this.history = createHistory();
+    const codeFromLocation = getRoomCodeFromLocation(this.history.location);
+
+    this.state = {
+      ...INITIAL_STATE,
+      previousRoomCode: codeFromLocation
+    };
+
+    if (codeFromLocation) {
+      this.history.replace("/");
+    }
+
+    this.history.listen(this.handleLocationChange);
   }
+
+  handleLocationChange = ({ search }) => {
+    if (search === "") {
+      const { others, roomCode } = this.state;
+      this.setState({
+        previousRoomCode: values(others).length > 0 ? roomCode : null
+      });
+      this.handleLeaveRoom();
+    }
+  };
 
   handleCreateRoom = ({ playerName, game }) => {
     POST("/rooms", { game }).then(({ room_code }) => {
@@ -75,6 +96,10 @@ class AppContainer extends Component {
   };
 
   handleLeaveRoom = () => {
+    if (!this.channel) {
+      return;
+    }
+
     this.channel.leave().receive("ok", () => {
       this.setState(INITIAL_STATE);
     });
