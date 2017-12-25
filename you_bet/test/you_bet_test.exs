@@ -25,7 +25,7 @@ defmodule YouBetTest do
       round: 1,
       stage: :guessing,
       question: "how much?",
-      you: %{id: "1", name: "foo", score: 200, guessed: false},
+      you: %{id: "1", name: "foo", score: 200, guess: nil},
       others: [
         %{id: "2", name: "bar", score: 200, guessed: false},
         %{id: "3", name: "baz", score: 200, guessed: false}
@@ -44,7 +44,7 @@ defmodule YouBetTest do
       round: 1,
       stage: :guessing,
       question: "how much?",
-      you: %{id: "1", name: "foo", score: 200, guessed: false},
+      you: %{id: "1", name: "foo", score: 200, guess: nil},
       others: [
         %{id: "2", name: "bar", score: 200, guessed: false},
         %{id: "3", name: "baz", score: 200, guessed: false}
@@ -63,7 +63,7 @@ defmodule YouBetTest do
       round: 1,
       stage: :guessing,
       question: "how much?",
-      you: %{id: "1", name: "foo", score: 200, guessed: true},
+      you: %{id: "1", name: "foo", score: 200, guess: 20},
       others: [
         %{id: "2", name: "bar", score: 200, guessed: false},
         %{id: "3", name: "baz", score: 200, guessed: false}

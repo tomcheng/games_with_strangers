@@ -10,7 +10,7 @@ export const FAKE_STATE = {
   gameId: "you_bet",
   playersNeeded: 3,
   gameState: {
-    you: { id: "1", name: "Foo", guessed: true },
+    you: { id: "1", name: "Foo", guess: 500 },
     others: [
       { id: "2", name: "Bar", guessed: false },
       { id: "3", name: "Baz", guessed: false }

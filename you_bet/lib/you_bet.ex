@@ -18,14 +18,20 @@ defmodule YouBet do
     state
     |> add_guesses_if_betting
     |> split_between_you_and_others(player_id)
-    |> update_you_and_others(fn %{guess: guess} = player ->
+    |> update_you(fn player ->
+      if stage == :guessing do
+        Map.drop(player, [:bet])
+      else
+        Map.drop(player, [:guess])
+      end
+    end)
+    |> update_others(fn %{guess: guess} = player ->
       if stage == :guessing do
         player
         |> Map.put(:guessed, !is_nil(guess))
         |> Map.drop([:guess, :bet])
       else
-        player
-        |> Map.drop([:guess])
+        Map.drop(player, [:guess])
       end
     end)
   end
@@ -94,11 +100,14 @@ defmodule YouBet do
     end)
   end
 
-  defp update_you_and_others(state, transformation) do
+  defp update_you(state, transformation) do
     new_you = if state[:you], do: transformation.(state[:you]), else: nil
 
+    Map.put(state, :you, new_you)
+  end
+
+  defp update_others(state, transformation) do
     state
-    |> Map.put(:you, new_you)
     |> Map.update!(:others, fn players ->
       Enum.map(players, &transformation.(&1))
     end)

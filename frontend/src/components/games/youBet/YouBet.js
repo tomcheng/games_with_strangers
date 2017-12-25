@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import SectionHeader from "../../common/SectionHeader";
-import GuessForm from "./GuessForm";
+import Guesses from "./Guesses";
 import Bets from "./Bets";
 
 const Question = styled.h1`
@@ -12,28 +12,19 @@ const Question = styled.h1`
 
 const YouBet = ({ gameState, onPlay }) => {
   const { round, stage, question, you, others, guesses } = gameState;
-  const youGuessed = you.guessed;
 
   return (
     <div>
       <SectionHeader>Round {round}</SectionHeader>
       <Question>{question}</Question>
-      {stage === "guessing" &&
-        !youGuessed && (
-          <GuessForm
-            onSubmitGuess={({ guess }) => {
-              onPlay({ type: "guess", payload: guess });
-            }}
-          />
-        )}
-      {youGuessed && (
-        <div>
-          Waiting on:{" "}
-          {others
-            .filter(p => !p.guessed)
-            .map(p => p.name)
-            .join(", ")}
-        </div>
+      {stage === "guessing" && (
+        <Guesses
+          yourGuess={you.guess}
+          onSubmitGuess={({ guess }) => {
+            onPlay({ type: "guess", payload: guess });
+          }}
+          others={others}
+        />
       )}
       {stage === "betting" && (
         <Bets
@@ -56,7 +47,7 @@ YouBet.propTypes = {
     you: PropTypes.shape({
       id: PropTypes.string.isRequired,
       bet: PropTypes.number,
-      guessed: PropTypes.bool
+      guess: PropTypes.number
     }),
     others: PropTypes.arrayOf(
       PropTypes.shape({
