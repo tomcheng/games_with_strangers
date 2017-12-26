@@ -1,20 +1,20 @@
 import React from "react";
 import PropTypes from "prop-types";
+import Answer from "./Answer";
 
 const Bets = ({ guesses, onBet }) => {
   return (
     <div>
       {guesses.map(({ guess, odds, players }) => (
-        <div key={guess}>
-          Guess: {guess}, odds: {odds}, players: {players.join(", ")}
-          <button
-            onClick={() => {
-              onBet({ firstBet: { guess, wager: 100 } });
-            }}
-          >
-            Bet on this
-          </button>
-        </div>
+        <Answer
+          key={guess}
+          guess={guess}
+          odds={odds}
+          players={players}
+          onBet={() => {
+            onBet({ firstBet: { guess, wager: 100 } });
+          }}
+        />
       ))}
     </div>
   );

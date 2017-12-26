@@ -33,17 +33,21 @@ export const BETTING_STATE = {
   gameId: "you_bet",
   playersNeeded: 3,
   gameState: {
-    you: { id: "1", name: "Foo", bet: null },
+    you: { id: "1", name: "Alan Rickman", bet: null },
     others: [
-      { id: "2", name: "Bar", bet: null },
-      { id: "3", name: "Baz", bet: null }
+      { id: "2", name: "Billy Bob Thornton", bet: null },
+      { id: "3", name: "Charlize Theron", bet: null },
+      { id: "4", name: "Doug Stanton", bet: null },
+      { id: "5", name: "Ernie Banks", bet: null }
     ],
-    question: "How many roads must a man walk down?",
+    question: "What percentage of US house holds own a dog?",
     round: 1,
     stage: "betting",
     guesses: [
-      { guess: 3, odds: 3, players: ["Foo", "Bar"]},
-      { guess: 5, odds: 3, players: ["Baz"]}
+      { guess: 15, odds: 4, players: ["Alan Rickman", "Billy Bob Thornton"]},
+      { guess: 20, odds: 3, players: ["Charlize Theron"]},
+      { guess: 25, odds: 3, players: ["Ernie Banks"]},
+      { guess: 40, odds: 4, players: ["Doug Stanton"]},
     ]
   }
 };
