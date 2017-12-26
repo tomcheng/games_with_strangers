@@ -97,6 +97,8 @@ class Lobby extends Component {
       return;
     }
 
+    setPlayerName(playerName);
+
     onCreateRoom({ playerName, gameId });
   };
 
