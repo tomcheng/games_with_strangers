@@ -1,6 +1,21 @@
 import React from "react";
 import PropTypes from "prop-types";
+import styled from "styled-components";
 import Answer from "./Answer";
+import Chip from "./Chip";
+
+const ChipContainer = styled.div`
+  display: flex;
+  position: fixed;
+  z-index: 1;
+  bottom: -24px;
+  right: 8px;
+  padding: 0;
+`;
+
+const ChipWrapper = styled.div`
+  margin-right: 8px;
+`;
 
 const Bets = ({ guesses, onBet }) => {
   return (
@@ -16,6 +31,12 @@ const Bets = ({ guesses, onBet }) => {
           }}
         />
       ))}
+      <ChipContainer>
+        <ChipWrapper>
+          <Chip />
+        </ChipWrapper>
+        <Chip />
+      </ChipContainer>
     </div>
   );
 };
