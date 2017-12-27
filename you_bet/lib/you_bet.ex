@@ -45,6 +45,17 @@ defmodule YouBet do
     state
     |> update_player(player_id, &Map.put(&1, :bet, payload))
   end
+  def play(state, player_id, "finalize_bets", %{
+    "bet1" => %{"guess" => guess1, "wager" => wager1},
+    "bet2" => %{"guess" => guess2, "wager" => wager2}
+  }) do
+    state
+    |> update_player(player_id, fn player ->
+      player
+      |> Map.put(:bets, [%{guess: guess1, wager: wager1}, %{guess: guess2, wager: wager2}])
+      |> Map.put(:bets_finalized, true)
+    end)
+  end
   def play(state, _, _, _), do: state
   def play(state, _, _), do: state
 

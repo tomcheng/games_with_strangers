@@ -135,6 +135,35 @@ defmodule YouBetTest do
     assert state[:you] == %{id: "1", name: "foo", score: 200, bet: %{foo: "bar"}}
   end
 
+  test "handles finalizing bets", %{players: players} do
+    state =
+      players
+      |> YouBet.initial_state
+      |> YouBet.play("1", "guess", "30")
+      |> YouBet.play("2", "guess", "20")
+      |> YouBet.play("3", "guess", "10")
+      |> YouBet.play("1", "finalize_bets", %{
+        "bet1" => %{"guess" => 20, "wager" => 100},
+        "bet2" => %{"guess" => 30, "wager" => 100}
+      })
+
+    you =
+      state
+      |> YouBet.sanitize_state("1")
+      |> Map.get(:you)
+
+    others_view_of_you =
+      state
+      |> YouBet.sanitize_state("2")
+      |> Map.get(:others)
+      |> Enum.find(fn p -> p[:id] == "1" end)
+
+    assert you[:bets] == [%{guess: 20, wager: 100}, %{guess: 30, wager: 100}]
+    assert you[:bets_finalized] == true
+
+    assert others_view_of_you[:bets_finalized] == true
+  end
+
   test "handles missing player", %{players: players} do
     state =
       players

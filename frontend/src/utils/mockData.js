@@ -33,7 +33,13 @@ export const BETTING_STATE = {
   gameId: "you_bet",
   playersNeeded: 3,
   gameState: {
-    you: { id: "1", name: "Alan Rickman", bet: null },
+    you: {
+      id: "1",
+      name: "Alan Rickman",
+      bet: null,
+      bets: [{ guess: 15, wager: 100 }, { guess: 20, wager: 100 }],
+      bets_finalized: true
+    },
     others: [
       { id: "2", name: "Billy Bob Thornton", bet: null },
       { id: "3", name: "Charlize Theron", bet: null },
@@ -44,10 +50,10 @@ export const BETTING_STATE = {
     round: 1,
     stage: "betting",
     guesses: [
-      { guess: 15, odds: 4, players: ["Alan Rickman", "Billy Bob Thornton"]},
-      { guess: 20, odds: 3, players: ["Charlize Theron"]},
-      { guess: 25, odds: 3, players: ["Ernie Banks"]},
-      { guess: 40, odds: 4, players: ["Doug Stanton"]},
+      { guess: 15, odds: 4, players: ["Alan Rickman", "Billy Bob Thornton"] },
+      { guess: 20, odds: 3, players: ["Charlize Theron"] },
+      { guess: 25, odds: 3, players: ["Ernie Banks"] },
+      { guess: 40, odds: 4, players: ["Doug Stanton"] }
     ]
   }
 };

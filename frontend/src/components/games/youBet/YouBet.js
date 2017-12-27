@@ -29,9 +29,12 @@ const YouBet = ({ gameState, onPlay }) => {
       {stage === "betting" && (
         <Bets
           guesses={guesses}
-          gameStatePlayers={[you].concat(others)}
+          you={you}
           onBet={payload => {
             onPlay({ type: "bet", payload });
+          }}
+          onFinalizeBets={payload => {
+            onPlay({ type: "finalize_bets", payload })
           }}
         />
       )}

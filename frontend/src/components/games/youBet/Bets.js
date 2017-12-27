@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import Button from "../../common/Button";
 import Answer from "./Answer";
 import DraggableChip from "./DraggableChip";
 import ChipDragLayer from "./ChipDragLayer";
@@ -28,10 +29,9 @@ const UnplayedDraggableChip2 = styled(DraggableChip)`
   right: 0;
 `;
 
-const PlayedDraggableChip = styled(DraggableChip)`
-  position: absolute;
-  top: 0;
-  left: 0;
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
 `;
 
 class Bets extends Component {
@@ -43,18 +43,44 @@ class Bets extends Component {
         odds: PropTypes.number
       })
     ),
-    onBet: PropTypes.func.isRequired
+    you: PropTypes.shape({
+      bets: PropTypes.arrayOf(
+        PropTypes.shape({
+          guess: PropTypes.number,
+          wager: PropTypes.number
+        })
+      )
+    }).isRequired,
+    onBet: PropTypes.func.isRequired,
+    onFinalizeBets: PropTypes.func.isRequired
   };
 
-  state = { chips: { 1: null, 2: null } };
+  constructor(props) {
+    super();
+
+    this.state = { chips: { 1: null, 2: null } };
+
+    const { bets } = props.you;
+
+    if (!bets) {
+      return;
+    }
+
+    this.state = {
+      chips: {
+        1: { guess: bets[0].guess, position: null },
+        2: { guess: bets[1].guess, position: null }
+      }
+    };
+  }
 
   containerEl = null;
+  answerEls = {};
 
   handleBet = ({ guess, position: fixedPosition, chipId }) => {
-    const {
-      x: containerX,
-      y: containerY
-    } = this.containerEl.getBoundingClientRect();
+    const { x: containerX, y: containerY } = this.answerEls[
+      guess
+    ].getBoundingClientRect();
     const position = {
       x: fixedPosition.x - containerX,
       y: fixedPosition.y - containerY
@@ -65,25 +91,34 @@ class Bets extends Component {
     });
   };
 
+  handleClickFinalize = () => {
+    const { onFinalizeBets } = this.props;
+    const { chips } = this.state;
+
+    onFinalizeBets({
+      bet1: { guess: chips[1].guess, wager: 100 },
+      bet2: { guess: chips[2].guess, wager: 100 }
+    });
+  };
+
+  getChipsForGuess = guess => {
+    const { 1: chip1, 2: chip2 } = this.state.chips;
+    const chips = [];
+
+    if (chip1 && chip1.guess === guess) {
+      chips.push({ id: 1, position: chip1.position });
+    }
+
+    if (chip2 && chip2.guess === guess) {
+      chips.push({ id: 2, position: chip2.position });
+    }
+
+    return chips;
+  };
+
   render() {
     const { guesses } = this.props;
     const { 1: chip1, 2: chip2 } = this.state.chips;
-
-    const chip1Played = !!chip1;
-    const chip1Transform = chip1Played
-      ? `translate(${chip1.position.x}px, ${chip1.position.y}px)`
-      : null;
-    const chip1Style = chip1Played
-      ? { transform: chip1Transform, WebkitTransform: chip1Transform }
-      : null;
-
-    const chip2Played = !!chip2;
-    const chip2Transform = chip2Played
-      ? `translate(${chip2.position.x}px, ${chip2.position.y}px)`
-      : null;
-    const chip2Style = chip2Played
-      ? { transform: chip2Transform, WebkitTransform: chip2Transform }
-      : null;
 
     return (
       <Container
@@ -94,19 +129,28 @@ class Bets extends Component {
         {guesses.map(({ guess, odds, players }) => (
           <Answer
             nothingSelected={!chip1 && !chip2}
-            selected={[chip1 && chip1.guess, chip2 && chip2.guess].includes(guess)}
+            chips={this.getChipsForGuess(guess)}
             key={guess}
             guess={guess}
             odds={odds}
             players={players}
             onBet={this.handleBet}
+            innerRef={el => {
+              this.answerEls[guess] = el;
+            }}
           />
         ))}
-        {chip1Played && <PlayedDraggableChip chipId={1} style={chip1Style} />}
-        {chip2Played && <PlayedDraggableChip chipId={2} style={chip2Style} />}
+        <ButtonContainer>
+          <Button
+            onClick={this.handleClickFinalize}
+            disabled={!chip1 || !chip2}
+          >
+            Finalize Bets
+          </Button>
+        </ButtonContainer>
         <UnplayedChips>
-          {!chip1Played && <UnplayedDraggableChip1 chipId={1} />}
-          {!chip2Played && <UnplayedDraggableChip2 chipId={2} />}
+          {!chip1 && <UnplayedDraggableChip1 chipId={1} />}
+          {!chip2 && <UnplayedDraggableChip2 chipId={2} />}
         </UnplayedChips>
         <ChipDragLayer />
       </Container>

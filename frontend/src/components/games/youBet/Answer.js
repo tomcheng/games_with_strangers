@@ -4,13 +4,20 @@ import styled from "styled-components";
 import { DropTarget } from "react-dnd";
 import { makeList } from "../../../utils/strings";
 import SecondaryText from "../../common/SecondaryText";
+import DraggableChip from "./DraggableChip";
+
+const getTranslationStyle = ({ x, y }) => {
+  const transform = `translate(${x}px, ${y}px)`;
+  return { transform, WebkitTransform: transform };
+};
 
 const Container = styled.div`
   border: 2px solid #fff;
   border-radius: 6px;
   padding: 8px 12px;
   margin-bottom: 12px;
-  opacity: ${({ committed, considering }) => (committed ? "1" : considering ? "0.7" : "0.4")};
+  opacity: ${({ committed, considering }) =>
+    committed ? "1" : considering ? "0.7" : "0.4"};
   transition: opacity 0.15s ease-in-out;
 `;
 
@@ -29,17 +36,32 @@ const Number = styled.h1`
   text-align: center;
 `;
 
+const StyledChip = styled(DraggableChip)`
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
+
 class Answer extends Component {
   static propTypes = {
     canDrop: PropTypes.bool.isRequired,
+    chips: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        position: PropTypes.shape({
+          x: PropTypes.number.isRequired,
+          y: PropTypes.number.isRequired
+        })
+      })
+    ).isRequired,
     connectDropTarget: PropTypes.func.isRequired,
     guess: PropTypes.number.isRequired,
     isOver: PropTypes.bool.isRequired,
     nothingSelected: PropTypes.bool.isRequired,
     odds: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.string).isRequired,
-    selected: PropTypes.bool.isRequired,
-    onBet: PropTypes.func.isRequired
+    onBet: PropTypes.func.isRequired,
+    innerRef: PropTypes.func
   };
 
   render() {
@@ -49,18 +71,31 @@ class Answer extends Component {
       players,
       connectDropTarget,
       nothingSelected,
-      selected,
       isOver,
-      canDrop
+      canDrop,
+      chips,
+      innerRef
     } = this.props;
+    const selected = chips.length > 0;
 
     return connectDropTarget(
-      <div>
-        <Container key={guess} committed={selected || !canDrop && nothingSelected} considering={canDrop && isOver}>
+      <div ref={innerRef} style={{ position: "relative" }}>
+        <Container
+          key={guess}
+          committed={selected || (!canDrop && nothingSelected)}
+          considering={canDrop && isOver}
+        >
           <Odds>Pays {odds} to 1</Odds>
           <Number>{guess}</Number>
           <SecondaryText>{makeList(players)}</SecondaryText>
         </Container>
+        {chips.map(({ id, position }) => (
+          <StyledChip
+            key={id}
+            chipId={id}
+            style={position ? getTranslationStyle(position) : null}
+          />
+        ))}
       </div>
     );
   }
