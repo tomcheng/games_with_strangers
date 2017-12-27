@@ -6,12 +6,11 @@ import { makeList } from "../../../utils/strings";
 import SecondaryText from "../../common/SecondaryText";
 
 const Container = styled.div`
-  border: 2px solid
-    ${({ faded }) => (faded ? "rgba(255,255,255,0.5)" : "#fff")};
+  border: 2px solid #fff;
   border-radius: 6px;
   padding: 8px 12px;
   margin-bottom: 12px;
-  opacity: ${({ faded }) => (faded ? "0.8" : "1")};
+  opacity: ${({ committed, considering }) => (committed ? "1" : considering ? "0.7" : "0.5")};
   transition: opacity 0.15s ease-in-out;
 `;
 
@@ -38,15 +37,24 @@ class Answer extends Component {
     isOver: PropTypes.bool.isRequired,
     odds: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.string).isRequired,
+    selected: PropTypes.bool.isRequired,
     onBet: PropTypes.func.isRequired
   };
 
   render() {
-    const { guess, odds, players, connectDropTarget, isOver, canDrop } = this.props;
+    const {
+      guess,
+      odds,
+      players,
+      connectDropTarget,
+      selected,
+      isOver,
+      canDrop
+    } = this.props;
 
     return connectDropTarget(
       <div>
-        <Container key={guess} faded={canDrop && !isOver}>
+        <Container key={guess} committed={selected} considering={canDrop && isOver}>
           <Odds>Pays {odds} to 1</Odds>
           <Number>{guess}</Number>
           <SecondaryText>{makeList(players)}</SecondaryText>

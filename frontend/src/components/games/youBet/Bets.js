@@ -19,7 +19,7 @@ const UnplayedChips = styled.div`
 const UnplayedDraggableChip1 = styled(DraggableChip)`
   position: absolute;
   bottom: 84px;
-  right: 0;  
+  right: 0;
 `;
 
 const UnplayedDraggableChip2 = styled(DraggableChip)`
@@ -93,6 +93,7 @@ class Bets extends Component {
       >
         {guesses.map(({ guess, odds, players }) => (
           <Answer
+            selected={[chip1 && chip1.guess, chip2 && chip2.guess].includes(guess)}
             key={guess}
             guess={guess}
             odds={odds}
