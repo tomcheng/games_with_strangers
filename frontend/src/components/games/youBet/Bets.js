@@ -10,16 +10,22 @@ const Container = styled.div`
 `;
 
 const UnplayedChips = styled.div`
-  display: flex;
   position: fixed;
   z-index: 1;
-  bottom: -24px;
-  right: 0;
-  padding: 0;
+  bottom: 8px;
+  right: -16px;
 `;
 
-const UnplayedDraggableChip = styled(DraggableChip)`
-  margin-right: 8px;
+const UnplayedDraggableChip1 = styled(DraggableChip)`
+  position: absolute;
+  bottom: 84px;
+  right: 0;  
+`;
+
+const UnplayedDraggableChip2 = styled(DraggableChip)`
+  position: absolute;
+  bottom: 0;
+  right: 0;
 `;
 
 const PlayedDraggableChip = styled(DraggableChip)`
@@ -97,8 +103,8 @@ class Bets extends Component {
         {chip1Played && <PlayedDraggableChip chipId={1} style={chip1Style} />}
         {chip2Played && <PlayedDraggableChip chipId={2} style={chip2Style} />}
         <UnplayedChips>
-          {!chip1Played && <UnplayedDraggableChip chipId={1} />}
-          {!chip2Played && <UnplayedDraggableChip chipId={2} />}
+          {!chip1Played && <UnplayedDraggableChip1 chipId={1} />}
+          {!chip2Played && <UnplayedDraggableChip2 chipId={2} />}
         </UnplayedChips>
         <ChipDragLayer />
       </Container>

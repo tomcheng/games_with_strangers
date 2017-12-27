@@ -18,7 +18,6 @@ const COLORS = {
 
 const ChipBase = styled.div`
   position: relative;
-  display: inline-block;
   width: ${DIAMETER}px;
   height: ${DIAMETER}px;
   box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.5), 0 0 3px 0 rgba(0, 0, 0, 0.4) inset;
