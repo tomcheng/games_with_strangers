@@ -44,10 +44,8 @@ const Room = ({
           {others.map(player => <h1 key={player.id}>{player.name}</h1>)}
           {!!playersNeeded && (
             <SecondaryText>
-              {`Waiting for ${playersNeeded} more ${pluralize(
-                "player",
-                playersNeeded
-              )}`}&hellip;
+              Waiting for {playersNeeded} more{" "}
+              {pluralize("player", playersNeeded)}&hellip;
             </SecondaryText>
           )}
         </Players>

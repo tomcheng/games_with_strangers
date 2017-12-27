@@ -16,13 +16,32 @@ class DraggableChip extends Component {
   static propTypes = {
     chipId: PropTypes.number.isRequired,
     connectDragSource: PropTypes.func.isRequired,
+    isDraggable: PropTypes.bool.isRequired,
     isDragging: PropTypes.bool.isRequired,
     className: PropTypes.string,
     style: PropTypes.object
   };
 
+  static defaultProps = {
+    isDraggable: true
+  };
+
   render() {
-    const { connectDragSource, isDragging, className, style } = this.props;
+    const {
+      connectDragSource,
+      isDragging,
+      className,
+      style,
+      isDraggable
+    } = this.props;
+
+    if (!isDraggable) {
+      return (
+        <div className={className} style={style}>
+          <Chip />
+        </div>
+      );
+    }
 
     return connectDragSource(
       <div

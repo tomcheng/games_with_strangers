@@ -55,6 +55,7 @@ class Answer extends Component {
       })
     ).isRequired,
     connectDropTarget: PropTypes.func.isRequired,
+    finalized: PropTypes.bool.isRequired,
     guess: PropTypes.number.isRequired,
     isOver: PropTypes.bool.isRequired,
     nothingSelected: PropTypes.bool.isRequired,
@@ -66,6 +67,7 @@ class Answer extends Component {
 
   render() {
     const {
+      finalized,
       guess,
       odds,
       players,
@@ -94,6 +96,7 @@ class Answer extends Component {
             key={id}
             chipId={id}
             style={position ? getTranslationStyle(position) : null}
+            isDraggable={!finalized}
           />
         ))}
       </div>

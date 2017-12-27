@@ -2,24 +2,21 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { makeList } from "../../../utils/strings";
+import SecondaryText from "../../common/SecondaryText";
 
 const Container = styled.div`
   text-align: center;
 `;
 
-const Title = styled.h1`
-  margin-bottom: 24px;
-`;
-
 const Guessed = ({ yourGuess, others }) => (
   <Container>
-    <Title>You Answered: {yourGuess}</Title>
-    <div>
-      Waiting on{" "}
+    <h1>You Answered: {yourGuess}</h1>
+    <SecondaryText>
+      Waiting for{" "}
       {makeList(others
         .filter(p => !p.guessed)
-        .map(p => p.name))}
-    </div>
+        .map(p => p.name))}&hellip;
+    </SecondaryText>
   </Container>
 );
 

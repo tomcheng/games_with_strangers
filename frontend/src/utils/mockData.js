@@ -41,10 +41,10 @@ export const BETTING_STATE = {
       bets_finalized: true
     },
     others: [
-      { id: "2", name: "Billy Bob Thornton", bet: null },
-      { id: "3", name: "Charlize Theron", bet: null },
-      { id: "4", name: "Doug Stanton", bet: null },
-      { id: "5", name: "Ernie Banks", bet: null }
+      { id: "2", name: "Billy Bob Thornton", bet: null, bets_finalized: false },
+      { id: "3", name: "Charlize Theron", bet: null, bets_finalized: false },
+      { id: "4", name: "Doug Stanton", bet: null, bets_finalized: false },
+      { id: "5", name: "Ernie Banks", bet: null, bets_finalized: false }
     ],
     question: "What percentage of US house holds own a dog?",
     round: 1,

@@ -30,11 +30,12 @@ const YouBet = ({ gameState, onPlay }) => {
         <Bets
           guesses={guesses}
           you={you}
+          others={others}
           onBet={payload => {
             onPlay({ type: "bet", payload });
           }}
           onFinalizeBets={payload => {
-            onPlay({ type: "finalize_bets", payload })
+            onPlay({ type: "finalize_bets", payload });
           }}
         />
       )}

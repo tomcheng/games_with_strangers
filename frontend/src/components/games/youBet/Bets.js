@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import { makeList } from "../../../utils/strings";
 import Button from "../../common/Button";
+import SecondaryText from "../../common/SecondaryText";
 import Answer from "./Answer";
 import DraggableChip from "./DraggableChip";
 import ChipDragLayer from "./ChipDragLayer";
@@ -29,9 +31,11 @@ const UnplayedDraggableChip2 = styled(DraggableChip)`
   right: 0;
 `;
 
-const ButtonContainer = styled.div`
+const Footer = styled.div`
+  margin-top: 24px;
   display: flex;
   justify-content: center;
+  text-align: center;
 `;
 
 class Bets extends Component {
@@ -49,8 +53,15 @@ class Bets extends Component {
           guess: PropTypes.number,
           wager: PropTypes.number
         })
-      )
+      ),
+      bets_finalized: PropTypes.bool.isRequired
     }).isRequired,
+    others: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        bets_finalized: PropTypes.bool.isRequired
+      })
+    ).isRequired,
     onBet: PropTypes.func.isRequired,
     onFinalizeBets: PropTypes.func.isRequired
   };
@@ -117,8 +128,12 @@ class Bets extends Component {
   };
 
   render() {
-    const { guesses } = this.props;
+    const { guesses, others } = this.props;
+    const { bets_finalized: finalized } = this.props.you;
     const { 1: chip1, 2: chip2 } = this.state.chips;
+    const awaitingOn = others
+      .filter(other => !other.bets_finalized)
+      .map(other => other.name);
 
     return (
       <Container
@@ -128,6 +143,7 @@ class Bets extends Component {
       >
         {guesses.map(({ guess, odds, players }) => (
           <Answer
+            finalized={finalized}
             nothingSelected={!chip1 && !chip2}
             chips={this.getChipsForGuess(guess)}
             key={guess}
@@ -140,14 +156,21 @@ class Bets extends Component {
             }}
           />
         ))}
-        <ButtonContainer>
-          <Button
-            onClick={this.handleClickFinalize}
-            disabled={!chip1 || !chip2}
-          >
-            Finalize Bets
-          </Button>
-        </ButtonContainer>
+        <Footer>
+          {finalized ? (
+            <div>
+              <h1>Your Bets have been Submitted</h1>
+              <SecondaryText>Waiting for {makeList(awaitingOn)}&hellip;</SecondaryText>
+            </div>
+          ) : (
+            <Button
+              onClick={this.handleClickFinalize}
+              disabled={!chip1 || !chip2}
+            >
+              Finalize Bets
+            </Button>
+          )}
+        </Footer>
         <UnplayedChips>
           {!chip1 && <UnplayedDraggableChip1 chipId={1} />}
           {!chip2 && <UnplayedDraggableChip2 chipId={2} />}
