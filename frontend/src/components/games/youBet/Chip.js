@@ -1,15 +1,19 @@
-import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import keys from "lodash/keys"
 
-const DIAMETER = 100;
+const DIAMETER = 80;
 
 const COLORS = {
-  black: ["#fff", "#222", "#ebebeb", "#000"],
-  white: ["#fff", "#dddddd", "#EBEBEB", "#C1C1C1"],
-  red: ["#fff", "#800000", "#EBEBEB", "#6C0000"],
-  blue: ["#fff", "#000099", "#EBEBEB", "#00016C"],
-  green: ["#fff", "#008000", "#EBEBEB", "#016C00"],
+  black: ["#222", "#000"],
+  blue: ["#062b4c", "#051b34"],
+  purple: ["#794e9b", "#68438b"],
+  red: ["#800000", "#6C0000"],
+  green: ["#008000", "#016C00"],
+  white: ["#dddddd", "#C1C1C1"],
+  yellow: ["#f5bd00", "#d09800"],
+  orange: ["#f0803c", "#ce6732"],
+  turquoise: ["#1d9295", "#147f83"]
 };
 
 const ChipBase = styled.div`
@@ -57,8 +61,8 @@ const Chip = styled(ChipBase)`
       0deg,
       transparent 0,
       transparent ${DIAMETER / 151 * 67.5}px,
-      ${props => COLORS[props.color][0]} ${DIAMETER / 151 * 67.5}px,
-      ${props => COLORS[props.color][0]} ${DIAMETER / 151 * 83.5}px,
+      #fff ${DIAMETER / 151 * 67.5}px,
+      #fff ${DIAMETER / 151 * 83.5}px,
       transparent ${DIAMETER / 151 * 83.5}px,
       transparent ${DIAMETER}px
     ),
@@ -66,29 +70,29 @@ const Chip = styled(ChipBase)`
       60deg,
       transparent 0,
       transparent ${DIAMETER / 151 * 97.4304}px,
-      ${props => COLORS[props.color][0]} ${DIAMETER / 151 * 97.4304}px,
-      ${props => COLORS[props.color][0]} ${DIAMETER / 151 * 113.4304}px,
+      #fff ${DIAMETER / 151 * 97.4304}px,
+      #fff ${DIAMETER / 151 * 113.4304}px,
       transparent ${DIAMETER / 151 * 113.4304}px,
       transparent ${DIAMETER}px
     ),
     linear-gradient(
       120deg,
-      ${props => COLORS[props.color][1]} 0,
-      ${props => COLORS[props.color][1]} ${DIAMETER / 151 * 97.4304}px,
+      ${props => COLORS[props.color][0]} 0,
       ${props => COLORS[props.color][0]} ${DIAMETER / 151 * 97.4304}px,
+      #fff ${DIAMETER / 151 * 97.4304}px,
+      #fff ${DIAMETER / 151 * 113.4304}px,
       ${props => COLORS[props.color][0]} ${DIAMETER / 151 * 113.4304}px,
-      ${props => COLORS[props.color][1]} ${DIAMETER / 151 * 113.4304}px,
-      ${props => COLORS[props.color][1]} ${DIAMETER}px
+      ${props => COLORS[props.color][0]} ${DIAMETER}px
     );
 
   &:before {
-    border: ${DIAMETER / 151 * 8}px solid ${props => COLORS[props.color][1]};
+    border: ${DIAMETER / 151 * 8}px solid ${props => COLORS[props.color][0]};
     background-image: linear-gradient(
         0deg,
         transparent 0,
         transparent ${DIAMETER / 151 * 69.5}px,
-        ${props => COLORS[props.color][2]} ${DIAMETER / 151 * 69.5}px,
-        ${props => COLORS[props.color][2]} ${DIAMETER / 151 * 81.5}px,
+        #ebebeb ${DIAMETER / 151 * 69.5}px,
+        #ebebeb ${DIAMETER / 151 * 81.5}px,
         transparent ${DIAMETER / 151 * 81.5}px,
         transparent ${DIAMETER}px
       ),
@@ -96,8 +100,8 @@ const Chip = styled(ChipBase)`
         30deg,
         transparent 0,
         transparent ${DIAMETER / 151 * 98.7104}px,
-        ${props => COLORS[props.color][2]} ${DIAMETER / 151 * 98.7104}px,
-        ${props => COLORS[props.color][2]} ${DIAMETER / 151 * 110.7104}px,
+        #ebebeb ${DIAMETER / 151 * 98.7104}px,
+        #ebebeb ${DIAMETER / 151 * 110.7104}px,
         transparent ${DIAMETER / 151 * 110.7104}px,
         transparent ${DIAMETER}px
       ),
@@ -105,8 +109,8 @@ const Chip = styled(ChipBase)`
         60deg,
         transparent 0,
         transparent ${DIAMETER / 151 * 98.7104}px,
-        ${props => COLORS[props.color][2]} ${DIAMETER / 151 * 98.7104}px,
-        ${props => COLORS[props.color][2]} ${DIAMETER / 151 * 110.7104}px,
+        #ebebeb ${DIAMETER / 151 * 98.7104}px,
+        #ebebeb ${DIAMETER / 151 * 110.7104}px,
         transparent ${DIAMETER / 151 * 110.7104}px,
         transparent ${DIAMETER}px
       ),
@@ -114,8 +118,8 @@ const Chip = styled(ChipBase)`
         90deg,
         transparent 0,
         transparent ${DIAMETER / 151 * 69.5}px,
-        ${props => COLORS[props.color][2]} ${DIAMETER / 151 * 69.5}px,
-        ${props => COLORS[props.color][2]} ${DIAMETER / 151 * 81.5}px,
+        #ebebeb ${DIAMETER / 151 * 69.5}px,
+        #ebebeb ${DIAMETER / 151 * 81.5}px,
         transparent ${DIAMETER / 151 * 81.5}px,
         transparent ${DIAMETER}px
       ),
@@ -123,30 +127,30 @@ const Chip = styled(ChipBase)`
         120deg,
         transparent 0,
         transparent ${DIAMETER / 151 * 98.7104}px,
-        ${props => COLORS[props.color][2]} ${DIAMETER / 151 * 98.7104}px,
-        ${props => COLORS[props.color][2]} ${DIAMETER / 151 * 110.7104}px,
+        #ebebeb ${DIAMETER / 151 * 98.7104}px,
+        #ebebeb ${DIAMETER / 151 * 110.7104}px,
         transparent ${DIAMETER / 151 * 110.7104}px,
         transparent ${DIAMETER}px
       ),
       linear-gradient(
         150deg,
-        ${props => COLORS[props.color][3]} 0,
-        ${props => COLORS[props.color][3]} ${DIAMETER / 151 * 98.7104}px,
-        ${props => COLORS[props.color][2]} ${DIAMETER / 151 * 98.7104}px,
-        ${props => COLORS[props.color][2]} ${DIAMETER / 151 * 110.7104}px,
-        ${props => COLORS[props.color][3]} ${DIAMETER / 151 * 110.7104}px,
-        ${props => COLORS[props.color][3]} ${DIAMETER}px
+        ${props => COLORS[props.color][1]} 0,
+        ${props => COLORS[props.color][1]} ${DIAMETER / 151 * 98.7104}px,
+        #ebebeb ${DIAMETER / 151 * 98.7104}px,
+        #ebebeb ${DIAMETER / 151 * 110.7104}px,
+        ${props => COLORS[props.color][1]} ${DIAMETER / 151 * 110.7104}px,
+        ${props => COLORS[props.color][1]} ${DIAMETER}px
       );
   }
 
   &:after {
-    background: ${props => COLORS[props.color][1]};
-    color: ${props => COLORS[props.color][3]};
+    background: ${props => COLORS[props.color][0]};
+    color: ${props => COLORS[props.color][1]};
   }
 `;
 
 Chip.propTypes = {
-  color: PropTypes.oneOf(["black"]),
+  color: PropTypes.oneOf(keys(COLORS)),
   value: PropTypes.number,
 };
 
