@@ -93,6 +93,7 @@ class Bets extends Component {
       >
         {guesses.map(({ guess, odds, players }) => (
           <Answer
+            nothingSelected={!chip1 && !chip2}
             selected={[chip1 && chip1.guess, chip2 && chip2.guess].includes(guess)}
             key={guess}
             guess={guess}

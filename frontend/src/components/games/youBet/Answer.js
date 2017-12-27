@@ -10,7 +10,7 @@ const Container = styled.div`
   border-radius: 6px;
   padding: 8px 12px;
   margin-bottom: 12px;
-  opacity: ${({ committed, considering }) => (committed ? "1" : considering ? "0.7" : "0.5")};
+  opacity: ${({ committed, considering }) => (committed ? "1" : considering ? "0.7" : "0.4")};
   transition: opacity 0.15s ease-in-out;
 `;
 
@@ -35,6 +35,7 @@ class Answer extends Component {
     connectDropTarget: PropTypes.func.isRequired,
     guess: PropTypes.number.isRequired,
     isOver: PropTypes.bool.isRequired,
+    nothingSelected: PropTypes.bool.isRequired,
     odds: PropTypes.number.isRequired,
     players: PropTypes.arrayOf(PropTypes.string).isRequired,
     selected: PropTypes.bool.isRequired,
@@ -47,6 +48,7 @@ class Answer extends Component {
       odds,
       players,
       connectDropTarget,
+      nothingSelected,
       selected,
       isOver,
       canDrop
@@ -54,7 +56,7 @@ class Answer extends Component {
 
     return connectDropTarget(
       <div>
-        <Container key={guess} committed={selected} considering={canDrop && isOver}>
+        <Container key={guess} committed={selected || !canDrop && nothingSelected} considering={canDrop && isOver}>
           <Odds>Pays {odds} to 1</Odds>
           <Number>{guess}</Number>
           <SecondaryText>{makeList(players)}</SecondaryText>
