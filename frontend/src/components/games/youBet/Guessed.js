@@ -10,7 +10,7 @@ const Container = styled.div`
 
 const Guessed = ({ yourGuess, others }) => (
   <Container>
-    <h1>You Answered: {yourGuess}</h1>
+    <h3>You Answered: {yourGuess}</h3>
     <SecondaryText>
       Waiting for{" "}
       {makeList(others

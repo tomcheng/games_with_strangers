@@ -159,7 +159,7 @@ class BettingStage extends Component {
         <Footer>
           {finalized ? (
             <div>
-              <h1>Your Bets have been Submitted</h1>
+              <h3>Your Bets have been Submitted</h3>
               <SecondaryText>Waiting for {makeList(awaitingOn)}&hellip;</SecondaryText>
             </div>
           ) : (

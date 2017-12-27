@@ -22,6 +22,12 @@ h1 {
   line-height: 40px;
 }
 
+h3 {
+  font-size: 18px;
+  line-height: 24px;
+  margin-bottom: 6px;
+}
+
 p {
   margin: 0 0 16px;
 }
