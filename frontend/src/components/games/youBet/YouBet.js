@@ -2,8 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import SectionHeader from "../../common/SectionHeader";
-import Guesses from "./Guesses";
-import Bets from "./Bets";
+import GuessingStage from "./GuessingStage";
+import BettingStage from "./BettingStage";
 
 const Question = styled.h1`
   text-align: center;
@@ -18,7 +18,7 @@ const YouBet = ({ gameState, onPlay }) => {
       <SectionHeader>Round {round}</SectionHeader>
       <Question>{question}</Question>
       {stage === "guessing" && (
-        <Guesses
+        <GuessingStage
           yourGuess={you.guess}
           onSubmitGuess={({ guess }) => {
             onPlay({ type: "guess", payload: guess });
@@ -27,7 +27,7 @@ const YouBet = ({ gameState, onPlay }) => {
         />
       )}
       {stage === "betting" && (
-        <Bets
+        <BettingStage
           guesses={guesses}
           you={you}
           others={others}

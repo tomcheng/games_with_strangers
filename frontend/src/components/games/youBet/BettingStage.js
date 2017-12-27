@@ -38,7 +38,7 @@ const Footer = styled.div`
   text-align: center;
 `;
 
-class Bets extends Component {
+class BettingStage extends Component {
   static propTypes = {
     guesses: PropTypes.arrayOf(
       PropTypes.shape({
@@ -181,4 +181,4 @@ class Bets extends Component {
   }
 }
 
-export default Bets;
+export default BettingStage;
