@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { DragDropContext } from "react-dnd";
+import touchBackend from "react-dnd-touch-backend";
 import createHistory from "history/createBrowserHistory";
 import mapKeys from "lodash/mapKeys";
 import camelCase from "lodash/camelCase";
@@ -152,4 +154,6 @@ class AppContainer extends Component {
   }
 }
 
-export default AppContainer;
+export default DragDropContext(touchBackend({ enableMouseEvents: true }))(
+  AppContainer
+);
