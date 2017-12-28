@@ -2,10 +2,13 @@ defmodule YouBet do
   def minimum_players, do: 3
 
   def initial_state(players) do
+    {question, answer} = YouBet.Questions.random()
+
     %{
       round: 1,
       stage: :guessing,
-      question: "how much?",
+      question: question,
+      answer: answer,
       players: players
         |> Enum.map(fn {id, %{name: name}} ->
           {id, %{id: id, name: name, guess: nil, bet: nil, score: 200}}
@@ -34,6 +37,7 @@ defmodule YouBet do
         Map.drop(player, [:guess])
       end
     end)
+    |> Map.drop([:answer])
   end
 
   def play(state, player_id, "guess", payload) do
