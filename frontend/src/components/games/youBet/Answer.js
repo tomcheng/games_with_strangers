@@ -38,8 +38,7 @@ const Number = styled.h1`
 
 const StyledChip = styled(DraggableChip)`
   position: absolute;
-  top: 0;
-  left: 0;
+  z-index: 1;
 `;
 
 class Answer extends Component {
@@ -81,7 +80,15 @@ class Answer extends Component {
     const selected = chips.length > 0;
 
     return connectDropTarget(
-      <div ref={innerRef} style={{ position: "relative" }}>
+      <div ref={innerRef}>
+        {chips.map(({ id, position }) => (
+          <StyledChip
+            key={id}
+            chipId={id}
+            style={position ? getTranslationStyle(position) : null}
+            isDraggable={!finalized}
+          />
+        ))}
         <Container
           key={guess}
           committed={selected || (!canDrop && nothingSelected)}
@@ -91,14 +98,6 @@ class Answer extends Component {
           <Number>{guess}</Number>
           <SecondaryText>{makeList(players)}</SecondaryText>
         </Container>
-        {chips.map(({ id, position }) => (
-          <StyledChip
-            key={id}
-            chipId={id}
-            style={position ? getTranslationStyle(position) : null}
-            isDraggable={!finalized}
-          />
-        ))}
       </div>
     );
   }
