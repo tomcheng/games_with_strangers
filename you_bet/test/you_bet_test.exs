@@ -25,11 +25,11 @@ defmodule YouBetTest do
     assert state[:stage] == :guessing
     assert String.match?(state[:question], ~r/.*\?$/)
     assert state[:answer] == nil
-    assert state[:you] == %{id: "1", name: "foo", score: 200, guess: nil}
-    assert state[:others] == [
-      %{id: "2", name: "bar", score: 200, guessed: false},
-      %{id: "3", name: "baz", score: 200, guessed: false}
-    ]
+    assert state[:you] == %{id: "1", name: "foo"}
+    assert state[:your_guess] == nil
+    assert state[:others] == [%{id: "2", name: "bar"}, %{id: "3", name: "baz"}]
+    assert state[:awaiting_guess] == [%{id: "2", name: "bar"}, %{id: "3", name: "baz"}]
+    assert state[:scores] == %{"1" => 200, "2" => 200, "3" => 200}
   end
 
   test "makes an empty play", %{players: players} do
@@ -52,11 +52,10 @@ defmodule YouBetTest do
     your_state = YouBet.sanitize_state(state, "1")
     others_state = YouBet.sanitize_state(state, "2")
 
-    assert your_state[:you] == %{id: "1", name: "foo", score: 200, guess: 20}
-    assert others_state[:others] == [
-      %{id: "1", name: "foo", score: 200, guessed: true},
-      %{id: "3", name: "baz", score: 200, guessed: false}
-    ]
+    assert your_state[:your_guess] == 20
+    assert your_state[:awaiting_guess] == [%{id: "2", name: "bar"}, %{id: "3", name: "baz"}]
+    assert others_state[:your_guess] == nil
+    assert others_state[:awaiting_guess] == [%{id: "3", name: "baz"}]
   end
 
   test "sets stage to betting when all guesses are in", %{players: players} do
@@ -69,15 +68,12 @@ defmodule YouBetTest do
       |> YouBet.sanitize_state("1")
 
     assert state[:stage] == :betting
-    assert state[:you] == %{id: "1", name: "foo", score: 200, guess: 30}
-    assert state[:others] == [
-      %{id: "2", name: "bar", score: 200, guess: 20},
-      %{id: "3", name: "baz", score: 200, guess: 10}
-    ]
-    assert state[:guesses] == [
-      %{guess: 10, odds: 3, players: ["baz"]},
-      %{guess: 20, odds: 2, players: ["bar"]},
-      %{guess: 30, odds: 3, players: ["foo"]}
+    assert state[:your_guess] == nil
+    assert state[:your_bets] == nil
+    assert state[:bet_options] == [
+      %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}]},
+      %{guess: 20, odds: 2, players: [%{id: "2", name: "bar"}]},
+      %{guess: 30, odds: 3, players: [%{id: "1", name: "foo"}]}
     ]
   end
 
@@ -90,9 +86,9 @@ defmodule YouBetTest do
       |> YouBet.play("3", "guess", "10")
       |> YouBet.sanitize_state("1")
 
-    assert state[:guesses] == [
-      %{guess: 10, odds: 3, players: ["baz"]},
-      %{guess: 20, odds: 3, players: ["bar", "foo"]},
+    assert state[:bet_options] == [
+      %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}]},
+      %{guess: 20, odds: 3, players: [%{id: "2", name: "bar"}, %{id: "1", name: "foo"}]},
     ]
   end
 
@@ -112,20 +108,11 @@ defmodule YouBetTest do
 
     others_state = YouBet.sanitize_state(state, "2")
 
-    assert your_state[:you][:bets] == [%{guess: 20, wager: 100}, %{guess: 30, wager: 100}]
-    assert your_state[:you][:bets_finalized] == true
+    assert your_state[:your_bets] == [%{guess: 20, wager: 100}, %{guess: 30, wager: 100}]
+    assert your_state[:awaiting_bet] == [%{id: "2", name: "bar"}, %{id: "3", name: "baz"}]
 
-    assert others_state[:others] == [
-      %{
-        id: "1",
-        name: "foo",
-        guess: 30,
-        bets: [%{guess: 20, wager: 100}, %{guess: 30, wager: 100}],
-        bets_finalized: true,
-        score: 200
-      },
-      %{guess: 10, id: "3", name: "baz", score: 200}
-    ]
+    assert others_state[:your_bets] == nil
+    assert others_state[:awaiting_bet] == [%{id: "3", name: "baz"}]
   end
 
   test "shows answer when all bets are in", %{players: players} do
@@ -161,9 +148,9 @@ defmodule YouBetTest do
 
     assert state[:you] == nil
     assert state[:others] == [
-      %{id: "1", name: "foo", score: 200, guessed: false},
-      %{id: "2", name: "bar", score: 200, guessed: false},
-      %{id: "3", name: "baz", score: 200, guessed: false}
+      %{id: "1", name: "foo"},
+      %{id: "2", name: "bar"},
+      %{id: "3", name: "baz"}
     ]
   end
 end

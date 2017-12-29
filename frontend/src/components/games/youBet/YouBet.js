@@ -11,7 +11,16 @@ const Question = styled.h1`
 `;
 
 const YouBet = ({ gameState, onPlay }) => {
-  const { round, stage, question, you, others, guesses } = gameState;
+  const {
+    round,
+    question,
+    stage,
+    your_guess: yourGuess,
+    awaiting_guess: awaitingGuess,
+    bet_options: betOptions,
+    your_bets: yourBets,
+    awaiting_bet: awaitingBet
+  } = gameState;
 
   return (
     <div>
@@ -19,18 +28,18 @@ const YouBet = ({ gameState, onPlay }) => {
       <Question>{question}</Question>
       {stage === "guessing" && (
         <GuessingStage
-          yourGuess={you.guess}
+          yourGuess={yourGuess}
           onSubmitGuess={({ guess }) => {
             onPlay({ type: "guess", payload: guess });
           }}
-          others={others}
+          awaitingGuess={awaitingGuess}
         />
       )}
       {stage === "betting" && (
         <BettingStage
-          guesses={guesses}
-          you={you}
-          others={others}
+          betOptions={betOptions}
+          yourBets={yourBets}
+          awaitingBet={awaitingBet}
           onBet={payload => {
             onPlay({ type: "bet", payload });
           }}
@@ -46,27 +55,49 @@ const YouBet = ({ gameState, onPlay }) => {
 YouBet.propTypes = {
   gameState: PropTypes.shape({
     round: PropTypes.number.isRequired,
-    stage: PropTypes.oneOf(["guessing", "betting"]).isRequired,
+    stage: PropTypes.oneOf(["guessing", "betting", "reveal"]).isRequired,
     question: PropTypes.string.isRequired,
     you: PropTypes.shape({
       id: PropTypes.string.isRequired,
-      bet: PropTypes.number,
-      guess: PropTypes.number
+      name: PropTypes.string.isRequired
     }),
     others: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string.isRequired,
-        bet: PropTypes.number,
-        guessed: PropTypes.bool
+        name: PropTypes.string.isRequired
       })
     ).isRequired,
-    guesses: PropTypes.arrayOf(
+    your_guess: PropTypes.number,
+    awaiting_guess: PropTypes.arrayOf(
       PropTypes.shape({
-        guess: PropTypes.number,
-        players: PropTypes.arrayOf(PropTypes.string),
-        odds: PropTypes.number
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired
       })
-    )
+    ),
+    bet_options: PropTypes.arrayOf(
+      PropTypes.shape({
+        guess: PropTypes.number.isRequired,
+        odds: PropTypes.number.isRequired,
+        players: PropTypes.arrayOf(
+          PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired
+          })
+        ).isRequired
+      })
+    ),
+    your_bets: PropTypes.arrayOf(
+      PropTypes.shape({
+        guess: PropTypes.number.isRequired,
+        wager: PropTypes.number.isRequired
+      })
+    ),
+    awaiting_bet: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired
+      })
+    ),
   }).isRequired,
   onPlay: PropTypes.func.isRequired
 };

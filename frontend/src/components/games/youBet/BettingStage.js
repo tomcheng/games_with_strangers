@@ -40,28 +40,21 @@ const Footer = styled.div`
 
 class BettingStage extends Component {
   static propTypes = {
-    guesses: PropTypes.arrayOf(
+    awaitingBet: PropTypes.arrayOf(
       PropTypes.shape({
-        guess: PropTypes.number,
-        players: PropTypes.arrayOf(PropTypes.string),
-        odds: PropTypes.number
-      })
-    ),
-    you: PropTypes.shape({
-      bets: PropTypes.arrayOf(
-        PropTypes.shape({
-          guess: PropTypes.number,
-          wager: PropTypes.number
-        })
-      ),
-      bets_finalized: PropTypes.bool.isRequired
-    }).isRequired,
-    others: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        bets_finalized: PropTypes.bool.isRequired
+        name: PropTypes.string.isRequired
       })
     ).isRequired,
+    betOptions: PropTypes.arrayOf(
+      PropTypes.shape({
+        guess: PropTypes.number.isRequired,
+        odds: PropTypes.number.isRequired,
+        players: PropTypes.array.isRequired
+      })
+    ).isRequired,
+    yourBet: PropTypes.arrayOf(PropTypes.shape({
+      guess: PropTypes.number.isRequired
+    })),
     onBet: PropTypes.func.isRequired,
     onFinalizeBets: PropTypes.func.isRequired
   };
@@ -71,16 +64,16 @@ class BettingStage extends Component {
 
     this.state = { chips: { 1: null, 2: null } };
 
-    const { bets } = props.you;
+    const { yourBets } = props;
 
-    if (!bets) {
+    if (!yourBets) {
       return;
     }
 
     this.state = {
       chips: {
-        1: { guess: bets[0].guess, position: null },
-        2: { guess: bets[1].guess, position: null }
+        1: { guess: yourBets[0].guess, position: null },
+        2: { guess: yourBets[1].guess, position: null }
       }
     };
   }
@@ -128,12 +121,8 @@ class BettingStage extends Component {
   };
 
   render() {
-    const { guesses, others } = this.props;
-    const { bets_finalized: finalized } = this.props.you;
+    const { betOptions, yourBets, awaitingBet } = this.props;
     const { 1: chip1, 2: chip2 } = this.state.chips;
-    const awaitingOn = others
-      .filter(other => !other.bets_finalized)
-      .map(other => other.name);
 
     return (
       <Container
@@ -141,9 +130,9 @@ class BettingStage extends Component {
           this.containerEl = el;
         }}
       >
-        {guesses.map(({ guess, odds, players }) => (
+        {betOptions.map(({ guess, odds, players }) => (
           <Answer
-            finalized={finalized}
+            finalized={!!yourBets}
             nothingSelected={!chip1 && !chip2}
             chips={this.getChipsForGuess(guess)}
             key={guess}
@@ -157,10 +146,12 @@ class BettingStage extends Component {
           />
         ))}
         <Footer>
-          {finalized ? (
+          {yourBets ? (
             <div>
               <h3>Your bets have been submitted.</h3>
-              <SecondaryText>Waiting for {makeList(awaitingOn)}&hellip;</SecondaryText>
+              <SecondaryText>
+                Waiting for {makeList(awaitingBet.map(b => b.name))}&hellip;
+              </SecondaryText>
             </div>
           ) : (
             <Button

@@ -10,14 +10,18 @@ export const GUESSING_STATE = {
   gameId: "you_bet",
   playersNeeded: 3,
   gameState: {
-    you: { id: "1", name: "Foo", guess: null },
-    others: [
-      { id: "2", name: "Bar", guessed: false },
-      { id: "3", name: "Baz", guessed: false }
-    ],
     question: "How many roads must a man walk down?",
     round: 1,
-    stage: "guessing"
+    stage: "guessing",
+    you: { id: "1", name: "Foo" },
+    your_guess: 50,
+    others: [{ id: "2", name: "Bar" }, { id: "3", name: "Baz" }],
+    awaiting_guess: [{ id: "2", name: "Bar" }, { id: "3", name: "Baz" }],
+    scores: {
+      "1": 200,
+      "2": 200,
+      "3": 200
+    }
   }
 };
 
@@ -35,25 +39,34 @@ export const BETTING_STATE = {
   gameState: {
     you: {
       id: "1",
-      name: "Alan Rickman",
-      bet: null,
-      bets: [{ guess: 15, wager: 100 }, { guess: 20, wager: 100 }],
-      bets_finalized: true
+      name: "Alan Rickman"
     },
     others: [
-      { id: "2", name: "Billy Bob Thornton", bet: null, bets_finalized: false },
-      { id: "3", name: "Charlize Theron", bet: null, bets_finalized: false },
-      { id: "4", name: "Doug Stanton", bet: null, bets_finalized: false },
-      { id: "5", name: "Ernie Banks", bet: null, bets_finalized: false }
+      { id: "2", name: "Billy Bob Thornton" },
+      { id: "3", name: "Charlize Theron" },
+      { id: "4", name: "Doug Stanton" },
+      { id: "5", name: "Ernie Banks" }
     ],
     question: "What percentage of US house holds own a dog?",
     round: 1,
     stage: "betting",
-    guesses: [
-      { guess: 15, odds: 4, players: ["Alan Rickman", "Billy Bob Thornton"] },
-      { guess: 20, odds: 3, players: ["Charlize Theron"] },
-      { guess: 25, odds: 3, players: ["Ernie Banks"] },
-      { guess: 40, odds: 4, players: ["Doug Stanton"] }
+    bet_options: [
+      {
+        guess: 15,
+        odds: 4,
+        players: [
+          { id: "1", name: "Alan Rickman" },
+          { id: "2", name: "Billy Bob Thornton" }
+        ]
+      },
+      { guess: 20, odds: 3, players: [{ id: "3", name: "Charlize Theron" }] },
+      { guess: 25, odds: 3, players: [{ id: "4", name: "Ernie Banks" }] },
+      { guess: 40, odds: 4, players: [{ id: "5", name: "Doug Stanton" }] }
+    ],
+    your_bets: [{ guess: 20, wager: 100 }, { guess: 25, wager: 100 }],
+    awaiting_bet: [
+      { id: "2", name: "Billy Bob Thornton" },
+      { id: "4", name: "Doug Stanton" }
     ]
   }
 };

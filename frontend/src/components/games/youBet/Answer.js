@@ -59,7 +59,9 @@ class Answer extends Component {
     isOver: PropTypes.bool.isRequired,
     nothingSelected: PropTypes.bool.isRequired,
     odds: PropTypes.number.isRequired,
-    players: PropTypes.arrayOf(PropTypes.string).isRequired,
+    players: PropTypes.arrayOf(
+      PropTypes.shape({ name: PropTypes.string.isRequired })
+    ).isRequired,
     onBet: PropTypes.func.isRequired,
     innerRef: PropTypes.func
   };
@@ -96,7 +98,7 @@ class Answer extends Component {
         >
           <Odds>Pays {odds} to 1</Odds>
           <Number>{guess}</Number>
-          <SecondaryText>{makeList(players)}</SecondaryText>
+          <SecondaryText>{makeList(players.map(p => p.name))}</SecondaryText>
         </Container>
       </div>
     );

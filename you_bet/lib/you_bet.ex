@@ -11,21 +11,29 @@ defmodule YouBet do
       answer: answer,
       players: players
         |> Enum.map(fn {id, %{name: name}} ->
-          {id, %{id: id, name: name, guess: nil, score: 200}}
+          {id, %{id: id, name: name}}
         end)
-        |> Enum.into(%{})
+        |> Enum.into(%{}),
+      scores: Enum.reduce(players, %{}, fn {id, _}, scores -> Map.put(scores, id, 200) end),
+      guesses: Enum.reduce(players, %{}, fn {id, _}, guesses -> Map.put(guesses, id, nil) end),
+      bets: Enum.reduce(players, %{}, fn {id, _}, bets -> Map.put(bets, id, nil) end)
     }
   end
 
   def sanitize_state(%{stage: stage} = state, player_id) do
     state
-    |> apply_if(&add_guesses/1, stage == :betting)
-    |> split_you_and_others(player_id)
-    |> apply_if(&hide_others_guesses/1, stage == :guessing)
+    |> apply_if(&add_your_guess(&1, player_id), stage == :guessing)
+    |> apply_if(&add_awaiting_guess(&1, player_id), stage == :guessing)
+    |> apply_if(&add_bet_options/1, stage == :betting)
+    |> apply_if(&add_your_bet(&1, player_id), stage == :betting)
+    |> apply_if(&add_awaiting_bet(&1, player_id), stage == :betting)
     |> apply_if(&hide_answer/1, stage !== :reveal)
+    |> split_you_and_others(player_id)
   end
 
-  defp add_guesses(%{players: players} = state), do: Map.put(state, :guesses, get_guesses(players))
+  defp add_bet_options(%{guesses: guesses, players: players} = state) do
+    Map.put(state, :bet_options, get_bet_options(guesses, players))
+  end
 
   defp split_you_and_others(%{players: players} = state, player_id) do
     state
@@ -34,19 +42,35 @@ defmodule YouBet do
     |> Map.drop([:players])
   end
 
-  defp hide_others_guesses(state) do
-    update_others(state, fn %{guess: guess} = player ->
-      player
-      |> Map.put(:guessed, !is_nil(guess))
-      |> Map.drop([:guess])
-    end)
+  defp add_your_guess(%{guesses: guesses} = state, player_id), do: Map.put(state, :your_guess, guesses[player_id])
+
+  defp add_awaiting_guess(%{guesses: guesses, players: players} = state, player_id) do
+    state
+    |> Map.put(
+      :awaiting_guess,
+      guesses
+      |> Enum.reject(fn {id, g} -> !is_nil(g) || id == player_id end)
+      |> Enum.map(fn {id, _} -> players[id] end)
+    )
+  end
+
+  defp add_your_bet(%{bets: bets} = state, player_id), do: Map.put(state, :your_bets, bets[player_id])
+
+  defp add_awaiting_bet(%{bets: bets, players: players} = state, player_id) do
+    state
+    |> Map.put(
+      :awaiting_bet,
+      bets
+      |> Enum.reject(fn {id, b} -> !is_nil(b) || id == player_id end)
+      |> Enum.map(fn {id, _} -> players[id] end)
+    )
   end
 
   defp hide_answer(state), do: Map.drop(state, [:answer])
 
   def play(state, player_id, "guess", payload) do
     state
-    |> update_player(player_id, &Map.put(&1, :guess, elem(Integer.parse(payload), 0)))
+    |> Map.update!(:guesses, &Map.put(&1, player_id, elem(Integer.parse(payload), 0)))
     |> update_stage
   end
 
@@ -55,34 +79,30 @@ defmodule YouBet do
     "bet2" => %{"guess" => guess2, "wager" => wager2}
   }) do
     state
-    |> update_player(player_id, fn player ->
-      player
-      |> Map.put(:bets, [%{guess: guess1, wager: wager1}, %{guess: guess2, wager: wager2}])
-      |> Map.put(:bets_finalized, true)
-    end)
+    |> Map.update!(:bets, &Map.put(&1, player_id, [%{guess: guess1, wager: wager1}, %{guess: guess2, wager: wager2}]))
     |> update_stage
   end
 
   def play(state, _, _, _), do: state
   def play(state, _, _), do: state
 
-  defp update_stage(%{stage: stage} = state) do
+  defp update_stage(%{stage: stage, guesses: guesses, bets: bets} = state) do
     state
-    |> apply_if(&Map.put(&1, :stage, :betting), stage == :guessing && all_players?(state, &(!is_nil(&1[:guess]))))
-    |> apply_if(&Map.put(&1, :stage, :reveal), stage == :betting && all_players?(state, &(&1[:bets_finalized])))
+    |> apply_if(&Map.put(&1, :stage, :betting), stage == :guessing && Enum.all?(guesses, fn {_, g} -> !is_nil(g) end))
+    |> apply_if(&Map.put(&1, :stage, :reveal), stage == :betting && Enum.all?(bets, fn {_, b} -> !is_nil(b) end))
   end
 
-  defp get_guesses(players) do
-    players
-    |> Enum.group_by(fn {_, %{guess: guess}} -> guess end, fn {id, _} -> id end)
+  defp get_bet_options(guesses, players) do
+    guesses
+    |> Enum.group_by(fn {_, guess} -> guess end, fn {id, _} -> id end)
     |> Enum.sort_by(fn {guess, _} -> guess end)
     |> Enum.map(fn {guess, player_ids} ->
       %{
         guess: guess,
         players:
           player_ids
-          |> Enum.map(fn id -> Map.get(players[id], :name) end)
-          |> Enum.sort
+          |> Enum.map(fn id -> players[id] end)
+          |> Enum.sort_by(&Map.get(&1, :name))
       }
     end)
     |> add_odds
@@ -98,32 +118,6 @@ defmodule YouBet do
     |> Enum.map(fn {guess, index} ->
       Map.put(guess, :odds, Float.round(abs(index - mid_point) + base))
     end)
-  end
-
-  defp update_player(state, player_id, transformation) do
-    state
-    |> Map.update!(:players, fn players ->
-      players
-      |> Enum.map(fn {id, player} ->
-        if id == player_id do
-          {id, transformation.(player)}
-        else
-          {id, player}
-        end
-      end)
-      |> Enum.into(%{})
-    end)
-  end
-
-  defp update_others(state, transformation) do
-    state
-    |> Map.update!(:others, fn players ->
-      Enum.map(players, &transformation.(&1))
-    end)
-  end
-
-  defp all_players?(%{players: players}, pred) do
-    Enum.all?(players, fn {_, p} -> pred.(p) end)
   end
 
   defp apply_if(subject, _, false), do: subject

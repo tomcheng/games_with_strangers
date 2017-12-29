@@ -3,18 +3,15 @@ import PropTypes from "prop-types";
 import GuessForm from "./GuessForm";
 import Guessed from "./Guessed";
 
-const GuessingStage = ({ yourGuess, onSubmitGuess, others }) =>
+const GuessingStage = ({ yourGuess, onSubmitGuess, awaitingGuess }) =>
   yourGuess === null ? (
     <GuessForm onSubmitGuess={onSubmitGuess} />
   ) : (
-    <Guessed yourGuess={yourGuess} others={others} />
+    <Guessed yourGuess={yourGuess} awaitingGuess={awaitingGuess} />
   );
 
 GuessingStage.propTypes = {
-  others: PropTypes.arrayOf(PropTypes.shape({
-    guessed: PropTypes.bool.isRequired,
-    name: PropTypes.string.isRequired
-  })).isRequired,
+  awaitingGuess: PropTypes.array.isRequired,
   onSubmitGuess: PropTypes.func.isRequired,
   yourGuess: PropTypes.number
 };

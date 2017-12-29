@@ -8,23 +8,20 @@ const Container = styled.div`
   text-align: center;
 `;
 
-const Guessed = ({ yourGuess, others }) => (
+const Guessed = ({ yourGuess, awaitingGuess }) => (
   <Container>
     <h3>You Answered: {yourGuess}</h3>
     <SecondaryText>
-      Waiting for{" "}
-      {makeList(others
-        .filter(p => !p.guessed)
-        .map(p => p.name))}&hellip;
+      Waiting for {makeList(awaitingGuess.map(p => p.name))}&hellip;
     </SecondaryText>
   </Container>
 );
 
 Guessed.propTypes = {
   yourGuess: PropTypes.number.isRequired,
-  others: PropTypes.arrayOf(
+  awaitingGuess: PropTypes.arrayOf(
     PropTypes.shape({
-      guessed: PropTypes.bool.isRequired,
+      id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired
     })
   ).isRequired
