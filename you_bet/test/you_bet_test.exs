@@ -48,9 +48,15 @@ defmodule YouBetTest do
       players
       |> YouBet.initial_state
       |> YouBet.play("1", "guess", "20")
-      |> YouBet.sanitize_state("1")
 
-    assert state[:you] == %{id: "1", name: "foo", score: 200, guess: 20}
+    your_state = YouBet.sanitize_state(state, "1")
+    others_state = YouBet.sanitize_state(state, "2")
+
+    assert your_state[:you] == %{id: "1", name: "foo", score: 200, guess: 20}
+    assert others_state[:others] == [
+      %{id: "1", name: "foo", score: 200, guessed: true},
+      %{id: "3", name: "baz", score: 200, guessed: false}
+    ]
   end
 
   test "sets stage to betting when all guesses are in", %{players: players} do
@@ -102,21 +108,24 @@ defmodule YouBetTest do
         "bet2" => %{"guess" => 30, "wager" => 100}
       })
 
-    you =
-      state
-      |> YouBet.sanitize_state("1")
-      |> Map.get(:you)
+    your_state = YouBet.sanitize_state(state, "1")
 
-    others_view_of_you =
-      state
-      |> YouBet.sanitize_state("2")
-      |> Map.get(:others)
-      |> Enum.find(fn p -> p[:id] == "1" end)
+    others_state = YouBet.sanitize_state(state, "2")
 
-    assert you[:bets] == [%{guess: 20, wager: 100}, %{guess: 30, wager: 100}]
-    assert you[:bets_finalized] == true
+    assert your_state[:you][:bets] == [%{guess: 20, wager: 100}, %{guess: 30, wager: 100}]
+    assert your_state[:you][:bets_finalized] == true
 
-    assert others_view_of_you[:bets_finalized] == true
+    assert others_state[:others] == [
+      %{
+        id: "1",
+        name: "foo",
+        guess: 30,
+        bets: [%{guess: 20, wager: 100}, %{guess: 30, wager: 100}],
+        bets_finalized: true,
+        score: 200
+      },
+      %{guess: 10, id: "3", name: "baz", score: 200}
+    ]
   end
 
   test "shows answer when all bets are in", %{players: players} do
