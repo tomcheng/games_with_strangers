@@ -1,72 +1,61 @@
-export const GUESSING_STATE = {
+const players = [
+  { id: "1", name: "Timmy Tanker" },
+  { id: "2", name: "Billy Jean" },
+  { id: "3", name: "Charlie Chapman" },
+  { id: "4", name: "Rick Sanchez" },
+  { id: "5", name: "Earnest Hemingway" }
+];
+const you = players[0];
+const others = players.slice(1);
+const nonGameState = {
+  you,
+  others,
   roomCode: "FOOB",
   roomJoined: true,
   yourId: "1",
-  you: {
-    id: "1",
-    name: "Foo"
-  },
-  others: [{ id: "2", name: "Bar" }, { id: "3", name: "Baz" }],
   gameId: "you_bet",
-  playersNeeded: 3,
+  playersNeeded: 3
+};
+const defaultGameState = {
+  you,
+  others,
+  round: 1,
+  question: "What percentage of US house holds own a dog?",
+  scores: { "1": 200, "2": 200, "3": 200, "4": 200, "5": 200 }
+};
+
+export const GUESSING_STATE = {
+  ...nonGameState,
   gameState: {
-    question: "How many roads must a man walk down?",
-    round: 1,
+    ...defaultGameState,
     stage: "guessing",
-    you: { id: "1", name: "Foo" },
     your_guess: 50,
-    others: [{ id: "2", name: "Bar" }, { id: "3", name: "Baz" }],
-    awaiting_guess: [{ id: "2", name: "Bar" }, { id: "3", name: "Baz" }],
-    scores: {
-      "1": 200,
-      "2": 200,
-      "3": 200
-    }
+    awaiting_guess: [{ id: "2", name: "Bar" }, { id: "3", name: "Baz" }]
   }
 };
 
 export const BETTING_STATE = {
-  roomCode: "FOOB",
-  roomJoined: true,
-  yourId: "1",
-  you: {
-    id: "1",
-    name: "Foo"
-  },
-  others: [{ id: "2", name: "Bar" }, { id: "3", name: "Baz" }],
-  gameId: "you_bet",
-  playersNeeded: 3,
+  ...nonGameState,
   gameState: {
-    you: {
-      id: "1",
-      name: "Alan Rickman"
-    },
-    others: [
-      { id: "2", name: "Billy Bob Thornton" },
-      { id: "3", name: "Charlize Theron" },
-      { id: "4", name: "Doug Stanton" },
-      { id: "5", name: "Ernie Banks" }
-    ],
-    question: "What percentage of US house holds own a dog?",
-    round: 1,
+    ...defaultGameState,
     stage: "betting",
     bet_options: [
-      {
-        guess: 15,
-        odds: 4,
-        players: [
-          { id: "1", name: "Alan Rickman" },
-          { id: "2", name: "Billy Bob Thornton" }
-        ]
-      },
-      { guess: 20, odds: 3, players: [{ id: "3", name: "Charlize Theron" }] },
-      { guess: 25, odds: 3, players: [{ id: "4", name: "Ernie Banks" }] },
-      { guess: 40, odds: 4, players: [{ id: "5", name: "Doug Stanton" }] }
+      { guess: 15, odds: 4, players: [players[0], players[1]] },
+      { guess: 20, odds: 3, players: [players[2]] },
+      { guess: 25, odds: 3, players: [players[3]] },
+      { guess: 40, odds: 4, players: [players[4]] }
     ],
     your_bets: [{ guess: 20, wager: 100 }, { guess: 25, wager: 100 }],
-    awaiting_bet: [
-      { id: "2", name: "Billy Bob Thornton" },
-      { id: "4", name: "Doug Stanton" }
-    ]
+    awaiting_bet: [players[2], players[3]]
+  }
+};
+
+export const REVEAL_STATE = {
+  ...nonGameState,
+  gameState: {
+    ...defaultGameState,
+    stage: "reveal",
+    answer: 43,
+    winning_guess: 40
   }
 };
