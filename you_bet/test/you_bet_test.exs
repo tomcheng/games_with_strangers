@@ -63,10 +63,10 @@ defmodule YouBetTest do
       |> YouBet.sanitize_state("1")
 
     assert state[:stage] == :betting
-    assert state[:you] == %{id: "1", name: "foo", score: 200, bet: nil}
+    assert state[:you] == %{id: "1", name: "foo", score: 200, guess: 30}
     assert state[:others] == [
-      %{id: "2", name: "bar", score: 200, bet: nil},
-      %{id: "3", name: "baz", score: 200, bet: nil}
+      %{id: "2", name: "bar", score: 200, guess: 20},
+      %{id: "3", name: "baz", score: 200, guess: 10}
     ]
     assert state[:guesses] == [
       %{guess: 10, odds: 3, players: ["baz"]},
@@ -88,19 +88,6 @@ defmodule YouBetTest do
       %{guess: 10, odds: 3, players: ["baz"]},
       %{guess: 20, odds: 3, players: ["bar", "foo"]},
     ]
-  end
-
-  test "handles a bet", %{players: players} do
-    state =
-      players
-      |> YouBet.initial_state
-      |> YouBet.play("1", "guess", "30")
-      |> YouBet.play("2", "guess", "20")
-      |> YouBet.play("3", "guess", "10")
-      |> YouBet.play("1", "bet", %{foo: "bar"})
-      |> YouBet.sanitize_state("1")
-
-    assert state[:you] == %{id: "1", name: "foo", score: 200, bet: %{foo: "bar"}}
   end
 
   test "handles finalizing bets", %{players: players} do
@@ -130,6 +117,31 @@ defmodule YouBetTest do
     assert you[:bets_finalized] == true
 
     assert others_view_of_you[:bets_finalized] == true
+  end
+
+  test "shows answer when all bets are in", %{players: players} do
+    state =
+      players
+      |> YouBet.initial_state
+      |> YouBet.play("1", "guess", "30")
+      |> YouBet.play("2", "guess", "20")
+      |> YouBet.play("3", "guess", "10")
+      |> YouBet.play("1", "finalize_bets", %{
+        "bet1" => %{"guess" => 20, "wager" => 100},
+        "bet2" => %{"guess" => 30, "wager" => 100}
+      })
+      |> YouBet.play("2", "finalize_bets", %{
+        "bet1" => %{"guess" => 20, "wager" => 100},
+        "bet2" => %{"guess" => 30, "wager" => 100}
+      })
+      |> YouBet.play("3", "finalize_bets", %{
+        "bet1" => %{"guess" => 20, "wager" => 100},
+        "bet2" => %{"guess" => 30, "wager" => 100}
+      })
+      |> YouBet.sanitize_state("1")
+
+    assert state[:stage] == :reveal
+    assert is_integer(state[:answer])
   end
 
   test "handles missing player", %{players: players} do
