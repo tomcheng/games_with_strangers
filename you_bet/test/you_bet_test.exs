@@ -65,7 +65,9 @@ defmodule YouBetTest do
       |> YouBet.play("3", "guess", "10")
       |> YouBet.sanitize_state("1")
 
+    assert state[:round] == 1
     assert state[:stage] == :betting
+    assert String.match?(state[:question], ~r/.*\?$/)
     assert state[:your_guess] == nil
     assert state[:your_bets] == nil
     assert state[:bet_options] == [
@@ -73,6 +75,7 @@ defmodule YouBetTest do
       %{guess: 20, odds: 2, players: [%{id: "2", name: "bar"}]},
       %{guess: 30, odds: 3, players: [%{id: "1", name: "foo"}]}
     ]
+    assert state[:scores] == %{"1" => 200, "2" => 200, "3" => 200}
   end
 
   test "sets correct odds for even number of guesses", %{players: players} do
@@ -134,7 +137,9 @@ defmodule YouBetTest do
       })
       |> YouBet.sanitize_state("1")
 
+    assert state[:round] == 1
     assert state[:stage] == :reveal
+    assert String.match?(state[:question], ~r/.*\?$/)
     assert is_integer(state[:answer])
     assert state[:payouts] == [
       %{player: %{id: "1", name: "foo"}, amount: 300, closest: true},

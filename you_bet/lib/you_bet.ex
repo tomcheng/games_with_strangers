@@ -25,7 +25,7 @@ defmodule YouBet do
     state
     |> Map.put(:your_guess, guesses[player_id])
     |> Map.put(:awaiting_guess, get_awaiting(guesses, players, player_id))
-    |> Map.drop([:answer, :players])
+    |> Map.take([:awaiting_guess, :question, :round, :scores, :stage, :your_guess])
   end
 
   def sanitize_state(%{stage: :betting, players: players, guesses: guesses, bets: bets, odds: odds} = state, player_id) do
@@ -33,12 +33,11 @@ defmodule YouBet do
     |> Map.put(:bet_options, get_bet_options(guesses, players, odds))
     |> Map.put(:your_bets, bets[player_id])
     |> Map.put(:awaiting_bet, get_awaiting(bets, players, player_id))
-    |> Map.drop([:answer, :players, :odds])
+    |> Map.take([:awaiting_bet, :bet_options, :question, :round, :scores, :stage, :your_bets])
   end
 
   def sanitize_state(%{stage: :reveal} = state, _) do
-    state
-    |> Map.drop([:players, :odds])
+    Map.take(state, [:answer, :payouts, :question, :round, :scores, :stage])
   end
 
   defp get_awaiting(actions, players, player_id) do
