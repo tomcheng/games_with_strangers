@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import * as customTypes from "../../../utils/customTypes";
 import styled from "styled-components";
 import SectionHeader from "../../common/SectionHeader";
+import Sidebar from "../../common/Sidebar";
 import GuessingStage from "./GuessingStage";
 import BettingStage from "./BettingStage";
 import RevealStage from "./RevealStage";
@@ -28,6 +29,9 @@ const YouBet = ({ gameState, onPlay }) => {
 
   return (
     <div>
+      <Sidebar backgroundColor="#084160">
+        <div>HELLO</div>
+      </Sidebar>
       <SectionHeader>Round {round}</SectionHeader>
       <Question>{question}</Question>
       {stage === "guessing" && (
@@ -87,7 +91,7 @@ YouBet.propTypes = {
         wager: PropTypes.number,
         odds: PropTypes.number
       })
-    ).isRequired
+    )
   }).isRequired,
   onPlay: PropTypes.func.isRequired
 };
