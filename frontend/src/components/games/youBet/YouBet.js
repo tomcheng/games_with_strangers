@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import customTypes from "../../../utils/customTypes";
 import styled from "styled-components";
 import SectionHeader from "../../common/SectionHeader";
 import GuessingStage from "./GuessingStage";
@@ -57,33 +58,15 @@ YouBet.propTypes = {
     round: PropTypes.number.isRequired,
     stage: PropTypes.oneOf(["guessing", "betting", "reveal"]).isRequired,
     question: PropTypes.string.isRequired,
-    you: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired
-    }),
-    others: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired
-      })
-    ).isRequired,
+    you: customTypes.player.isRequired,
+    others: customTypes.players.isRequired,
     your_guess: PropTypes.number,
-    awaiting_guess: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired
-      })
-    ),
+    awaiting_guess: customTypes.players,
     bet_options: PropTypes.arrayOf(
       PropTypes.shape({
         guess: PropTypes.number.isRequired,
         odds: PropTypes.number.isRequired,
-        players: PropTypes.arrayOf(
-          PropTypes.shape({
-            id: PropTypes.string.isRequired,
-            name: PropTypes.string.isRequired
-          })
-        ).isRequired
+        players: customTypes.players.isRequired
       })
     ),
     your_bets: PropTypes.arrayOf(
@@ -92,12 +75,7 @@ YouBet.propTypes = {
         wager: PropTypes.number.isRequired
       })
     ),
-    awaiting_bet: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired
-      })
-    ),
+    awaiting_bet: customTypes.players,
   }).isRequired,
   onPlay: PropTypes.func.isRequired
 };

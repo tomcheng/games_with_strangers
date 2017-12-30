@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { makeList } from "../../../utils/strings";
+import customTypes from "../../../utils/customTypes";
 import Button from "../../common/Button";
 import SecondaryText from "../../common/SecondaryText";
 import Answer from "./Answer";
@@ -40,16 +41,12 @@ const Footer = styled.div`
 
 class BettingStage extends Component {
   static propTypes = {
-    awaitingBet: PropTypes.arrayOf(
-      PropTypes.shape({
-        name: PropTypes.string.isRequired
-      })
-    ).isRequired,
+    awaitingBet: customTypes.players.isRequired,
     betOptions: PropTypes.arrayOf(
       PropTypes.shape({
         guess: PropTypes.number.isRequired,
         odds: PropTypes.number.isRequired,
-        players: PropTypes.array.isRequired
+        players: customTypes.players.isRequired
       })
     ).isRequired,
     yourBet: PropTypes.arrayOf(PropTypes.shape({

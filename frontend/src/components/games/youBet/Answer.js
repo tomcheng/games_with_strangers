@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import { DropTarget } from "react-dnd";
 import { makeList } from "../../../utils/strings";
+import customTypes from "../../../utils/customTypes";
 import SecondaryText from "../../common/SecondaryText";
 import DraggableChip from "./DraggableChip";
 
@@ -59,9 +60,7 @@ class Answer extends Component {
     isOver: PropTypes.bool.isRequired,
     nothingSelected: PropTypes.bool.isRequired,
     odds: PropTypes.number.isRequired,
-    players: PropTypes.arrayOf(
-      PropTypes.shape({ name: PropTypes.string.isRequired })
-    ).isRequired,
+    players: customTypes.players.isRequired,
     onBet: PropTypes.func.isRequired,
     innerRef: PropTypes.func
   };
