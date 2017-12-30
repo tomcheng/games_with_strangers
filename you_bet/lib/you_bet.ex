@@ -25,6 +25,7 @@ defmodule YouBet do
     state
     |> Map.put(:your_guess, guesses[player_id])
     |> Map.put(:awaiting_guess, get_awaiting(guesses, players, player_id))
+    |> format_scores
     |> Map.take([:awaiting_guess, :question, :round, :scores, :stage, :your_guess])
   end
 
@@ -32,11 +33,25 @@ defmodule YouBet do
     state
     |> Map.put(:your_bets, bets[player_id])
     |> Map.put(:awaiting_bet, get_awaiting(bets, players, player_id))
+    |> format_scores
     |> Map.take([:awaiting_bet, :bet_options, :question, :round, :scores, :stage, :your_bets])
   end
 
   def sanitize_state(%{stage: :reveal} = state, _) do
-    Map.take(state, [:answer, :payouts, :question, :round, :scores, :stage])
+    state
+    |> format_scores
+    |> Map.take([:answer, :payouts, :question, :round, :scores, :stage])
+  end
+
+  defp format_scores(%{scores: scores, players: players} = state) do
+    state
+    |> Map.put(
+      :scores,
+      scores
+      |> Enum.map(fn {id, score} -> %{player: players[id], score: score} end)
+      |> Enum.sort_by(fn %{player: %{name: name}} -> name end)
+      |> Enum.sort_by(fn %{score: score} -> -score end)
+    )
   end
 
   defp get_awaiting(actions, players, player_id) do

@@ -27,7 +27,11 @@ defmodule YouBetTest do
     assert state[:answer] == nil
     assert state[:your_guess] == nil
     assert state[:awaiting_guess] == [%{id: "2", name: "bar"}, %{id: "3", name: "baz"}]
-    assert state[:scores] == %{"1" => 200, "2" => 200, "3" => 200}
+    assert state[:scores] == [
+      %{player: %{id: "2", name: "bar"}, score: 200},
+      %{player: %{id: "3", name: "baz"}, score: 200},
+      %{player: %{id: "1", name: "foo"}, score: 200}
+    ]
   end
 
   test "makes an empty play", %{players: players} do
@@ -75,7 +79,11 @@ defmodule YouBetTest do
       %{guess: 20, odds: 2, players: [%{id: "2", name: "bar"}]},
       %{guess: 30, odds: 3, players: [%{id: "1", name: "foo"}]}
     ]
-    assert state[:scores] == %{"1" => 200, "2" => 200, "3" => 200}
+    assert state[:scores] == [
+      %{player: %{id: "2", name: "bar"}, score: 200},
+      %{player: %{id: "3", name: "baz"}, score: 200},
+      %{player: %{id: "1", name: "foo"}, score: 200}
+    ]
   end
 
   test "sets correct odds for even number of guesses", %{players: players} do
@@ -147,11 +155,11 @@ defmodule YouBetTest do
       %{player: %{id: "1", name: "foo"}, amount: 300, closest: false, wager: 100, odds: 3},
       %{player: %{id: "2", name: "bar"}, amount: 600, closest: false, wager: 200, odds: 3}
     ]
-    assert state[:scores] == %{
-      "1" => 800,
-      "2" => 1100,
-      "3" => 200
-    }
+    assert state[:scores] == [
+      %{player: %{id: "2", name: "bar"}, score: 1100},
+      %{player: %{id: "1", name: "foo"}, score: 800},
+      %{player: %{id: "3", name: "baz"}, score: 200}
+    ]
   end
 
   test "handles missing player", %{players: players} do
