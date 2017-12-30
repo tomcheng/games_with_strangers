@@ -16,7 +16,8 @@ defmodule YouBet do
         |> Enum.into(%{}),
       scores: Enum.reduce(players, %{}, fn {id, _}, scores -> Map.put(scores, id, 200) end),
       guesses: Enum.reduce(players, %{}, fn {id, _}, guesses -> Map.put(guesses, id, nil) end),
-      bets: Enum.reduce(players, %{}, fn {id, _}, bets -> Map.put(bets, id, nil) end)
+      bets: Enum.reduce(players, %{}, fn {id, _}, bets -> Map.put(bets, id, nil) end),
+      odds: nil
     }
   end
 
@@ -27,9 +28,9 @@ defmodule YouBet do
     |> Map.drop([:answer, :players])
   end
 
-  def sanitize_state(%{stage: :betting, players: players, guesses: guesses, bets: bets} = state, player_id) do
+  def sanitize_state(%{stage: :betting, players: players, guesses: guesses, bets: bets, odds: odds} = state, player_id) do
     state
-    |> Map.put(:bet_options, get_bet_options(guesses, players))
+    |> Map.put(:bet_options, get_bet_options(guesses, players, odds))
     |> Map.put(:your_bets, bets[player_id])
     |> Map.put(:awaiting_bet, get_awaiting(bets, players, player_id))
     |> Map.drop([:answer, :players, :odds])
@@ -83,9 +84,7 @@ defmodule YouBet do
     end
   end
 
-  defp get_bet_options(guesses_by_player_id, players) do
-    odds = get_odds(guesses_by_player_id)
-
+  defp get_bet_options(guesses_by_player_id, players, odds) do
     guesses_by_player_id
     |> Map.values
     |> Enum.uniq
