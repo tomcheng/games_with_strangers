@@ -25,9 +25,7 @@ defmodule YouBetTest do
     assert state[:stage] == :guessing
     assert String.match?(state[:question], ~r/.*\?$/)
     assert state[:answer] == nil
-    assert state[:you] == %{id: "1", name: "foo"}
     assert state[:your_guess] == nil
-    assert state[:others] == [%{id: "2", name: "bar"}, %{id: "3", name: "baz"}]
     assert state[:awaiting_guess] == [%{id: "2", name: "bar"}, %{id: "3", name: "baz"}]
     assert state[:scores] == %{"1" => 200, "2" => 200, "3" => 200}
   end
@@ -146,11 +144,7 @@ defmodule YouBetTest do
       |> YouBet.initial_state
       |> YouBet.sanitize_state(nil)
 
-    assert state[:you] == nil
-    assert state[:others] == [
-      %{id: "1", name: "foo"},
-      %{id: "2", name: "bar"},
-      %{id: "3", name: "baz"}
-    ]
+    assert state[:round] == 1
+    assert state[:stage] == :guessing
   end
 end

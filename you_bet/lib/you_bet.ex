@@ -24,8 +24,7 @@ defmodule YouBet do
     state
     |> Map.put(:your_guess, guesses[player_id])
     |> Map.put(:awaiting_guess, get_awaiting(guesses, players, player_id))
-    |> Map.drop([:answer])
-    |> split_you_and_others(player_id)
+    |> Map.drop([:answer, :players])
   end
 
   def sanitize_state(%{stage: :betting, players: players, guesses: guesses, bets: bets} = state, player_id) do
@@ -33,25 +32,17 @@ defmodule YouBet do
     |> Map.put(:bet_options, get_bet_options(guesses, players))
     |> Map.put(:your_bets, bets[player_id])
     |> Map.put(:awaiting_bet, get_awaiting(bets, players, player_id))
-    |> Map.drop([:answer])
-    |> split_you_and_others(player_id)
+    |> Map.drop([:answer, :players])
   end
 
-  def sanitize_state(%{stage: :reveal} = state, player_id) do
-    split_you_and_others(state, player_id)
+  def sanitize_state(%{stage: :reveal} = state, _) do
+    Map.drop(state, [:players])
   end
 
   defp get_awaiting(actions, players, player_id) do
     actions
     |> Enum.reject(fn {id, a} -> !is_nil(a) || id == player_id end)
     |> Enum.map(fn {id, _} -> players[id] end)
-  end
-
-  defp split_you_and_others(%{players: players} = state, player_id) do
-    state
-    |> Map.put(:you, players |> Enum.find({nil, nil}, fn {id, _} -> id == player_id end) |> elem(1))
-    |> Map.put(:others, players |> Enum.reject(fn {id, _} -> id == player_id end) |> Enum.map(&elem(&1, 1)))
-    |> Map.drop([:players])
   end
 
   def play(state, player_id, "guess", payload) do

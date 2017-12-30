@@ -61,8 +61,6 @@ YouBet.propTypes = {
     round: PropTypes.number.isRequired,
     stage: PropTypes.oneOf(["guessing", "betting", "reveal"]).isRequired,
     question: PropTypes.string.isRequired,
-    you: customTypes.player.isRequired,
-    others: customTypes.players.isRequired,
     your_guess: PropTypes.number,
     awaiting_guess: customTypes.players,
     bet_options: PropTypes.arrayOf(
