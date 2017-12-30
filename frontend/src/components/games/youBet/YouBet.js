@@ -4,6 +4,7 @@ import * as customTypes from "../../../utils/customTypes";
 import styled from "styled-components";
 import SectionHeader from "../../common/SectionHeader";
 import Sidebar from "../../common/Sidebar";
+import Scores from "./Scores";
 import GuessingStage from "./GuessingStage";
 import BettingStage from "./BettingStage";
 import RevealStage from "./RevealStage";
@@ -24,13 +25,14 @@ const YouBet = ({ gameState, onPlay }) => {
     your_bets: yourBets,
     awaiting_bet: awaitingBet,
     answer,
-    payouts
+    payouts,
+    scores
   } = gameState;
 
   return (
     <div>
       <Sidebar backgroundColor="#084160">
-        <div>HELLO</div>
+        <Scores scores={scores} />
       </Sidebar>
       <SectionHeader>Round {round}</SectionHeader>
       <Question>{question}</Question>
@@ -91,7 +93,13 @@ YouBet.propTypes = {
         wager: PropTypes.number,
         odds: PropTypes.number
       })
-    )
+    ),
+    scores: PropTypes.arrayOf(
+      PropTypes.shape({
+        player: customTypes.player.isRequired,
+        score: PropTypes.number.isRequired
+      })
+    ).isRequired
   }).isRequired,
   onPlay: PropTypes.func.isRequired
 };

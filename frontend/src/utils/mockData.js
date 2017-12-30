@@ -21,7 +21,7 @@ const defaultGameState = {
   others,
   round: 1,
   question: "What percentage of US house holds own a dog?",
-  scores: { "1": 200, "2": 200, "3": 200, "4": 200, "5": 200 }
+  scores: players.map(player => ({ player, score: 200 }))
 };
 
 export const WAITING_FOR_PLAYERS = {

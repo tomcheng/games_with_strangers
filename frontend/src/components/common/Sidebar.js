@@ -234,12 +234,7 @@ class Sidebar extends Component {
     }
 
     return (
-      <Container
-        onTouchStart={evt => {
-          evt.stopPropagation();
-          evt.preventDefault();
-        }}
-      >
+      <Container>
         <SidebarWrapper {...sidebarProps} style={sidebarStyle}>
           {this.props.children}
         </SidebarWrapper>
