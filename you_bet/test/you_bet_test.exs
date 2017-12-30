@@ -113,7 +113,7 @@ defmodule YouBetTest do
     assert others_state[:awaiting_bet] == [%{id: "3", name: "baz"}]
   end
 
-  test "changes to reveal stage when all bets are in", %{players: players} do
+  test "changes to reveal stage when all bets are in and updates scores", %{players: players} do
     state =
       players
       |> YouBet.initial_state
@@ -142,6 +142,11 @@ defmodule YouBetTest do
       %{player: %{id: "1", name: "foo"}, amount: 300, closest: false, wager: 100, odds: 3},
       %{player: %{id: "2", name: "bar"}, amount: 600, closest: false, wager: 200, odds: 3}
     ]
+    assert state[:scores] == %{
+      "1" => 800,
+      "2" => 1100,
+      "3" => 200
+    }
   end
 
   test "handles missing player", %{players: players} do

@@ -36,9 +36,8 @@ defmodule YouBet do
     |> Map.drop([:answer, :players, :odds])
   end
 
-  def sanitize_state(%{stage: :reveal, players: players, guesses: guesses, odds: odds, bets: bets, answer: answer} = state, _) do
+  def sanitize_state(%{stage: :reveal} = state, _) do
     state
-    |> Map.put(:payouts, YouBet.Payouts.get(players, guesses, odds, bets, answer))
     |> Map.drop([:players, :odds])
   end
 
@@ -78,10 +77,26 @@ defmodule YouBet do
 
   defp update_stage(%{stage: :betting, bets: bets} = state) do
     if Enum.all?(bets, fn {_, b} -> !is_nil(b) end) do
-      Map.put(state, :stage, :reveal)
+      state
+      |> update_scores
+      |> Map.put(:stage, :reveal)
     else
       state
     end
+  end
+
+  defp update_scores(%{
+    scores: scores,
+    players: players,
+    guesses: guesses,
+    odds: odds,
+    bets: bets,
+    answer: answer
+  } = state) do
+    {new_scores, payouts} = YouBet.Scores.update(scores, players, guesses, odds, bets, answer)
+    state
+    |> Map.put(:payouts, payouts)
+    |> Map.put(:scores, new_scores)
   end
 
   defp get_bet_options(guesses_by_player_id, players, odds) do

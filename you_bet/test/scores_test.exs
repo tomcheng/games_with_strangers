@@ -1,4 +1,4 @@
-defmodule PayoutsTest do
+defmodule ScoresTest do
   use ExUnit.Case
 
   setup do
@@ -11,6 +11,7 @@ defmodule PayoutsTest do
   end
 
   test "no winners", %{players: players} do
+    scores = %{"1" => 200, "2" => 200, "3" => 200}
     guesses = %{"1" => 100, "2" => 200, "3" => 300}
     odds = %{100 => 3, 200 => 2, 300 => 3}
     bets = %{
@@ -19,12 +20,14 @@ defmodule PayoutsTest do
       "3" => [%{guess: 100, wager: 100}, %{guess: 100, wager: 100}]
     }
     answer = 50
-    payouts = YouBet.Payouts.get(players, guesses, odds, bets, answer)
+    {new_scores, payouts} = YouBet.Scores.update(scores, players, guesses, odds, bets, answer)
 
+    assert new_scores == %{"1" => 200, "2" => 200, "3" => 200}
     assert payouts == []
   end
 
   test "one got closest without over", %{players: players} do
+    scores = %{"1" => 200, "2" => 200, "3" => 200}
     guesses = %{"1" => 100, "2" => 200, "3" => 300}
     odds = %{100 => 3, 200 => 2, 300 => 3}
     bets = %{
@@ -33,12 +36,14 @@ defmodule PayoutsTest do
       "3" => [%{guess: 200, wager: 100}, %{guess: 200, wager: 100}]
     }
     answer = 150
-    payouts = YouBet.Payouts.get(players, guesses, odds, bets, answer)
+    {new_scores, payouts} = YouBet.Scores.update(scores, players, guesses, odds, bets, answer)
 
+    assert new_scores == %{"1" => 500, "2" => 200, "3" => 200}
     assert payouts == [%{player: %{id: "1", name: "foo"}, amount: 300, closest: true}]
   end
 
   test "two got closest without over", %{players: players} do
+    scores = %{"1" => 200, "2" => 200, "3" => 200}
     guesses = %{"1" => 100, "2" => 100, "3" => 300}
     odds = %{100 => 3, 200 => 2, 300 => 3}
     bets = %{
@@ -47,8 +52,9 @@ defmodule PayoutsTest do
       "3" => [%{guess: 200, wager: 100}, %{guess: 200, wager: 100}]
     }
     answer = 150
-    payouts = YouBet.Payouts.get(players, guesses, odds, bets, answer)
+    {new_scores, payouts} = YouBet.Scores.update(scores, players, guesses, odds, bets, answer)
 
+    assert new_scores == %{"1" => 500, "2" => 500, "3" => 200}
     assert payouts == [
       %{player: %{id: "1", name: "foo"}, amount: 300, closest: true},
       %{player: %{id: "2", name: "bar"}, amount: 300, closest: true}
@@ -56,6 +62,7 @@ defmodule PayoutsTest do
   end
 
   test "payouts for one correct bet", %{players: players} do
+    scores = %{"1" => 200, "2" => 200, "3" => 200}
     guesses = %{"1" => 100, "2" => 200, "3" => 300}
     odds = %{100 => 3, 200 => 2, 300 => 3}
     bets = %{
@@ -64,8 +71,9 @@ defmodule PayoutsTest do
       "3" => [%{guess: 200, wager: 100}, %{guess: 200, wager: 100}]
     }
     answer = 150
-    payouts = YouBet.Payouts.get(players, guesses, odds, bets, answer)
+    {new_scores, payouts} = YouBet.Scores.update(scores, players, guesses, odds, bets, answer)
 
+    assert new_scores == %{"1" => 800, "2" => 200, "3" => 200}
     assert payouts == [
       %{player: %{id: "1", name: "foo"}, amount: 300, closest: true},
       %{player: %{id: "1", name: "foo"}, amount: 300, closest: false, wager: 100, odds: 3}
@@ -73,6 +81,7 @@ defmodule PayoutsTest do
   end
 
   test "payouts for two correct bets", %{players: players} do
+    scores = %{"1" => 200, "2" => 200, "3" => 200}
     guesses = %{"1" => 100, "2" => 200, "3" => 300}
     odds = %{100 => 3, 200 => 2, 300 => 3}
     bets = %{
@@ -81,8 +90,9 @@ defmodule PayoutsTest do
       "3" => [%{guess: 200, wager: 100}, %{guess: 200, wager: 100}]
     }
     answer = 150
-    payouts = YouBet.Payouts.get(players, guesses, odds, bets, answer)
+    {new_scores, payouts} = YouBet.Scores.update(scores, players, guesses, odds, bets, answer)
 
+    assert new_scores == %{"1" => 500, "2" => 800, "3" => 200}
     assert payouts == [
       %{player: %{id: "1", name: "foo"}, amount: 300, closest: true},
       %{player: %{id: "2", name: "bar"}, amount: 600, closest: false, wager: 200, odds: 3}
