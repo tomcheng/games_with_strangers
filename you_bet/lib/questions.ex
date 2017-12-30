@@ -84,7 +84,7 @@ defmodule YouBet.Questions do
 {:mathematics, "How many digits does the largest prime number known have (as of December 2017)?", 22_338_618},
 {:pop_culture, "How many stars are in the Paramount studios logo?", 22},
 {:pop_culture, "In how many weeks was the movie Wayne's World filmed?", 2},
-{:pop_culture, "What percentage of movies are rated R", 55},
+{:pop_culture, "What percentage of movies are rated R?", 55},
 {:pop_culture, "How many minutes was the Lord of the Rings trilogy (extended edition)?", 682},
 {:pop_culture, "How many Academy Awards did Walt Disney win?", 22},
 {:pop_culture, "How many albums did the Beatles release?", 13},

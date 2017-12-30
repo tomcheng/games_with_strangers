@@ -28,9 +28,8 @@ defmodule YouBet do
     |> Map.take([:awaiting_guess, :question, :round, :scores, :stage, :your_guess])
   end
 
-  def sanitize_state(%{stage: :betting, players: players, guesses: guesses, bets: bets, odds: odds} = state, player_id) do
+  def sanitize_state(%{stage: :betting, players: players, bets: bets} = state, player_id) do
     state
-    |> Map.put(:bet_options, get_bet_options(guesses, players, odds))
     |> Map.put(:your_bets, bets[player_id])
     |> Map.put(:awaiting_bet, get_awaiting(bets, players, player_id))
     |> Map.take([:awaiting_bet, :bet_options, :question, :round, :scores, :stage, :your_bets])
@@ -49,39 +48,46 @@ defmodule YouBet do
   def play(state, player_id, "guess", payload) do
     state
     |> Map.update!(:guesses, &Map.put(&1, player_id, elem(Integer.parse(payload), 0)))
-    |> update_stage
+    |> transition_to_betting_if_done
   end
 
-  def play(state, player_id, "finalize_bets", %{
-    "bet1" => %{"guess" => guess1, "wager" => wager1},
-    "bet2" => %{"guess" => guess2, "wager" => wager2}
-  }) do
+  def play(state, player_id, "finalize_bets", %{"bet1" => %{"guess" => g1, "wager" => w1}, "bet2" => %{"guess" => g2, "wager" => w2}}) do
     state
-    |> Map.update!(:bets, &Map.put(&1, player_id, [%{guess: guess1, wager: wager1}, %{guess: guess2, wager: wager2}]))
-    |> update_stage
+    |> Map.update!(:bets, &Map.put(&1, player_id, [%{guess: g1, wager: w1}, %{guess: g2, wager: w2}]))
+    |> transition_to_reveal_if_done
   end
 
   def play(state, _, _, _), do: state
   def play(state, _, _), do: state
 
-  defp update_stage(%{stage: :guessing, guesses: guesses} = state) do
-    if Enum.all?(guesses, fn {_, g} -> !is_nil(g) end) do
+  defp transition_to_betting_if_done(%{guesses: guesses, players: players} = state) do
+    if all_done?(guesses) do
+      odds = get_odds(guesses)
+      bet_options = get_bet_options(guesses, players, odds)
+
       state
-      |> Map.put(:odds, get_odds(guesses))
+      |> Map.put(:odds, odds)
+      |> Map.put(:bet_options, bet_options)
       |> Map.put(:stage, :betting)
     else
       state
     end
   end
 
-  defp update_stage(%{stage: :betting, bets: bets} = state) do
-    if Enum.all?(bets, fn {_, b} -> !is_nil(b) end) do
+  defp transition_to_reveal_if_done(%{bets: bets} = state) do
+    if all_done?(bets) do
       state
       |> update_scores
       |> Map.put(:stage, :reveal)
     else
       state
     end
+  end
+
+  defp all_done?(items) do
+    items
+    |> Map.values
+    |> Enum.all?(&(!is_nil(&1)))
   end
 
   defp update_scores(%{
