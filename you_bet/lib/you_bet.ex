@@ -32,13 +32,13 @@ defmodule YouBet do
     |> Map.put(:bet_options, get_bet_options(guesses, players))
     |> Map.put(:your_bets, bets[player_id])
     |> Map.put(:awaiting_bet, get_awaiting(bets, players, player_id))
-    |> Map.drop([:answer, :players])
+    |> Map.drop([:answer, :players, :odds])
   end
 
   def sanitize_state(%{stage: :reveal, players: players, guesses: guesses, odds: odds, bets: bets, answer: answer} = state, _) do
     state
     |> Map.put(:payouts, YouBet.Payouts.get(players, guesses, odds, bets, answer))
-    |> Map.drop([:players])
+    |> Map.drop([:players, :odds])
   end
 
   defp get_awaiting(actions, players, player_id) do
@@ -83,37 +83,28 @@ defmodule YouBet do
     end
   end
 
-  defp get_bet_options(guesses, players) do
-    guesses
-    |> Enum.group_by(fn {_, guess} -> guess end, fn {id, _} -> id end)
-    |> Enum.sort_by(fn {guess, _} -> guess end)
-    |> Enum.map(fn {guess, player_ids} ->
+  defp get_bet_options(guesses_by_player_id, players) do
+    odds = get_odds(guesses_by_player_id)
+
+    guesses_by_player_id
+    |> Map.values
+    |> Enum.uniq
+    |> Enum.sort
+    |> Enum.map(fn guess ->
       %{
         guess: guess,
-        players:
-          player_ids
-          |> Enum.map(fn id -> players[id] end)
-          |> Enum.sort_by(&Map.get(&1, :name))
+        players: guesses_by_player_id
+          |> Enum.filter(fn {_, g} -> g == guess end)
+          |> Enum.map(fn {id, _} -> players[id] end)
+          |> Enum.sort_by(fn p -> p[:name] end),
+        odds: odds[guess]
       }
     end)
-    |> add_odds
   end
 
-  defp add_odds(guesses) do
-    num_guesses = Enum.count(guesses)
-    mid_point = num_guesses / 2 - 0.5
-    base = if rem(num_guesses, 2) == 0, do: 2.5, else: 2
-
-    guesses
-    |> Enum.with_index
-    |> Enum.map(fn {guess, index} ->
-      Map.put(guess, :odds, Float.round(abs(index - mid_point) + base))
-    end)
-  end
-
-  defp get_odds(raw_guesses) do
+  defp get_odds(guesses_by_player_id) do
     guesses =
-      raw_guesses
+      guesses_by_player_id
       |> Map.values
       |> Enum.uniq
       |> Enum.sort
