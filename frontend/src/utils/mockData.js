@@ -56,6 +56,10 @@ export const REVEAL_STATE = {
     ...defaultGameState,
     stage: "reveal",
     answer: 43,
-    winning_guess: 40
+    winning_guess: 40,
+    score_updates: [
+      { player: players[0], old_score: 200, new_score: 300, winning_guess: true, wagered: 0 },
+      { player: players[1], old_score: 200, new_score: 300, winning_guess: false, wagered: 100 },
+    ]
   }
 };

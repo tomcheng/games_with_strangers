@@ -5,6 +5,7 @@ import styled from "styled-components";
 import SectionHeader from "../../common/SectionHeader";
 import GuessingStage from "./GuessingStage";
 import BettingStage from "./BettingStage";
+import RevealStage from "./RevealStage";
 
 const Question = styled.h1`
   text-align: center;
@@ -20,7 +21,8 @@ const YouBet = ({ gameState, onPlay }) => {
     awaiting_guess: awaitingGuess,
     bet_options: betOptions,
     your_bets: yourBets,
-    awaiting_bet: awaitingBet
+    awaiting_bet: awaitingBet,
+    answer
   } = gameState;
 
   return (
@@ -49,6 +51,7 @@ const YouBet = ({ gameState, onPlay }) => {
           }}
         />
       )}
+      {stage === "reveal" && <RevealStage answer={answer} />}
     </div>
   );
 };
@@ -76,6 +79,7 @@ YouBet.propTypes = {
       })
     ),
     awaiting_bet: customTypes.players,
+    answer: PropTypes.number
   }).isRequired,
   onPlay: PropTypes.func.isRequired
 };
