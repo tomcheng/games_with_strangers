@@ -13,10 +13,14 @@ const ActionContainer = styled.div`
   align-items: center;
 `;
 
+const Description = styled.div`
+  margin-bottom: 16px;
+`;
+
 const GameCard = ({ title, description, playerRequirements, onSelect }) => (
   <div>
     <h1>{title}</h1>
-    <p>{description}</p>
+    <Description>{description}</Description>
     <ActionContainer>
       <Button onClick={onSelect}>Start Game</Button>
       <FootNote>{playerRequirements}</FootNote>

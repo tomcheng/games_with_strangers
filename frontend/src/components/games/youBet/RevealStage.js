@@ -8,10 +8,10 @@ const Container = styled.div`
 
 const RevealStage = ({ answer }) => (
   <Container>
-    <div>The actual answer is {answer}</div>
-    <div>The closest guess without going over is 40</div>
-    <div>Charlie Chapman gets 300 points for getting the closest guess</div>
-    <div>Charlie Chapman gets 400 points for betting 200 on the closest guess</div>
+    <h3>The answer is:</h3>
+    <h1>{answer}</h1>
+    <h3>Charlie Chapman gets $300 for guessing closest without going over</h3>
+    <h3>Rick Sanchez gets $400 for betting $200 with 2 to 1 odds</h3>
   </Container>
 );
 

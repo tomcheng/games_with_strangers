@@ -9,7 +9,7 @@ import RevealStage from "./RevealStage";
 
 const Question = styled.h1`
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 `;
 
 const YouBet = ({ gameState, onPlay }) => {

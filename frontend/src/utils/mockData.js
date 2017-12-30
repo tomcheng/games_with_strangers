@@ -24,17 +24,29 @@ const defaultGameState = {
   scores: { "1": 200, "2": 200, "3": 200, "4": 200, "5": 200 }
 };
 
-export const GUESSING_STATE = {
+export const WAITING_FOR_PLAYERS = {
+  ...nonGameState
+};
+
+export const GUESSING = {
   ...nonGameState,
   gameState: {
     ...defaultGameState,
     stage: "guessing",
-    your_guess: 50,
-    awaiting_guess: [{ id: "2", name: "Bar" }, { id: "3", name: "Baz" }]
+    your_guess: null,
+    awaiting_guess: [players[2], players[3]]
   }
 };
 
-export const BETTING_STATE = {
+export const GUESSED = {
+  ...GUESSING,
+  gameState: {
+    ...GUESSING.gameState,
+    your_guess: 50
+  }
+};
+
+export const BETTING = {
   ...nonGameState,
   gameState: {
     ...defaultGameState,
@@ -45,12 +57,20 @@ export const BETTING_STATE = {
       { guess: 25, odds: 3, players: [players[3]] },
       { guess: 40, odds: 4, players: [players[4]] }
     ],
-    your_bets: [{ guess: 20, wager: 100 }, { guess: 25, wager: 100 }],
+    your_bets: null,
     awaiting_bet: [players[2], players[3]]
   }
 };
 
-export const REVEAL_STATE = {
+export const BETTED = {
+  ...BETTING,
+  gameState: {
+    ...BETTING.gameState,
+    your_bets: [{ guess: 20, wager: 100 }, { guess: 25, wager: 100 }]
+  }
+};
+
+export const REVEAL = {
   ...nonGameState,
   gameState: {
     ...defaultGameState,

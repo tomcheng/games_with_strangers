@@ -6,7 +6,7 @@ const gamesList = [
     id: "you_bet",
     displayName: "You Bet",
     description: "Answer general trivia questions and wager on guesses.",
-    playerRequirements: <span>Players: 4&ndash;20</span>,
+    playerRequirements: <span>Players: 3&ndash;7</span>,
     component: YouBet
   }
 ];

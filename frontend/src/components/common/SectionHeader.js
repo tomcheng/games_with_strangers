@@ -4,7 +4,7 @@ import styled from "styled-components";
 const Container = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 `;
 
 const Rule = styled.div`

@@ -16,6 +16,11 @@ const Content = styled.div`
 
 const Players = styled.div`
   text-align: center;
+  margin-bottom: 16px;
+`;
+
+const Waiting = styled(SecondaryText)`
+  margin-top: -8px;
   margin-bottom: 24px;
 `;
 
@@ -42,13 +47,13 @@ const Room = ({
         <Players>
           <h1>{you.name}</h1>
           {others.map(player => <h1 key={player.id}>{player.name}</h1>)}
-          {!!playersNeeded && (
-            <SecondaryText>
-              Waiting for {playersNeeded} more{" "}
-              {pluralize("player", playersNeeded)}&hellip;
-            </SecondaryText>
-          )}
         </Players>
+        {!!playersNeeded && (
+          <Waiting>
+            Waiting for {playersNeeded} more{" "}
+            {pluralize("player", playersNeeded)}&hellip;
+          </Waiting>
+        )}
         <Button onClick={onStartGame} disabled={playersNeeded > 0}>
           Start Game
         </Button>
