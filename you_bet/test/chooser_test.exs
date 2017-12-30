@@ -36,5 +36,4 @@ defmodule ChooserTest do
     assert abs(Enum.count(choices["foo"]) - 300) < 50
     assert abs(Enum.count(choices["baz"]) - 600) < 50
   end
-
 end

@@ -35,8 +35,10 @@ defmodule YouBet do
     |> Map.drop([:answer, :players])
   end
 
-  def sanitize_state(%{stage: :reveal} = state, _) do
-    Map.drop(state, [:players])
+  def sanitize_state(%{stage: :reveal, players: players, guesses: guesses, odds: odds, bets: bets, answer: answer} = state, _) do
+    state
+    |> Map.put(:payouts, YouBet.Payouts.get(players, guesses, odds, bets, answer))
+    |> Map.drop([:players])
   end
 
   defp get_awaiting(actions, players, player_id) do
@@ -65,7 +67,9 @@ defmodule YouBet do
 
   defp update_stage(%{stage: :guessing, guesses: guesses} = state) do
     if Enum.all?(guesses, fn {_, g} -> !is_nil(g) end) do
-      Map.put(state, :stage, :betting)
+      state
+      |> Map.put(:odds, get_odds(guesses))
+      |> Map.put(:stage, :betting)
     else
       state
     end
@@ -104,6 +108,23 @@ defmodule YouBet do
     |> Enum.with_index
     |> Enum.map(fn {guess, index} ->
       Map.put(guess, :odds, Float.round(abs(index - mid_point) + base))
+    end)
+  end
+
+  defp get_odds(raw_guesses) do
+    guesses =
+      raw_guesses
+      |> Map.values
+      |> Enum.uniq
+      |> Enum.sort
+    num_guesses = Enum.count(guesses)
+    mid_point = num_guesses / 2 - 0.5
+    base = if rem(num_guesses, 2) == 0, do: 2.5, else: 2
+
+    guesses
+    |> Enum.with_index
+    |> Enum.reduce(%{}, fn {guess, index}, odds ->
+      Map.put(odds, guess, Float.round(abs(index - mid_point) + base))
     end)
   end
 end

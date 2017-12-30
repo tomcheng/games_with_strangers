@@ -113,29 +113,35 @@ defmodule YouBetTest do
     assert others_state[:awaiting_bet] == [%{id: "3", name: "baz"}]
   end
 
-  test "shows answer when all bets are in", %{players: players} do
+  test "changes to reveal stage when all bets are in", %{players: players} do
     state =
       players
       |> YouBet.initial_state
-      |> YouBet.play("1", "guess", "30")
-      |> YouBet.play("2", "guess", "20")
-      |> YouBet.play("3", "guess", "10")
+      |> YouBet.play("1", "guess", "1")
+      |> YouBet.play("2", "guess", "1")
+      |> YouBet.play("3", "guess", "999999999999")
       |> YouBet.play("1", "finalize_bets", %{
-        "bet1" => %{"guess" => 20, "wager" => 100},
-        "bet2" => %{"guess" => 30, "wager" => 100}
+        "bet1" => %{"guess" => 1, "wager" => 100},
+        "bet2" => %{"guess" => 999_999_999_999, "wager" => 100}
       })
       |> YouBet.play("2", "finalize_bets", %{
-        "bet1" => %{"guess" => 20, "wager" => 100},
-        "bet2" => %{"guess" => 30, "wager" => 100}
+        "bet1" => %{"guess" => 1, "wager" => 100},
+        "bet2" => %{"guess" => 1, "wager" => 100}
       })
       |> YouBet.play("3", "finalize_bets", %{
-        "bet1" => %{"guess" => 20, "wager" => 100},
-        "bet2" => %{"guess" => 30, "wager" => 100}
+        "bet1" => %{"guess" => 999_999_999_999, "wager" => 100},
+        "bet2" => %{"guess" => 999_999_999_999, "wager" => 100}
       })
       |> YouBet.sanitize_state("1")
 
     assert state[:stage] == :reveal
     assert is_integer(state[:answer])
+    assert state[:payouts] == [
+      %{player: %{id: "1", name: "foo"}, amount: 300, closest: true},
+      %{player: %{id: "2", name: "bar"}, amount: 300, closest: true},
+      %{player: %{id: "1", name: "foo"}, amount: 300, closest: false, wager: 100, odds: 3},
+      %{player: %{id: "2", name: "bar"}, amount: 600, closest: false, wager: 200, odds: 3}
+    ]
   end
 
   test "handles missing player", %{players: players} do
