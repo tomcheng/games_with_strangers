@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import customTypes from "../../../utils/customTypes";
+import * as customTypes from "../../../utils/customTypes";
 import styled from "styled-components";
 import SectionHeader from "../../common/SectionHeader";
 import GuessingStage from "./GuessingStage";

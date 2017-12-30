@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import * as customTypes from "../../../utils/customTypes";
 import styled from "styled-components";
 import { makeList } from "../../../utils/strings";
-import customTypes from "../../../utils/customTypes";
 import Button from "../../common/Button";
 import SecondaryText from "../../common/SecondaryText";
 import Answer from "./Answer";
