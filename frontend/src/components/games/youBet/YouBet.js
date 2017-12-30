@@ -22,7 +22,8 @@ const YouBet = ({ gameState, onPlay }) => {
     bet_options: betOptions,
     your_bets: yourBets,
     awaiting_bet: awaitingBet,
-    answer
+    answer,
+    payouts
   } = gameState;
 
   return (
@@ -51,7 +52,7 @@ const YouBet = ({ gameState, onPlay }) => {
           }}
         />
       )}
-      {stage === "reveal" && <RevealStage answer={answer} />}
+      {stage === "reveal" && <RevealStage answer={answer} payouts={payouts} />}
     </div>
   );
 };
@@ -77,7 +78,16 @@ YouBet.propTypes = {
       })
     ),
     awaiting_bet: customTypes.players,
-    answer: PropTypes.number
+    answer: PropTypes.number,
+    payouts: PropTypes.arrayOf(
+      PropTypes.shape({
+        player: customTypes.player.isRequired,
+        amount: PropTypes.number.isRequired,
+        closest: PropTypes.bool.isRequired,
+        wager: PropTypes.number,
+        odds: PropTypes.number
+      })
+    ).isRequired
   }).isRequired,
   onPlay: PropTypes.func.isRequired
 };
