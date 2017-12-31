@@ -62,6 +62,7 @@ class Answer extends Component {
     odds: PropTypes.number.isRequired,
     players: customTypes.players.isRequired,
     onBet: PropTypes.func.isRequired,
+    onCancelBet: PropTypes.func.isRequired,
     innerRef: PropTypes.func
   };
 
@@ -76,20 +77,23 @@ class Answer extends Component {
       isOver,
       canDrop,
       chips,
+      onCancelBet,
       innerRef
     } = this.props;
     const selected = chips.length > 0;
 
     return connectDropTarget(
       <div ref={innerRef}>
-        {chips.map(({ id, position, amount, color }) => (
+        {chips.map(({ id, position, amount, color, base }) => (
           <StyledChip
             key={id}
             chipId={id}
             amount={amount}
             color={color}
+            base={base}
             style={position ? getTranslationStyle(position) : null}
             isDraggable={!finalized}
+            onCancelBet={onCancelBet}
           />
         ))}
         <Container

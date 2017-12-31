@@ -78,20 +78,48 @@ class BettingStage extends Component {
       return [];
     }
     const chips = [
-      { id: 1, amount: 100, color: "black", base: true, guess: null, position: null },
-      { id: 2, amount: 100, color: "black", base: true, guess: null, position: null }
+      {
+        id: 1,
+        amount: 100,
+        color: "black",
+        base: true,
+        guess: null,
+        position: null
+      },
+      {
+        id: 2,
+        amount: 100,
+        color: "black",
+        base: true,
+        guess: null,
+        position: null
+      }
     ];
     let id = 3;
     let remaining = score - 200;
 
     while (remaining >= 500) {
-      chips.push({ id, amount: 500, color: "red", base: false, guess: null, position: null });
+      chips.push({
+        id,
+        amount: 500,
+        color: "red",
+        base: false,
+        guess: null,
+        position: null
+      });
       id += 1;
       remaining -= 500;
     }
 
     while (remaining >= 100) {
-      chips.push({ id, amount: 100, color: "white", base: false, guess: null, position: null });
+      chips.push({
+        id,
+        amount: 100,
+        color: "white",
+        base: false,
+        guess: null,
+        position: null
+      });
       id += 1;
       remaining -= 100;
     }
@@ -99,7 +127,6 @@ class BettingStage extends Component {
     return chips;
   };
 
-  containerEl = null;
   answerEls = {};
 
   handleBet = ({ guess, position: fixedPosition, chipId, base }) => {
@@ -125,6 +152,20 @@ class BettingStage extends Component {
     this.setState({ chips: newChips });
   };
 
+  handleCancelBet = ({ chipId, base }) => {
+    if (base) {
+      return;
+    }
+
+    const { chips } = this.state;
+    const newChips = chips.map(
+      chip =>
+        chip.id === chipId ? { ...chip, guess: null, position: null } : chip
+    );
+
+    this.setState({ chips: newChips });
+  };
+
   handleClickFinalize = () => {
     const { onFinalizeBets } = this.props;
     const { chips } = this.state;
@@ -142,13 +183,12 @@ class BettingStage extends Component {
     const baseChipsPlayed = chips.every(({ guess, base }) => !base || !!guess);
 
     return (
-      <Container
-        innerRef={el => {
-          this.containerEl = el;
-        }}
-      >
+      <Container>
         {betOptions.map(({ guess, odds, players }) => (
           <Answer
+            innerRef={el => {
+              this.answerEls[guess] = el;
+            }}
             finalized={!!yourBets}
             nothingSelected={
               chips.filter(chip => chip.guess === guess).length > 0
@@ -159,9 +199,7 @@ class BettingStage extends Component {
             odds={odds}
             players={players}
             onBet={this.handleBet}
-            innerRef={el => {
-              this.answerEls[guess] = el;
-            }}
+            onCancelBet={this.handleCancelBet}
           />
         ))}
         <Footer>
@@ -182,12 +220,13 @@ class BettingStage extends Component {
           )}
         </Footer>
         <UnplayedChips>
-          {unplayedChips.map(({id, amount, color}, index) => (
+          {unplayedChips.map(({ id, amount, color, base }, index) => (
             <UnplayedDraggableChip
               key={id}
               chipId={id}
               amount={amount}
               color={color}
+              base={base}
               style={{
                 transform: `translateY(${-index * 15}px)`,
                 zIndex: 50 - index

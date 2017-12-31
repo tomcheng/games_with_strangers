@@ -6,10 +6,18 @@ import Chip from "./Chip";
 const chipSource = {
   beginDrag: props => ({
     amount: props.amount,
-    base: props.color === "black",
+    base: props.base,
     chipId: props.chipId,
     color: props.color
-  })
+  }),
+  endDrag: (props, monitor) => {
+    const { onCancelBet, chipId, base } = props;
+    const didDrop = monitor.didDrop();
+
+    if (!didDrop && onCancelBet) {
+      onCancelBet({ chipId, base })
+    }
+  }
 };
 
 const collect = (connect, monitor) => ({
@@ -20,13 +28,15 @@ const collect = (connect, monitor) => ({
 class DraggableChip extends Component {
   static propTypes = {
     amount: PropTypes.number.isRequired,
+    base: PropTypes.bool.isRequired,
     chipId: PropTypes.number.isRequired,
     color: PropTypes.string.isRequired,
     connectDragSource: PropTypes.func.isRequired,
     isDraggable: PropTypes.bool.isRequired,
     isDragging: PropTypes.bool.isRequired,
     className: PropTypes.string,
-    style: PropTypes.object
+    style: PropTypes.object,
+    onCancelBet: PropTypes.func
   };
 
   static defaultProps = {
