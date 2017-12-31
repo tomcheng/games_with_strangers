@@ -71,9 +71,11 @@ defmodule YouBet do
     end
   end
 
-  def play(state, player_id, "finalize_bets", %{"bet1" => %{"guess" => g1, "wager" => w1}, "bet2" => %{"guess" => g2, "wager" => w2}}) do
+  def play(state, player_id, "finalize_bets", bets) do
     state
-    |> Map.update!(:bets, &Map.put(&1, player_id, [%{guess: g1, wager: w1}, %{guess: g2, wager: w2}]))
+    |> Map.update!(:bets, &Map.put(&1, player_id, Enum.map(bets, fn bet ->
+      %{guess: bet["guess"], base_wager: bet["base_wager"], extra_wager: bet["extra_wager"]}
+    end)))
     |> transition_to_reveal_if_done
   end
 

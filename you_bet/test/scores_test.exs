@@ -15,9 +15,9 @@ defmodule ScoresTest do
     guesses = %{"1" => 100, "2" => 200, "3" => 300}
     odds = %{100 => 3, 200 => 2, 300 => 3}
     bets = %{
-      "1" => [%{guess: 100, wager: 100}, %{guess: 100, wager: 100}],
-      "2" => [%{guess: 100, wager: 100}, %{guess: 100, wager: 100}],
-      "3" => [%{guess: 100, wager: 100}, %{guess: 100, wager: 100}]
+      "1" => [%{guess: 100, base_wager: 100, extra_wager: 0}, %{guess: 100, base_wager: 100, extra_wager: 0}],
+      "2" => [%{guess: 100, base_wager: 100, extra_wager: 0}, %{guess: 100, base_wager: 100, extra_wager: 0}],
+      "3" => [%{guess: 100, base_wager: 100, extra_wager: 0}, %{guess: 100, base_wager: 100, extra_wager: 0}]
     }
     answer = 50
     {new_scores, payouts} = YouBet.Scores.update(scores, players, guesses, odds, bets, answer)
@@ -31,9 +31,9 @@ defmodule ScoresTest do
     guesses = %{"1" => 100, "2" => 200, "3" => 300}
     odds = %{100 => 3, 200 => 2, 300 => 3}
     bets = %{
-      "1" => [%{guess: 200, wager: 100}, %{guess: 200, wager: 100}],
-      "2" => [%{guess: 200, wager: 100}, %{guess: 200, wager: 100}],
-      "3" => [%{guess: 200, wager: 100}, %{guess: 200, wager: 100}]
+      "1" => [%{guess: 200, base_wager: 100, extra_wager: 0}, %{guess: 200, base_wager: 100, extra_wager: 0}],
+      "2" => [%{guess: 200, base_wager: 100, extra_wager: 0}, %{guess: 200, base_wager: 100, extra_wager: 0}],
+      "3" => [%{guess: 200, base_wager: 100, extra_wager: 0}, %{guess: 200, base_wager: 100, extra_wager: 0}]
     }
     answer = 150
     {new_scores, payouts} = YouBet.Scores.update(scores, players, guesses, odds, bets, answer)
@@ -47,9 +47,9 @@ defmodule ScoresTest do
     guesses = %{"1" => 100, "2" => 100, "3" => 300}
     odds = %{100 => 3, 200 => 2, 300 => 3}
     bets = %{
-      "1" => [%{guess: 200, wager: 100}, %{guess: 200, wager: 100}],
-      "2" => [%{guess: 200, wager: 100}, %{guess: 200, wager: 100}],
-      "3" => [%{guess: 200, wager: 100}, %{guess: 200, wager: 100}]
+      "1" => [%{guess: 200, base_wager: 100, extra_wager: 0}, %{guess: 200, base_wager: 100, extra_wager: 0}],
+      "2" => [%{guess: 200, base_wager: 100, extra_wager: 0}, %{guess: 200, base_wager: 100, extra_wager: 0}],
+      "3" => [%{guess: 200, base_wager: 100, extra_wager: 0}, %{guess: 200, base_wager: 100, extra_wager: 0}]
     }
     answer = 150
     {new_scores, payouts} = YouBet.Scores.update(scores, players, guesses, odds, bets, answer)
@@ -66,9 +66,9 @@ defmodule ScoresTest do
     guesses = %{"1" => 100, "2" => 200, "3" => 300}
     odds = %{100 => 3, 200 => 2, 300 => 3}
     bets = %{
-      "1" => [%{guess: 100, wager: 100}, %{guess: 200, wager: 100}],
-      "2" => [%{guess: 200, wager: 100}, %{guess: 200, wager: 100}],
-      "3" => [%{guess: 200, wager: 100}, %{guess: 200, wager: 100}]
+      "1" => [%{guess: 100, base_wager: 100, extra_wager: 0}, %{guess: 200, base_wager: 100, extra_wager: 0}],
+      "2" => [%{guess: 200, base_wager: 100, extra_wager: 0}, %{guess: 200, base_wager: 100, extra_wager: 0}],
+      "3" => [%{guess: 200, base_wager: 100, extra_wager: 0}, %{guess: 200, base_wager: 100, extra_wager: 0}]
     }
     answer = 150
     {new_scores, payouts} = YouBet.Scores.update(scores, players, guesses, odds, bets, answer)
@@ -85,9 +85,9 @@ defmodule ScoresTest do
     guesses = %{"1" => 100, "2" => 200, "3" => 300}
     odds = %{100 => 3, 200 => 2, 300 => 3}
     bets = %{
-      "1" => [%{guess: 200, wager: 100}, %{guess: 200, wager: 100}],
-      "2" => [%{guess: 100, wager: 100}, %{guess: 100, wager: 100}],
-      "3" => [%{guess: 200, wager: 100}, %{guess: 200, wager: 100}]
+      "1" => [%{guess: 200, base_wager: 100, extra_wager: 0}, %{guess: 200, base_wager: 100, extra_wager: 0}],
+      "2" => [%{guess: 100, base_wager: 100, extra_wager: 0}, %{guess: 100, base_wager: 100, extra_wager: 0}],
+      "3" => [%{guess: 200, base_wager: 100, extra_wager: 0}, %{guess: 200, base_wager: 100, extra_wager: 0}]
     }
     answer = 150
     {new_scores, payouts} = YouBet.Scores.update(scores, players, guesses, odds, bets, answer)

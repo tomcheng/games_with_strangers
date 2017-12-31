@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import uniq from "lodash/uniq";
+import map from "lodash/map";
 import * as customTypes from "../../../utils/customTypes";
 import styled from "styled-components";
 import { makeList } from "../../../utils/strings";
@@ -34,6 +35,27 @@ const Footer = styled.div`
   justify-content: center;
   text-align: center;
 `;
+
+export const gatherChips = chips => {
+  const gathered = chips.reduce(
+    (acc, { guess, base, amount }) => ({
+      ...acc,
+      [guess]: {
+        baseWager:
+          (acc[guess] ? acc[guess].baseWager : 0) + (base ? amount : 0),
+        extraWager:
+          (acc[guess] ? acc[guess].extraWager : 0) + (base ? 0 : amount)
+      }
+    }),
+    {}
+  );
+
+  return map(gathered, (value, key) => ({
+    baseWager: value.baseWager,
+    extraWager: value.extraWager,
+    guess: parseInt(key, 10)
+  }));
+};
 
 class BettingStage extends Component {
   static propTypes = {
@@ -163,10 +185,7 @@ class BettingStage extends Component {
     const { onFinalizeBets } = this.props;
     const { chips } = this.state;
 
-    onFinalizeBets({
-      bet1: { guess: chips[0].guess, wager: 100 },
-      bet2: { guess: chips[1].guess, wager: 100 }
-    });
+    onFinalizeBets(gatherChips(chips));
   };
 
   moveChipBack = chipId => {

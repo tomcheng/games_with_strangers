@@ -124,16 +124,19 @@ defmodule YouBetTest do
       |> YouBet.play("1", "guess", "30")
       |> YouBet.play("2", "guess", "20")
       |> YouBet.play("3", "guess", "10")
-      |> YouBet.play("1", "finalize_bets", %{
-        "bet1" => %{"guess" => 20, "wager" => 100},
-        "bet2" => %{"guess" => 30, "wager" => 100}
-      })
+      |> YouBet.play("1", "finalize_bets", [
+        %{"guess" => 20, "base_wager" => 100, "extra_wager" => 0},
+        %{"guess" => 30, "base_wager" => 100, "extra_wager" => 0},
+      ])
 
     your_state = YouBet.sanitize_state(state, "1")
 
     others_state = YouBet.sanitize_state(state, "2")
 
-    assert your_state[:your_bets] == [%{guess: 20, wager: 100}, %{guess: 30, wager: 100}]
+    assert your_state[:your_bets] == [
+      %{guess: 20, base_wager: 100, extra_wager: 0},
+      %{guess: 30, base_wager: 100, extra_wager: 0}
+    ]
     assert your_state[:awaiting_bet] == [%{id: "2", name: "bar"}, %{id: "3", name: "baz"}]
 
     assert others_state[:your_bets] == nil
@@ -147,18 +150,18 @@ defmodule YouBetTest do
       |> YouBet.play("1", "guess", "1")
       |> YouBet.play("2", "guess", "1")
       |> YouBet.play("3", "guess", "999999999999")
-      |> YouBet.play("1", "finalize_bets", %{
-        "bet1" => %{"guess" => 1, "wager" => 100},
-        "bet2" => %{"guess" => 999_999_999_999, "wager" => 100}
-      })
-      |> YouBet.play("2", "finalize_bets", %{
-        "bet1" => %{"guess" => 1, "wager" => 100},
-        "bet2" => %{"guess" => 1, "wager" => 100}
-      })
-      |> YouBet.play("3", "finalize_bets", %{
-        "bet1" => %{"guess" => 999_999_999_999, "wager" => 100},
-        "bet2" => %{"guess" => 999_999_999_999, "wager" => 100}
-      })
+      |> YouBet.play("1", "finalize_bets", [
+        %{"guess" => 1, "base_wager" => 100, "extra_wager" => 0},
+        %{"guess" => 999_999_999_999, "base_wager" => 100, "extra_wager" => 0}
+      ])
+      |> YouBet.play("2", "finalize_bets", [
+        %{"guess" => 1, "base_wager" => 100, "extra_wager" => 0},
+        %{"guess" => 1, "base_wager" => 100, "extra_wager" => 0}
+      ])
+      |> YouBet.play("3", "finalize_bets", [
+        %{"guess" => 999_999_999_999, "base_wager" => 100, "extra_wager" => 0},
+        %{"guess" => 999_999_999_999, "base_wager" => 100, "extra_wager" => 0}
+      ])
       |> YouBet.sanitize_state("1")
 
     assert state[:round] == 1
@@ -185,18 +188,18 @@ defmodule YouBetTest do
       |> YouBet.play("1", "guess", "1")
       |> YouBet.play("2", "guess", "1")
       |> YouBet.play("3", "guess", "999999999999")
-      |> YouBet.play("1", "finalize_bets", %{
-        "bet1" => %{"guess" => 1, "wager" => 100},
-        "bet2" => %{"guess" => 999_999_999_999, "wager" => 100}
-      })
-      |> YouBet.play("2", "finalize_bets", %{
-        "bet1" => %{"guess" => 1, "wager" => 100},
-        "bet2" => %{"guess" => 1, "wager" => 100}
-      })
-      |> YouBet.play("3", "finalize_bets", %{
-        "bet1" => %{"guess" => 999_999_999_999, "wager" => 100},
-        "bet2" => %{"guess" => 999_999_999_999, "wager" => 100}
-      })
+      |> YouBet.play("1", "finalize_bets", [
+        %{"guess" => 1, "base_wager" => 100, "extra_wager" => 0},
+        %{"guess" => 999_999_999_999, "base_wager" => 100, "extra_wager" => 0}
+      ])
+      |> YouBet.play("2", "finalize_bets", [
+        %{"guess" => 1, "base_wager" => 100, "extra_wager" => 0},
+        %{"guess" => 1, "base_wager" => 100, "extra_wager" => 0}
+      ])
+      |> YouBet.play("3", "finalize_bets", [
+        %{"guess" => 999_999_999_999, "base_wager" => 100, "extra_wager" => 0},
+        %{"guess" => 999_999_999_999, "base_wager" => 100, "extra_wager" => 0}
+      ])
       |> YouBet.play("1", "advance_round", nil)
       |> YouBet.sanitize_state("1")
 

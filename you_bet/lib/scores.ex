@@ -20,7 +20,7 @@ defmodule YouBet.Scores do
     bet_payouts =
       bets
       |> Enum.map(fn {player_id, bs} ->
-        {player_id, Enum.reduce(bs, 0, fn %{guess: guess, wager: wager}, sum ->
+        {player_id, Enum.reduce(bs, 0, fn %{guess: guess, base_wager: wager}, sum ->
           if guess == closest_guess do
             sum + wager
           else
