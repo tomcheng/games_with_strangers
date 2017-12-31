@@ -37,7 +37,13 @@ const Room = ({
 
   if (gameState) {
     const GameComponent = game.component;
-    return <GameComponent gameState={gameState} onPlay={onPlay} />;
+    return (
+      <GameComponent
+        gameState={gameState}
+        onPlay={onPlay}
+        youAreModerator={you.isModerator}
+      />
+    );
   }
 
   return (
@@ -70,7 +76,8 @@ Room.propTypes = {
     })
   ).isRequired,
   you: PropTypes.shape({
-    id: PropTypes.string.isRequired
+    id: PropTypes.string.isRequired,
+    isModerator: PropTypes.bool.isRequired
   }).isRequired,
   onStartGame: PropTypes.func.isRequired,
   gameState: PropTypes.object,

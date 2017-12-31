@@ -162,6 +162,36 @@ defmodule YouBetTest do
     ]
   end
 
+  test "advances to next round", %{players: players} do
+    state =
+      players
+      |> YouBet.initial_state
+      |> YouBet.play("1", "guess", "1")
+      |> YouBet.play("2", "guess", "1")
+      |> YouBet.play("3", "guess", "999999999999")
+      |> YouBet.play("1", "finalize_bets", %{
+        "bet1" => %{"guess" => 1, "wager" => 100},
+        "bet2" => %{"guess" => 999_999_999_999, "wager" => 100}
+      })
+      |> YouBet.play("2", "finalize_bets", %{
+        "bet1" => %{"guess" => 1, "wager" => 100},
+        "bet2" => %{"guess" => 1, "wager" => 100}
+      })
+      |> YouBet.play("3", "finalize_bets", %{
+        "bet1" => %{"guess" => 999_999_999_999, "wager" => 100},
+        "bet2" => %{"guess" => 999_999_999_999, "wager" => 100}
+      })
+      |> YouBet.play("1", "advance_round", nil)
+      |> YouBet.sanitize_state("1")
+
+    assert state[:round] == 2
+    assert state[:stage] == :guessing
+    assert String.match?(state[:question], ~r/.*\?$/)
+    assert state[:answer] == nil
+    assert state[:your_guess] == nil
+    assert state[:awaiting_guess] == [%{id: "2", name: "bar"}, %{id: "3", name: "baz"}]
+  end
+
   test "handles missing player", %{players: players} do
     state =
       players

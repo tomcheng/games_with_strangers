@@ -14,10 +14,9 @@ defmodule YouBet do
           {id, %{id: id, name: name}}
         end)
         |> Enum.into(%{}),
-      scores: Enum.reduce(players, %{}, fn {id, _}, scores -> Map.put(scores, id, 200) end),
-      guesses: Enum.reduce(players, %{}, fn {id, _}, guesses -> Map.put(guesses, id, nil) end),
-      bets: Enum.reduce(players, %{}, fn {id, _}, bets -> Map.put(bets, id, nil) end),
-      odds: nil
+      scores: initial_map(players, 200),
+      guesses: initial_map(players),
+      bets: initial_map(players)
     }
   end
 
@@ -70,6 +69,18 @@ defmodule YouBet do
     state
     |> Map.update!(:bets, &Map.put(&1, player_id, [%{guess: g1, wager: w1}, %{guess: g2, wager: w2}]))
     |> transition_to_reveal_if_done
+  end
+
+  def play(%{players: players} = state, _player_id, "advance_round", _) do
+    {question, answer} = YouBet.Questions.random()
+
+    state
+    |> Map.update!(:round, &(&1 + 1))
+    |> Map.put(:stage, :guessing)
+    |> Map.put(:question, question)
+    |> Map.put(:answer, answer)
+    |> Map.put(:guesses, initial_map(players))
+    |> Map.put(:bets, initial_map(players))
   end
 
   def play(state, _, _, _), do: state
@@ -151,5 +162,9 @@ defmodule YouBet do
     |> Enum.reduce(%{}, fn {guess, index}, odds ->
       Map.put(odds, guess, Float.round(abs(index - mid_point) + base))
     end)
+  end
+
+  defp initial_map(players, initial_value \\ nil) do
+    Enum.reduce(players, %{}, fn {id, _}, acc -> Map.put(acc, id, initial_value) end)
   end
 end

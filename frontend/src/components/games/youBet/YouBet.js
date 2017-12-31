@@ -14,7 +14,7 @@ const Question = styled.h1`
   margin-bottom: 16px;
 `;
 
-const YouBet = ({ gameState, onPlay }) => {
+const YouBet = ({ gameState, youAreModerator, onPlay }) => {
   const {
     round,
     question,
@@ -58,7 +58,16 @@ const YouBet = ({ gameState, onPlay }) => {
           }}
         />
       )}
-      {stage === "reveal" && <RevealStage answer={answer} payouts={payouts} />}
+      {stage === "reveal" && (
+        <RevealStage
+          answer={answer}
+          payouts={payouts}
+          youAreModerator={youAreModerator}
+          onAdvanceRound={() => {
+            onPlay({ type: "advance_round" });
+          }}
+        />
+      )}
     </div>
   );
 };
@@ -101,6 +110,7 @@ YouBet.propTypes = {
       })
     ).isRequired
   }).isRequired,
+  youAreModerator: PropTypes.bool.isRequired,
   onPlay: PropTypes.func.isRequired
 };
 

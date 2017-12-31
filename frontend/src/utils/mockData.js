@@ -1,5 +1,5 @@
 const players = [
-  { id: "1", name: "Timmy Tanker" },
+  { id: "1", name: "Timmy Tanker", isModerator: true },
   { id: "2", name: "Billy Jean" },
   { id: "3", name: "Charlie Chapman" },
   { id: "4", name: "Rick Sanchez" },
