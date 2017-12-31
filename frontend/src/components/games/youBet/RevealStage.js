@@ -12,11 +12,11 @@ const Answer = styled.h1`
   margin-bottom: 16px;
 `;
 
-const Award = styled.div`
+const Payout = styled.div`
   margin-bottom: 16px;
 `;
 
-const AwardTitle = styled.h3`
+const PayoutTitle = styled.h3`
   margin-bottom: 0;
 `;
 
@@ -25,16 +25,16 @@ const RevealStage = ({ answer, payouts }) => (
     <h3>The answer is:</h3>
     <Answer>{answer}</Answer>
     {payouts.map(({ player, amount, closest, wager, odds }) => (
-      <Award>
-        <AwardTitle>
+      <Payout key={`${player.id}-${closest ? "closest" : "wager"}`}>
+        <PayoutTitle>
           {player.name} gets ${amount}
-        </AwardTitle>
+        </PayoutTitle>
         <SecondaryText>
           {closest
             ? "closest guess without going over"
             : `$${wager} bet at ${odds} to 1 odds`}
         </SecondaryText>
-      </Award>
+      </Payout>
     ))}
   </Container>
 );
