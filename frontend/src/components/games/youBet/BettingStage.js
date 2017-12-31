@@ -51,7 +51,8 @@ class BettingStage extends Component {
     ),
     yourScore: PropTypes.number.isRequired,
     onBet: PropTypes.func.isRequired,
-    onFinalizeBets: PropTypes.func.isRequired
+    onFinalizeBets: PropTypes.func.isRequired,
+    onSetFlashMessage: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -102,6 +103,7 @@ class BettingStage extends Component {
   answerEls = {};
 
   handleBet = ({ guess, position: fixedPosition, chipId, base }) => {
+    const { onSetFlashMessage } = this.props;
     const { chips } = this.state;
     const { x: containerX, y: containerY } = this.answerEls[
       guess
@@ -112,6 +114,7 @@ class BettingStage extends Component {
     };
 
     if (!base && chips.filter(chip => chip.guess === guess).length === 0) {
+      onSetFlashMessage("Can only add where black chips are placed.");
       return;
     }
 

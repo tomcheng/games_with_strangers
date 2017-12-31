@@ -31,7 +31,8 @@ const Room = ({
   you,
   others,
   onStartGame,
-  onPlay
+  onPlay,
+  onSetFlashMessage
 }) => {
   const game = find(gamesList, g => g.id === gameId);
 
@@ -40,8 +41,9 @@ const Room = ({
     return (
       <GameComponent
         gameState={gameState}
-        onPlay={onPlay}
         youAreModerator={you.isModerator}
+        onPlay={onPlay}
+        onSetFlashMessage={onSetFlashMessage}
       />
     );
   }

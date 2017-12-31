@@ -14,7 +14,7 @@ const Question = styled.h1`
   margin-bottom: 16px;
 `;
 
-const YouBet = ({ gameState, youAreModerator, onPlay }) => {
+const YouBet = ({ gameState, youAreModerator, onPlay, onSetFlashMessage }) => {
   const {
     answer,
     payouts,
@@ -58,6 +58,7 @@ const YouBet = ({ gameState, youAreModerator, onPlay }) => {
           onFinalizeBets={payload => {
             onPlay({ type: "finalize_bets", payload });
           }}
+          onSetFlashMessage={onSetFlashMessage}
         />
       )}
       {stage === "reveal" && (
@@ -114,7 +115,8 @@ YouBet.propTypes = {
     your_score: PropTypes.number
   }).isRequired,
   youAreModerator: PropTypes.bool.isRequired,
-  onPlay: PropTypes.func.isRequired
+  onPlay: PropTypes.func.isRequired,
+  onSetFlashMessage: PropTypes.func.isRequired
 };
 
 export default YouBet;
