@@ -12,7 +12,7 @@ const Container = styled.div`
 
 class ChipDragLayer extends Component {
   render() {
-    const { isDragging, currentOffset, itemType } = this.props;
+    const { isDragging, currentOffset, itemType, ...other } = this.props;
 
     if (!isDragging || itemType !== "CHIP" || !currentOffset) {
       return null;
@@ -24,13 +24,14 @@ class ChipDragLayer extends Component {
       <Container
         style={{ pointerEvents: "none", transform, WebkitTransform: transform }}
       >
-        <Chip />
+        <Chip {...other} />
       </Container>
     );
   }
 }
 
 const collect = monitor => ({
+  ...monitor.getItem(),
   itemType: monitor.getItemType(),
   isDragging: monitor.isDragging(),
   currentOffset: monitor.getSourceClientOffset()

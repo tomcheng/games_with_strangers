@@ -57,7 +57,7 @@ class BettingStage extends Component {
   constructor(props) {
     super();
 
-    const { yourBets } = props;
+    const { yourBets, yourScore } = props;
 
     const chips = yourBets
       ? yourBets.map(({ guess }, index) => ({
@@ -67,13 +67,36 @@ class BettingStage extends Component {
           guess,
           position: null
         }))
-      : [
-          { id: 1, amount: 100, base: true, guess: null, position: null },
-          { id: 2, amount: 100, base: true, guess: null, position: null }
-        ];
+      : this.getInitialChips(yourScore);
 
     this.state = { chips };
   }
+
+  getInitialChips = score => {
+    if (score < 200) {
+      return [];
+    }
+    const chips = [
+      { id: 1, amount: 100, color: "black", base: true, guess: null, position: null },
+      { id: 2, amount: 100, color: "black", base: true, guess: null, position: null }
+    ];
+    let id = 3;
+    let remaining = score - 200;
+
+    while (remaining >= 500) {
+      chips.push({ id, amount: 500, color: "red", base: false, guess: null, position: null });
+      id += 1;
+      remaining -= 500;
+    }
+
+    while (remaining >= 100) {
+      chips.push({ id, amount: 100, color: "white", base: false, guess: null, position: null });
+      id += 1;
+      remaining -= 100;
+    }
+
+    return chips;
+  };
 
   containerEl = null;
   answerEls = {};
@@ -151,10 +174,12 @@ class BettingStage extends Component {
           )}
         </Footer>
         <UnplayedChips>
-          {unplayedChips.map(({ id }, index) => (
+          {unplayedChips.map(({id, amount, color}, index) => (
             <UnplayedDraggableChip
               key={id}
               chipId={id}
+              amount={amount}
+              color={color}
               style={{
                 transform: `translateY(${-index * 15}px)`,
                 zIndex: 50 - index

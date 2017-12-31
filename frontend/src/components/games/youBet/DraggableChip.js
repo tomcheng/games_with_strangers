@@ -4,7 +4,11 @@ import { DragSource } from "react-dnd";
 import Chip from "./Chip";
 
 const chipSource = {
-  beginDrag: props => ({ chipId: props.chipId })
+  beginDrag: props => ({
+    chipId: props.chipId,
+    color: props.color,
+    amount: props.amount
+  })
 };
 
 const collect = (connect, monitor) => ({
@@ -32,13 +36,14 @@ class DraggableChip extends Component {
       isDragging,
       className,
       style,
-      isDraggable
+      isDraggable,
+      ...other
     } = this.props;
 
     if (!isDraggable) {
       return (
         <div className={className} style={style}>
-          <Chip />
+          <Chip {...other} />
         </div>
       );
     }
@@ -48,7 +53,7 @@ class DraggableChip extends Component {
         style={{ ...style, display: isDragging ? "none" : null }}
         className={className}
       >
-        <Chip />
+        <Chip {...other} />
       </div>
     );
   }

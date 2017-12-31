@@ -82,10 +82,12 @@ class Answer extends Component {
 
     return connectDropTarget(
       <div ref={innerRef}>
-        {chips.map(({ id, position }) => (
+        {chips.map(({ id, position, amount, color }) => (
           <StyledChip
             key={id}
             chipId={id}
+            amount={amount}
+            color={color}
             style={position ? getTranslationStyle(position) : null}
             isDraggable={!finalized}
           />

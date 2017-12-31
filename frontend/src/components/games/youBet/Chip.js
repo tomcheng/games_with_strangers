@@ -41,7 +41,7 @@ const ChipBase = styled.div`
   &:after {
     z-index: 2;
     position: absolute;
-    content: "${props => props.value}";
+    content: "${props => props.amount}";
     text-align: center;
     font: bold ${DIAMETER / 151 * 50}px/${DIAMETER / 151 * 111}px Arial;
     white-space: pre;
@@ -150,12 +150,12 @@ const Chip = styled(ChipBase)`
 
 Chip.propTypes = {
   color: PropTypes.oneOf(keys(COLORS)),
-  value: PropTypes.number,
+  amount: PropTypes.number,
 };
 
 Chip.defaultProps = {
   color: "black",
-  value: 100
+  amount: 100
 };
 
 export default Chip;
