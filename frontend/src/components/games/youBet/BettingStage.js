@@ -101,7 +101,7 @@ class BettingStage extends Component {
   containerEl = null;
   answerEls = {};
 
-  handleBet = ({ guess, position: fixedPosition, chipId }) => {
+  handleBet = ({ guess, position: fixedPosition, chipId, base }) => {
     const { chips } = this.state;
     const { x: containerX, y: containerY } = this.answerEls[
       guess
@@ -110,6 +110,11 @@ class BettingStage extends Component {
       x: fixedPosition.x - containerX,
       y: fixedPosition.y - containerY
     };
+
+    if (!base && chips.filter(chip => chip.guess === guess).length === 0) {
+      return;
+    }
+
     const newChips = chips.map(
       chip => (chip.id === chipId ? { ...chip, guess, position } : chip)
     );

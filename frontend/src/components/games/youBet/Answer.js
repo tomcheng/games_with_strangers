@@ -109,10 +109,10 @@ class Answer extends Component {
 const answerSpec = {
   drop: (props, monitor) => {
     const { guess, onBet } = props;
-    const { chipId } = monitor.getItem();
+    const { chipId, base } = monitor.getItem();
     const position = monitor.getSourceClientOffset();
 
-    onBet({ guess, position, chipId });
+    onBet({ guess, position, chipId, base });
   }
 };
 

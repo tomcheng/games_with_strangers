@@ -5,9 +5,10 @@ import Chip from "./Chip";
 
 const chipSource = {
   beginDrag: props => ({
+    amount: props.amount,
+    base: props.color === "black",
     chipId: props.chipId,
-    color: props.color,
-    amount: props.amount
+    color: props.color
   })
 };
 
@@ -18,7 +19,9 @@ const collect = (connect, monitor) => ({
 
 class DraggableChip extends Component {
   static propTypes = {
+    amount: PropTypes.number.isRequired,
     chipId: PropTypes.number.isRequired,
+    color: PropTypes.string.isRequired,
     connectDragSource: PropTypes.func.isRequired,
     isDraggable: PropTypes.bool.isRequired,
     isDragging: PropTypes.bool.isRequired,
