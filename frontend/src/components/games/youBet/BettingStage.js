@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import uniq from "lodash/uniq";
 import * as customTypes from "../../../utils/customTypes";
 import styled from "styled-components";
 import { makeList } from "../../../utils/strings";
@@ -150,20 +151,13 @@ class BettingStage extends Component {
     );
 
     this.setState({ chips: newChips });
+    this.cleanUpChips();
   };
 
   handleCancelBet = ({ chipId, base }) => {
-    if (base) {
-      return;
+    if (!base) {
+      this.moveChipBack(chipId);
     }
-
-    const { chips } = this.state;
-    const newChips = chips.map(
-      chip =>
-        chip.id === chipId ? { ...chip, guess: null, position: null } : chip
-    );
-
-    this.setState({ chips: newChips });
   };
 
   handleClickFinalize = () => {
@@ -173,6 +167,32 @@ class BettingStage extends Component {
     onFinalizeBets({
       bet1: { guess: chips[0].guess, wager: 100 },
       bet2: { guess: chips[1].guess, wager: 100 }
+    });
+  };
+
+  moveChipBack = chipId => {
+    const { chips } = this.state;
+    const newChips = chips.map(
+      chip =>
+        chip.id === chipId ? { ...chip, guess: null, position: null } : chip
+    );
+    this.setState({ chips: newChips });
+  };
+
+  cleanUpChips = () => {
+    this.setState(state => {
+      const { chips } = this.state;
+      const validGuesses = uniq(
+        chips.filter(chip => chip.base && !!chip.guess).map(chip => chip.guess)
+      );
+      const newChips = chips.map(
+        chip =>
+          chip.guess && !validGuesses.includes(chip.guess)
+            ? { ...chip, guess: null, position: null }
+            : chip
+      );
+
+      return { ...state, chips: newChips };
     });
   };
 
