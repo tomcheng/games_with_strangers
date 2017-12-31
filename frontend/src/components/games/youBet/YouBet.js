@@ -16,17 +16,18 @@ const Question = styled.h1`
 
 const YouBet = ({ gameState, youAreModerator, onPlay }) => {
   const {
-    round,
+    answer,
+    payouts,
     question,
+    round,
+    scores,
     stage,
-    your_guess: yourGuess,
+    awaiting_bet: awaitingBet,
     awaiting_guess: awaitingGuess,
     bet_options: betOptions,
     your_bets: yourBets,
-    awaiting_bet: awaitingBet,
-    answer,
-    payouts,
-    scores
+    your_guess: yourGuess,
+    your_score: yourScore
   } = gameState;
 
   return (
@@ -47,9 +48,10 @@ const YouBet = ({ gameState, youAreModerator, onPlay }) => {
       )}
       {stage === "betting" && (
         <BettingStage
+          awaitingBet={awaitingBet}
           betOptions={betOptions}
           yourBets={yourBets}
-          awaitingBet={awaitingBet}
+          yourScore={yourScore}
           onBet={payload => {
             onPlay({ type: "bet", payload });
           }}

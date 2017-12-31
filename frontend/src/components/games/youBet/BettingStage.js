@@ -20,16 +20,11 @@ const UnplayedChips = styled.div`
   right: -16px;
 `;
 
-const UnplayedDraggableChip1 = styled(DraggableChip)`
-  position: absolute;
-  bottom: 84px;
-  right: 0;
-`;
-
-const UnplayedDraggableChip2 = styled(DraggableChip)`
+const UnplayedDraggableChip = styled(DraggableChip)`
   position: absolute;
   bottom: 0;
   right: 0;
+  transition: transform 0.2s ease-in-out;
 `;
 
 const Footer = styled.div`
@@ -49,9 +44,12 @@ class BettingStage extends Component {
         players: customTypes.players.isRequired
       })
     ).isRequired,
-    yourBet: PropTypes.arrayOf(PropTypes.shape({
-      guess: PropTypes.number.isRequired
-    })),
+    yourBet: PropTypes.arrayOf(
+      PropTypes.shape({
+        guess: PropTypes.number.isRequired
+      })
+    ),
+    yourScore: PropTypes.number.isRequired,
     onBet: PropTypes.func.isRequired,
     onFinalizeBets: PropTypes.func.isRequired
   };
@@ -59,26 +57,29 @@ class BettingStage extends Component {
   constructor(props) {
     super();
 
-    this.state = { chips: { 1: null, 2: null } };
-
     const { yourBets } = props;
 
-    if (!yourBets) {
-      return;
-    }
+    const chips = yourBets
+      ? yourBets.map(({ guess }, index) => ({
+          id: index + 1,
+          amount: 100,
+          base: true,
+          guess,
+          position: null
+        }))
+      : [
+          { id: 1, amount: 100, base: true, guess: null, position: null },
+          { id: 2, amount: 100, base: true, guess: null, position: null }
+        ];
 
-    this.state = {
-      chips: {
-        1: { guess: yourBets[0].guess, position: null },
-        2: { guess: yourBets[1].guess, position: null }
-      }
-    };
+    this.state = { chips };
   }
 
   containerEl = null;
   answerEls = {};
 
   handleBet = ({ guess, position: fixedPosition, chipId }) => {
+    const { chips } = this.state;
     const { x: containerX, y: containerY } = this.answerEls[
       guess
     ].getBoundingClientRect();
@@ -86,10 +87,11 @@ class BettingStage extends Component {
       x: fixedPosition.x - containerX,
       y: fixedPosition.y - containerY
     };
+    const newChips = chips.map(
+      chip => (chip.id === chipId ? { ...chip, guess, position } : chip)
+    );
 
-    this.setState({
-      chips: { ...this.state.chips, [chipId]: { guess, position } }
-    });
+    this.setState({ chips: newChips });
   };
 
   handleClickFinalize = () => {
@@ -97,29 +99,16 @@ class BettingStage extends Component {
     const { chips } = this.state;
 
     onFinalizeBets({
-      bet1: { guess: chips[1].guess, wager: 100 },
-      bet2: { guess: chips[2].guess, wager: 100 }
+      bet1: { guess: chips[0].guess, wager: 100 },
+      bet2: { guess: chips[1].guess, wager: 100 }
     });
-  };
-
-  getChipsForGuess = guess => {
-    const { 1: chip1, 2: chip2 } = this.state.chips;
-    const chips = [];
-
-    if (chip1 && chip1.guess === guess) {
-      chips.push({ id: 1, position: chip1.position });
-    }
-
-    if (chip2 && chip2.guess === guess) {
-      chips.push({ id: 2, position: chip2.position });
-    }
-
-    return chips;
   };
 
   render() {
     const { betOptions, yourBets, awaitingBet } = this.props;
-    const { 1: chip1, 2: chip2 } = this.state.chips;
+    const { chips } = this.state;
+    const unplayedChips = chips.filter(({ guess }) => !guess);
+    const baseChipsPlayed = chips.every(({ guess, base }) => !base || !!guess);
 
     return (
       <Container
@@ -130,8 +119,10 @@ class BettingStage extends Component {
         {betOptions.map(({ guess, odds, players }) => (
           <Answer
             finalized={!!yourBets}
-            nothingSelected={!chip1 && !chip2}
-            chips={this.getChipsForGuess(guess)}
+            nothingSelected={
+              chips.filter(chip => chip.guess === guess).length > 0
+            }
+            chips={chips.filter(chip => chip.guess === guess)}
             key={guess}
             guess={guess}
             odds={odds}
@@ -153,15 +144,23 @@ class BettingStage extends Component {
           ) : (
             <Button
               onClick={this.handleClickFinalize}
-              disabled={!chip1 || !chip2}
+              disabled={!baseChipsPlayed}
             >
               Finalize Bets
             </Button>
           )}
         </Footer>
         <UnplayedChips>
-          {!chip1 && <UnplayedDraggableChip1 chipId={1} />}
-          {!chip2 && <UnplayedDraggableChip2 chipId={2} />}
+          {unplayedChips.map(({ id }, index) => (
+            <UnplayedDraggableChip
+              key={id}
+              chipId={id}
+              style={{
+                transform: `translateY(${-index * 15}px)`,
+                zIndex: 50 - index
+              }}
+            />
+          ))}
         </UnplayedChips>
         <ChipDragLayer />
       </Container>

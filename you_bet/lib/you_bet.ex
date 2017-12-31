@@ -88,7 +88,7 @@ defmodule YouBet do
   def play(state, _, _), do: state
 
   defp transition_to_betting_if_done(%{guesses: guesses, players: players} = state) do
-    if all_done?(guesses) do
+    if all_populated?(guesses) do
       odds = get_odds(guesses)
       bet_options = get_bet_options(guesses, players, odds)
 
@@ -102,7 +102,7 @@ defmodule YouBet do
   end
 
   defp transition_to_reveal_if_done(%{bets: bets} = state) do
-    if all_done?(bets) do
+    if all_populated?(bets) do
       state
       |> update_scores
       |> Map.put(:stage, :reveal)
@@ -111,7 +111,7 @@ defmodule YouBet do
     end
   end
 
-  defp all_done?(items) do
+  defp all_populated?(items) do
     items
     |> Map.values
     |> Enum.all?(&(!is_nil(&1)))
