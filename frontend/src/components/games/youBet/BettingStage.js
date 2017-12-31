@@ -146,9 +146,8 @@ class BettingStage extends Component {
       return;
     }
 
-    const newChips = chips.map(
-      chip => (chip.id === chipId ? { ...chip, guess, position } : chip)
-    );
+    const newChip = { ...chips.find(c => c.id === chipId), guess, position };
+    const newChips = chips.filter(chip => chip.id !== chipId).concat(newChip);
 
     this.setState({ chips: newChips });
     this.cleanUpChips();
