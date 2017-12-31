@@ -77,7 +77,8 @@ YouBet.propTypes = {
     round: PropTypes.number.isRequired,
     stage: PropTypes.oneOf(["guessing", "betting", "reveal"]).isRequired,
     question: PropTypes.string.isRequired,
-    your_guess: PropTypes.number,
+    answer: PropTypes.number,
+    awaiting_bet: customTypes.players,
     awaiting_guess: customTypes.players,
     bet_options: PropTypes.arrayOf(
       PropTypes.shape({
@@ -86,14 +87,6 @@ YouBet.propTypes = {
         players: customTypes.players.isRequired
       })
     ),
-    your_bets: PropTypes.arrayOf(
-      PropTypes.shape({
-        guess: PropTypes.number.isRequired,
-        wager: PropTypes.number.isRequired
-      })
-    ),
-    awaiting_bet: customTypes.players,
-    answer: PropTypes.number,
     payouts: PropTypes.arrayOf(
       PropTypes.shape({
         player: customTypes.player.isRequired,
@@ -108,7 +101,15 @@ YouBet.propTypes = {
         player: customTypes.player.isRequired,
         score: PropTypes.number.isRequired
       })
-    ).isRequired
+    ).isRequired,
+    your_bets: PropTypes.arrayOf(
+      PropTypes.shape({
+        guess: PropTypes.number.isRequired,
+        wager: PropTypes.number.isRequired
+      })
+    ),
+    your_guess: PropTypes.number,
+    your_score: PropTypes.number
   }).isRequired,
   youAreModerator: PropTypes.bool.isRequired,
   onPlay: PropTypes.func.isRequired

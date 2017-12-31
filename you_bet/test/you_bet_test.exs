@@ -84,6 +84,7 @@ defmodule YouBetTest do
       %{player: %{id: "3", name: "baz"}, score: 200},
       %{player: %{id: "1", name: "foo"}, score: 200}
     ]
+    assert state[:your_score] == 200
   end
 
   test "sets correct odds for even number of guesses", %{players: players} do

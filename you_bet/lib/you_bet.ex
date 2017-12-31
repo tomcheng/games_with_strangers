@@ -28,12 +28,13 @@ defmodule YouBet do
     |> Map.take([:awaiting_guess, :question, :round, :scores, :stage, :your_guess])
   end
 
-  def sanitize_state(%{stage: :betting, players: players, bets: bets} = state, player_id) do
+  def sanitize_state(%{stage: :betting, players: players, bets: bets, scores: scores} = state, player_id) do
     state
     |> Map.put(:your_bets, bets[player_id])
     |> Map.put(:awaiting_bet, get_awaiting(bets, players, player_id))
+    |> Map.put(:your_score, scores[player_id])
     |> format_scores
-    |> Map.take([:awaiting_bet, :bet_options, :question, :round, :scores, :stage, :your_bets])
+    |> Map.take([:awaiting_bet, :bet_options, :question, :round, :scores, :stage, :your_bets, :your_score])
   end
 
   def sanitize_state(%{stage: :reveal} = state, _) do

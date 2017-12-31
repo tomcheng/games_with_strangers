@@ -19,9 +19,9 @@ const nonGameState = {
 const defaultGameState = {
   you,
   others,
-  round: 1,
+  round: 2,
   question: "What percentage of US house holds own a dog?",
-  scores: players.map(player => ({ player, score: 200 }))
+  scores: players.map(player => ({ player, score: 1500 }))
 };
 
 export const WAITING_FOR_PLAYERS = {
@@ -58,7 +58,8 @@ export const BETTING = {
       { guess: 40, odds: 4, players: [players[4]] }
     ],
     your_bets: null,
-    awaiting_bet: [players[2], players[3]]
+    awaiting_bet: [players[2], players[3]],
+    your_score: 1500
   }
 };
 
@@ -66,7 +67,8 @@ export const BETTED = {
   ...BETTING,
   gameState: {
     ...BETTING.gameState,
-    your_bets: [{ guess: 20, wager: 100 }, { guess: 25, wager: 100 }]
+    your_bets: [{ guess: 20, wager: 100 }, { guess: 25, wager: 100 }],
+    your_score: 1500
   }
 };
 
