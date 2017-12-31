@@ -61,9 +61,14 @@ defmodule YouBet do
   end
 
   def play(state, player_id, "guess", payload) do
-    state
-    |> Map.update!(:guesses, &Map.put(&1, player_id, elem(Integer.parse(payload), 0)))
-    |> transition_to_betting_if_done
+    case Integer.parse(payload) do
+      :error ->
+        state
+      {guess, _} ->
+        state
+        |> Map.update!(:guesses, &Map.put(&1, player_id, guess))
+        |> transition_to_betting_if_done
+    end
   end
 
   def play(state, player_id, "finalize_bets", %{"bet1" => %{"guess" => g1, "wager" => w1}, "bet2" => %{"guess" => g2, "wager" => w2}}) do

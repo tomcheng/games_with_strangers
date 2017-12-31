@@ -60,6 +60,21 @@ defmodule YouBetTest do
     assert others_state[:awaiting_guess] == [%{id: "3", name: "baz"}]
   end
 
+  test "handles an invalid guess", %{players: players} do
+    state =
+      players
+      |> YouBet.initial_state
+      |> YouBet.play("1", "guess", "")
+
+    your_state = YouBet.sanitize_state(state, "1")
+    others_state = YouBet.sanitize_state(state, "2")
+
+    assert your_state[:your_guess] == nil
+    assert your_state[:awaiting_guess] == [%{id: "2", name: "bar"}, %{id: "3", name: "baz"}]
+    assert others_state[:your_guess] == nil
+    assert others_state[:awaiting_guess] == [%{id: "1", name: "foo"}, %{id: "3", name: "baz"}]
+  end
+
   test "sets stage to betting when all guesses are in", %{players: players} do
     state =
       players
