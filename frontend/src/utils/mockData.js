@@ -79,8 +79,11 @@ export const REVEAL = {
     stage: "reveal",
     answer: 43,
     payouts: [
-      { player: players[0], amount: 300, closest: true },
-      { player: players[1], amount: 600, closest: false, wager: 200, odds: 3 }
+      { player: players[0], delta: 300, closest: true },
+      { player: players[1], delta: 600, closest: false },
+      { player: players[2], delta: 0, closest: false },
+      { player: players[3], delta: 0, closest: false },
+      { player: players[4], delta: -200, closest: false },
     ]
   }
 };

@@ -17,10 +17,6 @@ const Payout = styled.div`
   margin-bottom: 16px;
 `;
 
-const PayoutTitle = styled.h3`
-  margin-bottom: 0;
-`;
-
 const Footer = styled.div`
   display: flex;
   justify-content: center;
@@ -31,16 +27,16 @@ const RevealStage = ({ answer, payouts, youAreModerator, onAdvanceRound }) => (
   <Container>
     <h3>The answer is:</h3>
     <Answer>{answer}</Answer>
-    {payouts.map(({ player, amount, closest, wager, odds }) => (
-      <Payout key={`${player.id}-${closest ? "closest" : "wager"}`}>
-        <PayoutTitle>
-          {player.name} gets ${amount}
-        </PayoutTitle>
-        <SecondaryText>
-          {closest
-            ? "closest guess without going over"
-            : `$${wager} bet at ${odds} to 1 odds`}
-        </SecondaryText>
+    {payouts.map(({ player, delta, closest }) => (
+      <Payout key={player.id}>
+        <h3>
+          {player.name} {delta < 0 ? "loses" : "gets"} ${Math.abs(delta)}
+        </h3>
+        {closest && (
+          <SecondaryText>
+             Closest answer without going over
+          </SecondaryText>
+        )}
       </Payout>
     ))}
     {youAreModerator && (
@@ -56,10 +52,8 @@ RevealStage.propTypes = {
   payouts: PropTypes.arrayOf(
     PropTypes.shape({
       player: customTypes.player.isRequired,
-      amount: PropTypes.number.isRequired,
-      closest: PropTypes.bool.isRequired,
-      wager: PropTypes.number,
-      odds: PropTypes.number
+      delta: PropTypes.number.isRequired,
+      closest: PropTypes.bool.isRequired
     })
   ).isRequired,
   youAreModerator: PropTypes.bool.isRequired,

@@ -16,8 +16,8 @@ describe("getting bets from chips", () => {
     const bets = gatherChips(chips);
 
     expect(bets).toEqual([
-      { guess: 10, baseWager: 100, extraWager: 0 },
-      { guess: 20, baseWager: 100, extraWager: 0 }
+      { guess: 10, base_wager: 100, extra_wager: 0 },
+      { guess: 20, base_wager: 100, extra_wager: 0 }
     ]);
   });
 
@@ -28,7 +28,7 @@ describe("getting bets from chips", () => {
     ];
     const bets = gatherChips(chips);
 
-    expect(bets).toEqual([{ guess: 10, baseWager: 200, extraWager: 0 }]);
+    expect(bets).toEqual([{ guess: 10, base_wager: 200, extra_wager: 0 }]);
   });
 
   it("handles non-base bets", () => {
@@ -41,8 +41,8 @@ describe("getting bets from chips", () => {
     const bets = gatherChips(chips);
 
     expect(bets).toEqual([
-      { guess: 10, baseWager: 100, extraWager: 600 },
-      { guess: 20, baseWager: 100, extraWager: 0 }
+      { guess: 10, base_wager: 100, extra_wager: 600 },
+      { guess: 20, base_wager: 100, extra_wager: 0 }
     ]);
   });
 });

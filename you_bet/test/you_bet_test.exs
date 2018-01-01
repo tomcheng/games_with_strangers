@@ -155,12 +155,10 @@ defmodule YouBetTest do
         %{"guess" => 999_999_999_999, "base_wager" => 100, "extra_wager" => 0}
       ])
       |> YouBet.play("2", "finalize_bets", [
-        %{"guess" => 1, "base_wager" => 100, "extra_wager" => 0},
-        %{"guess" => 1, "base_wager" => 100, "extra_wager" => 0}
+        %{"guess" => 1, "base_wager" => 200, "extra_wager" => 0}
       ])
       |> YouBet.play("3", "finalize_bets", [
-        %{"guess" => 999_999_999_999, "base_wager" => 100, "extra_wager" => 0},
-        %{"guess" => 999_999_999_999, "base_wager" => 100, "extra_wager" => 0}
+        %{"guess" => 999_999_999_999, "base_wager" => 200, "extra_wager" => 0}
       ])
       |> YouBet.sanitize_state("1")
 
@@ -169,11 +167,11 @@ defmodule YouBetTest do
     assert String.match?(state[:question], ~r/.*\?$/)
     assert is_integer(state[:answer])
     assert state[:payouts] == [
-      %{player: %{id: "1", name: "foo"}, amount: 300, closest: true},
-      %{player: %{id: "2", name: "bar"}, amount: 300, closest: true},
-      %{player: %{id: "1", name: "foo"}, amount: 300, closest: false, wager: 100, odds: 3},
-      %{player: %{id: "2", name: "bar"}, amount: 600, closest: false, wager: 200, odds: 3}
+      %{player: %{id: "2", name: "bar"}, delta: 900, closest: true},
+      %{player: %{id: "1", name: "foo"}, delta: 600, closest: true},
+      %{player: %{id: "3", name: "baz"}, delta: 0, closest: false}
     ]
+
     assert state[:scores] == [
       %{player: %{id: "2", name: "bar"}, score: 1100},
       %{player: %{id: "1", name: "foo"}, score: 800},

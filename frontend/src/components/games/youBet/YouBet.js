@@ -93,10 +93,8 @@ YouBet.propTypes = {
     payouts: PropTypes.arrayOf(
       PropTypes.shape({
         player: customTypes.player.isRequired,
-        amount: PropTypes.number.isRequired,
-        closest: PropTypes.bool.isRequired,
-        wager: PropTypes.number,
-        odds: PropTypes.number
+        delta: PropTypes.number.isRequired,
+        closest: PropTypes.bool.isRequired
       })
     ),
     scores: PropTypes.arrayOf(

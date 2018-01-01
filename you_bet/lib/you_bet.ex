@@ -39,8 +39,21 @@ defmodule YouBet do
 
   def sanitize_state(%{stage: :reveal} = state, _) do
     state
+    |> format_payouts
     |> format_scores
     |> Map.take([:answer, :payouts, :question, :round, :scores, :stage])
+  end
+
+  defp format_payouts(%{payouts: payouts, players: players} = state) do
+    state
+    |> Map.put(
+      :payouts,
+      payouts
+      |> Enum.map(fn {id, payout} -> Map.put(payout, :player, players[id]) end)
+      |> Enum.sort_by(fn %{player: %{name: name}} -> name end)
+      |> Enum.sort_by(fn %{delta: delta} -> -delta end)
+      |> Enum.sort_by(fn %{closest: closest} -> if closest, do: 0, else: 1 end)
+    )
   end
 
   defp format_scores(%{scores: scores, players: players} = state) do

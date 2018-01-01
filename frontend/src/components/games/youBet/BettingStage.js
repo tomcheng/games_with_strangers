@@ -41,18 +41,18 @@ export const gatherChips = chips => {
     (acc, { guess, base, amount }) => ({
       ...acc,
       [guess]: {
-        baseWager:
-          (acc[guess] ? acc[guess].baseWager : 0) + (base ? amount : 0),
-        extraWager:
-          (acc[guess] ? acc[guess].extraWager : 0) + (base ? 0 : amount)
+        base_wager:
+          (acc[guess] ? acc[guess].base_wager : 0) + (base ? amount : 0),
+        extra_wager:
+          (acc[guess] ? acc[guess].extra_wager : 0) + (base ? 0 : amount)
       }
     }),
     {}
   );
 
   return map(gathered, (value, key) => ({
-    baseWager: value.baseWager,
-    extraWager: value.extraWager,
+    base_wager: value.base_wager,
+    extra_wager: value.extra_wager,
     guess: parseInt(key, 10)
   }));
 };
