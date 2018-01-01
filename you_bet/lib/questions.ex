@@ -893,6 +893,22 @@ defmodule YouBet.Questions do
 {"Baghdad", "Iraq", 231}
 ]
 
+@average_sports_salaries [
+{"National Basketball Association", "2016-17 season", 6_200_000},
+{"Major League Baseball", "2016 season", 4_400_000},
+{"National Hockey League", "2015-16 season", 2_900_000},
+{"National Football League", "2015 season", 2_100_000},
+{"Major League Soccer", "2016 season", 308_969}
+]
+
+@highest_sports_salaries [
+{"the National Basketball Association", "Lebron James", "2016-17 season", 31_000_000},
+{"the Major League Baseball", "Clayton Kershaw", "2016 season", 32_000_000},
+{"the National Hockey League", "Anze Kopitar", "2016-17 season", 14_000_000},
+{"the National Football League", "Drew Brees", "2016 season", 31_250_000},
+{"Major League Soccer", "Kaka", "2016 season", 7_200_000}
+]
+
   def random do
     YouBet.Chooser.choose([
       {20, &one_off/0},
@@ -909,6 +925,8 @@ defmodule YouBet.Questions do
       {1, &fastest_eaten/0},
       {2, &fastest_run/0},
       {5, &quality_of_living/0},
+      {3, &average_sports_salary/0},
+      {3, &highest_sports_salary/0}
     ])
   end
 
@@ -980,5 +998,15 @@ defmodule YouBet.Questions do
   defp quality_of_living do
     {city, country, rank} = Enum.random(@mercer_2017_quality_of_living_rankings)
     {"According to the 2017 Mercer Quality of Living Ranking, out of 231 cities, with 1 being the best and 231 being the worst, where did " <> city <> ", " <> country <> " rank?", rank}
+  end
+
+  defp average_sports_salary do
+    {league, season, answer} = Enum.random(@average_sports_salaries)
+    {"What is the average salary in " <> league <> " as of the " <> season <> "?", answer}
+  end
+
+  defp highest_sports_salary do
+    {league, player, season, answer} = Enum.random(@highest_sports_salaries)
+    {player <> " had the highest salary in " <> league <> " in the " <> season <> ". How much did he earn that season?", answer}
   end
 end
