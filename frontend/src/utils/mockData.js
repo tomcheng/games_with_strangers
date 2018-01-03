@@ -78,6 +78,7 @@ export const REVEAL = {
     ...defaultGameState,
     stage: "reveal",
     answer: 43,
+    closest_guess: 40,
     payouts: [
       { player: players[0], delta: 300, closest: true },
       { player: players[1], delta: 600, closest: false },

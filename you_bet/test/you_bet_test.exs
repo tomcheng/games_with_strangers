@@ -186,6 +186,7 @@ defmodule YouBetTest do
     assert state[:stage] == :reveal
     assert String.match?(state[:question], ~r/.*\?$/)
     assert is_integer(state[:answer])
+    assert state[:closest_guess] == 1
     assert state[:payouts] == [
       %{player: %{id: "2", name: "bar"}, delta: 900, closest: true},
       %{player: %{id: "1", name: "foo"}, delta: 600, closest: true},

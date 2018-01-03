@@ -41,9 +41,10 @@ defmodule YouBet do
 
   def sanitize_state(%{stage: :reveal} = state, _) do
     state
+    |> add_closest_guess
     |> format_payouts
     |> format_scores
-    |> Map.take([:answer, :payouts, :question, :round, :scores, :stage])
+    |> Map.take([:answer, :closest_guess, :payouts, :question, :round, :scores, :stage])
   end
 
   defp add_bets_to_bet_options(%{bets: bets, bet_options: bet_options} = state) do
@@ -65,6 +66,17 @@ defmodule YouBet do
     end)
 
     Map.put(state, :bet_options, new_bet_options)
+  end
+
+  defp add_closest_guess(%{guesses: guesses, answer: answer} = state) do
+    closest_guess =
+      guesses
+      |> Map.values
+      |> Enum.reject(fn g -> g > answer end)
+      |> Enum.sort_by(fn g -> -g end)
+      |> hd
+
+    Map.put(state, :closest_guess, closest_guess)
   end
 
   defp format_payouts(%{payouts: payouts, players: players} = state) do

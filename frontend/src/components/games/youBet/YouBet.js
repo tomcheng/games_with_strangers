@@ -25,6 +25,7 @@ const YouBet = ({ gameState, youAreModerator, onPlay, onSetFlashMessage }) => {
     awaiting_bet: awaitingBet,
     awaiting_guess: awaitingGuess,
     bet_options: betOptions,
+    closest_guess: closestGuess,
     your_bets: yourBets,
     your_guess: yourGuess,
     your_score: yourScore
@@ -64,6 +65,7 @@ const YouBet = ({ gameState, youAreModerator, onPlay, onSetFlashMessage }) => {
       {stage === "reveal" && (
         <RevealStage
           answer={answer}
+          closestGuess={closestGuess}
           payouts={payouts}
           youAreModerator={youAreModerator}
           onAdvanceRound={() => {
@@ -91,6 +93,7 @@ YouBet.propTypes = {
         bets: PropTypes.number.isRequired
       })
     ),
+    closest_guess: PropTypes.number,
     payouts: PropTypes.arrayOf(
       PropTypes.shape({
         player: customTypes.player.isRequired,
