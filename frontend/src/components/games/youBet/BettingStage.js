@@ -37,7 +37,7 @@ const Footer = styled.div`
 `;
 
 export const gatherChips = chips => {
-  const gathered = chips.reduce(
+  const gathered = chips.filter(chip => chip.guess !== null).reduce(
     (acc, { guess, base, amount }) => ({
       ...acc,
       [guess]: {

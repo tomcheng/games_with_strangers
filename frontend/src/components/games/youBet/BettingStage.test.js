@@ -45,4 +45,19 @@ describe("getting bets from chips", () => {
       { guess: 20, base_wager: 100, extra_wager: 0 }
     ]);
   });
+
+  it("handles chips that aren't bet", () => {
+    const chips = [
+      { guess: 10, base: true, amount: 100 },
+      { guess: 20, base: true, amount: 100 },
+      { guess: null, base: false, amount: 100 },
+      { guess: null, base: false, amount: 500 }
+    ];
+    const bets = gatherChips(chips);
+
+    expect(bets).toEqual([
+      { guess: 10, base_wager: 100, extra_wager: 0 },
+      { guess: 20, base_wager: 100, extra_wager: 0 }
+    ]);
+  })
 });
