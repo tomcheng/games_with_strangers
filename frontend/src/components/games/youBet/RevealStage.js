@@ -4,6 +4,7 @@ import * as customTypes from "../../../utils/customTypes";
 import { makeList } from "../../../utils/strings";
 import styled from "styled-components";
 import Button from "../../common/Button";
+import SecondaryText from "../../common/SecondaryText";
 import DelayShow from "../../common/DelayShow";
 
 const DELAY_START = 5000;
@@ -31,12 +32,21 @@ const Footer = styled.div`
   margin-top: 24px;
 `;
 
-const RevealStage = ({ answer, closestGuess, payouts, youAreModerator, onAdvanceRound }) => {
+const RevealStage = ({
+  answer,
+  closestGuess,
+  payouts,
+  youAreModerator,
+  onAdvanceRound,
+  moderator
+}) => {
   const closestPlayers = payouts.filter(p => p.closest).map(p => p.player);
-  const payoutsFromBetting = payouts.map(payout => ({
-    ...payout,
-    delta: payout.closest ? payout.delta - 300 : payout.delta
-  })).filter(p => p.delta !== 0);
+  const payoutsFromBetting = payouts
+    .map(payout => ({
+      ...payout,
+      delta: payout.closest ? payout.delta - 300 : payout.delta
+    }))
+    .filter(p => p.delta !== 0);
 
   return (
     <Container>
@@ -69,13 +79,19 @@ const RevealStage = ({ answer, closestGuess, payouts, youAreModerator, onAdvance
           </Payout>
         </DelayShow>
       ))}
-      {youAreModerator && (
-        <DelayShow delay={DELAY_START + payoutsFromBetting.length * DELAY_INTERVAL}>
-          <Footer>
+      <DelayShow
+        delay={DELAY_START + payoutsFromBetting.length * DELAY_INTERVAL}
+      >
+        <Footer>
+          {youAreModerator ? (
             <Button onClick={onAdvanceRound}>Start Next Round</Button>
-          </Footer>
-        </DelayShow>
-      )}
+          ) : (
+            <SecondaryText>
+              Waiting for {moderator.name} to start next round&hellip;
+            </SecondaryText>
+          )}
+        </Footer>
+      </DelayShow>
     </Container>
   );
 };
@@ -91,7 +107,8 @@ RevealStage.propTypes = {
     })
   ).isRequired,
   youAreModerator: PropTypes.bool.isRequired,
-  onAdvanceRound: PropTypes.func.isRequired
+  onAdvanceRound: PropTypes.func.isRequired,
+  moderator: customTypes.player
 };
 
 export default RevealStage;

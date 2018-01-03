@@ -35,6 +35,7 @@ const Room = ({
   onSetFlashMessage
 }) => {
   const game = find(gamesList, g => g.id === gameId);
+  const moderator = others.find(p => p.isModerator);
 
   if (gameState) {
     const GameComponent = game.component;
@@ -42,13 +43,12 @@ const Room = ({
       <GameComponent
         gameState={gameState}
         youAreModerator={you.isModerator}
+        moderator={moderator}
         onPlay={onPlay}
         onSetFlashMessage={onSetFlashMessage}
       />
     );
   }
-
-  const moderator = others.find(p => p.isModerator);
 
   return (
     <Fragment>

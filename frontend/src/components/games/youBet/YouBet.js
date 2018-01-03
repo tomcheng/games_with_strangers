@@ -14,7 +14,13 @@ const Question = styled.h1`
   margin-bottom: 16px;
 `;
 
-const YouBet = ({ gameState, youAreModerator, onPlay, onSetFlashMessage }) => {
+const YouBet = ({
+  gameState,
+  youAreModerator,
+  onPlay,
+  onSetFlashMessage,
+  moderator
+}) => {
   const {
     answer,
     payouts,
@@ -68,6 +74,7 @@ const YouBet = ({ gameState, youAreModerator, onPlay, onSetFlashMessage }) => {
           closestGuess={closestGuess}
           payouts={payouts}
           youAreModerator={youAreModerator}
+          moderator={moderator}
           onAdvanceRound={() => {
             onPlay({ type: "advance_round" });
           }}
@@ -119,7 +126,8 @@ YouBet.propTypes = {
   }).isRequired,
   youAreModerator: PropTypes.bool.isRequired,
   onPlay: PropTypes.func.isRequired,
-  onSetFlashMessage: PropTypes.func.isRequired
+  onSetFlashMessage: PropTypes.func.isRequired,
+  moderator: customTypes.player
 };
 
 export default YouBet;

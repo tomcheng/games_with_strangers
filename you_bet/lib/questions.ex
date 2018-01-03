@@ -11,7 +11,7 @@ defmodule YouBet.Questions do
 {:astronomy, "How wide, in kilometres, are Saturns Rings?", 282_000},
 {:astronomy, "What is the Moon's diameter, in kilometres?", 3_476},
 {:astronomy, "How many times larger than Earth is the Sun?", 330_330},
-{:astronomy, "How many tons des the sun lose every year?", 360_000_000},
+{:astronomy, "How many tons does the sun lose every year?", 360_000_000},
 {:astronomy, "What is the diameter of the sun, in kilometres?", 1_390_000},
 {:astronomy, "What is the temperature at the center of the Sun, in degrees Celcius?", 15_000_000},
 {:biology, "How many muscles do cats have in each ear?", 32},
