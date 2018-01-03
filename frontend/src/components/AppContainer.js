@@ -62,7 +62,7 @@ class AppContainer extends Component {
       previousRoomCode: values(others).length > 0 ? roomCode : null
     });
 
-    this.handleLeaveRoom();
+    this.leaveRoom();
   };
 
   handleCreateRoom = ({ playerName, gameId }) => {
@@ -81,7 +81,6 @@ class AppContainer extends Component {
   };
 
   handleJoinRoom = ({ playerName, roomCode, onError }) => {
-    this.history.push(`?c=${roomCode}`);
     this.channel = getChannel({
       topic: "room:" + roomCode,
       params: { player_id: getPlayerId(), player_name: playerName }
@@ -90,6 +89,7 @@ class AppContainer extends Component {
     this.channel
       .join()
       .receive("ok", ({ player_id }) => {
+        this.history.push(`?c=${roomCode}`);
         setPlayerId(player_id);
         this.channel.on("new_state", this.updateRoomState);
         this.setState({ roomCode, yourId: player_id });
@@ -99,7 +99,7 @@ class AppContainer extends Component {
       });
   };
 
-  handleLeaveRoom = () => {
+  leaveRoom = () => {
     if (!this.channel) {
       return;
     }

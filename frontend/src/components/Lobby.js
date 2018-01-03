@@ -45,7 +45,9 @@ class Lobby extends Component {
       playerName: getPlayerName() || "",
       roomCode: props.previousRoomCode || "",
       nameError: null,
-      roomCodeError: null
+      roomCodeError: null,
+      joinGameClicked: false,
+      startGameClicked: false,
     };
   }
 
@@ -68,6 +70,8 @@ class Lobby extends Component {
       return;
     }
 
+    this.setState({ joinGameClicked: true });
+
     onJoinRoom({
       playerName,
       roomCode,
@@ -76,7 +80,7 @@ class Lobby extends Component {
   };
 
   handleJoinError = ({ message }) => {
-    this.setState({ roomCodeError: message });
+    this.setState({ roomCodeError: message, joinGameClicked: false });
   };
 
   handleChange = ({ target }) => {
@@ -99,11 +103,19 @@ class Lobby extends Component {
 
     setPlayerName(playerName);
 
+    this.setState({ startGameClicked: true });
     onCreateRoom({ playerName, gameId });
   };
 
   render() {
-    const { playerName, roomCode, nameError, roomCodeError } = this.state;
+    const {
+      playerName,
+      roomCode,
+      nameError,
+      roomCodeError,
+      joinGameClicked,
+      startGameClicked
+    } = this.state;
 
     return (
       <Fragment>
@@ -126,7 +138,7 @@ class Lobby extends Component {
               value={roomCode}
               onChange={this.handleChangeCode}
             />
-            <JoinButton>Join Game</JoinButton>
+            <JoinButton disabled={joinGameClicked}>Join Game</JoinButton>
           </JoinGameForm>
           {roomCodeError && <Error>{roomCodeError}</Error>}
         </Section>
@@ -139,6 +151,7 @@ class Lobby extends Component {
                 title={displayName}
                 description={description}
                 playerRequirements={playerRequirements}
+                startGameClicked={startGameClicked}
                 onSelect={() => {
                   this.handleSelectGame(id);
                 }}

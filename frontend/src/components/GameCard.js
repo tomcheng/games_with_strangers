@@ -17,12 +17,20 @@ const Description = styled.div`
   margin-bottom: 16px;
 `;
 
-const GameCard = ({ title, description, playerRequirements, onSelect }) => (
+const GameCard = ({
+  title,
+  description,
+  playerRequirements,
+  onSelect,
+  startGameClicked
+}) => (
   <div>
     <h1>{title}</h1>
     <Description>{description}</Description>
     <ActionContainer>
-      <Button onClick={onSelect}>Start Game</Button>
+      <Button onClick={onSelect} disabled={startGameClicked}>
+        Start Game
+      </Button>
       <FootNote>{playerRequirements}</FootNote>
     </ActionContainer>
   </div>
