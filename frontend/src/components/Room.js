@@ -48,6 +48,8 @@ const Room = ({
     );
   }
 
+  const moderator = others.find(p => p.isModerator);
+
   return (
     <Fragment>
       <SectionHeader>About to Play: {game.displayName}</SectionHeader>
@@ -62,9 +64,16 @@ const Room = ({
             {pluralize("player", playersNeeded)}&hellip;
           </Waiting>
         )}
-        <Button onClick={onStartGame} disabled={playersNeeded > 0}>
-          Start Game
-        </Button>
+        {you.isModerator && (
+          <Button onClick={onStartGame} disabled={playersNeeded > 0}>
+            Start Game
+          </Button>
+        )}
+        {!playersNeeded && !you.isModerator && (
+          <Waiting>
+            Waiting for {moderator.name} to start game&hellip;
+          </Waiting>
+        )}
       </Content>
     </Fragment>
   );
@@ -74,7 +83,8 @@ Room.propTypes = {
   gameId: PropTypes.oneOf(gamesList.map(g => g.id)).isRequired,
   others: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string.isRequired
+      id: PropTypes.string.isRequired,
+      isModerator: PropTypes.bool.isRequired,
     })
   ).isRequired,
   you: PropTypes.shape({
