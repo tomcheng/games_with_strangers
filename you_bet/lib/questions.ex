@@ -82,7 +82,7 @@ defmodule YouBet.Questions do
 {:records, "What is the most number of balloons blown up by an individual in one hour?", 910},
 {:records, "How many millimeters was the world's longest eyelash?", 124},
 {:records, "What is the most number apples bobbed in one minute by an individual?", 37},
-{:records, "What's the fastest 100m slackfline walk, in seconds?", 119},
+{:records, "What's the fastest 100m slackline walk, in seconds?", 119},
 {:records, "How much did the world's largest rubber band ball weigh, in kilograms?", 4_097},
 {:society, "How many homicides where committed in Canada in 2016?", 611},
 {:society, "What percentage of burglaries are committed by people aged 13-21?", 80},

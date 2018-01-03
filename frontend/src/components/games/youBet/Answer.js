@@ -42,6 +42,11 @@ const StyledChip = styled(DraggableChip)`
   z-index: 1;
 `;
 
+const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
 class Answer extends Component {
   static propTypes = {
     canDrop: PropTypes.bool.isRequired,
@@ -61,6 +66,7 @@ class Answer extends Component {
     nothingSelected: PropTypes.bool.isRequired,
     odds: PropTypes.number.isRequired,
     players: customTypes.players.isRequired,
+    totalBets: PropTypes.number.isRequired,
     onBet: PropTypes.func.isRequired,
     onCancelBet: PropTypes.func.isRequired,
     innerRef: PropTypes.func
@@ -78,6 +84,7 @@ class Answer extends Component {
       canDrop,
       chips,
       onCancelBet,
+      totalBets,
       innerRef
     } = this.props;
     const selected = chips.length > 0;
@@ -103,7 +110,10 @@ class Answer extends Component {
         >
           <Odds>Pays {odds} to 1</Odds>
           <Number>{guess}</Number>
-          <SecondaryText>{makeList(players.map(p => p.name))}</SecondaryText>
+          <Footer>
+            <SecondaryText>${totalBets} bet</SecondaryText>
+            <SecondaryText>{makeList(players.map(p => p.name))}</SecondaryText>
+          </Footer>
         </Container>
       </div>
     );

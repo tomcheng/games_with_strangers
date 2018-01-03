@@ -19,7 +19,7 @@ const UnplayedChips = styled.div`
   position: fixed;
   z-index: 1;
   bottom: 8px;
-  right: -16px;
+  right: -24px;
 `;
 
 const UnplayedDraggableChip = styled(DraggableChip)`
@@ -64,7 +64,8 @@ class BettingStage extends Component {
       PropTypes.shape({
         guess: PropTypes.number.isRequired,
         odds: PropTypes.number.isRequired,
-        players: customTypes.players.isRequired
+        players: customTypes.players.isRequired,
+        bets: PropTypes.number.isRequired
       })
     ).isRequired,
     yourBet: PropTypes.arrayOf(
@@ -83,6 +84,7 @@ class BettingStage extends Component {
 
     const { yourBets, yourScore } = props;
 
+    // TODO: initialize bets properly with base_wager and extra_wager
     const chips = yourBets
       ? yourBets.map(({ guess }, index) => ({
           id: index + 1,
@@ -153,7 +155,7 @@ class BettingStage extends Component {
   answerEls = {};
 
   handleBet = ({ guess, position: fixedPosition, chipId, base }) => {
-    const { onSetFlashMessage } = this.props;
+    const { onSetFlashMessage, onBet } = this.props;
     const { chips } = this.state;
     const { x: containerX, y: containerY } = this.answerEls[
       guess
@@ -172,7 +174,13 @@ class BettingStage extends Component {
     const newChips = chips.filter(chip => chip.id !== chipId).concat(newChip);
 
     this.setState({ chips: newChips });
-    this.cleanUpChips();
+
+    this.cleanUpChips({
+      callback: () => {
+        const { chips } = this.state;
+        onBet(gatherChips(chips));
+      }
+    });
   };
 
   handleCancelBet = ({ chipId, base }) => {
@@ -197,7 +205,7 @@ class BettingStage extends Component {
     this.setState({ chips: newChips });
   };
 
-  cleanUpChips = () => {
+  cleanUpChips = ({ callback }) => {
     this.setState(state => {
       const { chips } = this.state;
       const validGuesses = uniq(
@@ -211,7 +219,7 @@ class BettingStage extends Component {
       );
 
       return { ...state, chips: newChips };
-    });
+    }, callback);
   };
 
   render() {
@@ -222,7 +230,7 @@ class BettingStage extends Component {
 
     return (
       <Container>
-        {betOptions.map(({ guess, odds, players }) => (
+        {betOptions.map(({ guess, odds, players, bets }) => (
           <Answer
             innerRef={el => {
               this.answerEls[guess] = el;
@@ -236,6 +244,7 @@ class BettingStage extends Component {
             guess={guess}
             odds={odds}
             players={players}
+            totalBets={bets}
             onBet={this.handleBet}
             onCancelBet={this.handleCancelBet}
           />

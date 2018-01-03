@@ -87,7 +87,8 @@ YouBet.propTypes = {
       PropTypes.shape({
         guess: PropTypes.number.isRequired,
         odds: PropTypes.number.isRequired,
-        players: customTypes.players.isRequired
+        players: customTypes.players.isRequired,
+        bets: PropTypes.number.isRequired
       })
     ),
     payouts: PropTypes.arrayOf(
@@ -106,7 +107,8 @@ YouBet.propTypes = {
     your_bets: PropTypes.arrayOf(
       PropTypes.shape({
         guess: PropTypes.number.isRequired,
-        wager: PropTypes.number.isRequired
+        base_wager: PropTypes.number.isRequired,
+        extra_wager: PropTypes.number.isRequired
       })
     ),
     your_guess: PropTypes.number,
