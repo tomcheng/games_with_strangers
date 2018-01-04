@@ -1,9 +1,9 @@
 const players = [
   { id: "1", name: "Timmy Tanker", isModerator: true },
-  { id: "2", name: "Billy Jean" },
-  { id: "3", name: "Charlie Chapman" },
-  { id: "4", name: "Rick Sanchez" },
-  { id: "5", name: "Earnest Hemingway" }
+  { id: "2", name: "Billy Jean", isModerator: false },
+  { id: "3", name: "Charlie Chapman", isModerator: false },
+  { id: "4", name: "Rick Sanchez", isModerator: false },
+  { id: "5", name: "Earnest Hemingway", isModerator: false }
 ];
 const you = players[0];
 const others = players.slice(1);
@@ -86,5 +86,13 @@ export const REVEAL = {
       { player: players[3], delta: 0, closest: false },
       { player: players[4], delta: -200, closest: false },
     ]
+  }
+};
+
+export const END_GAME = {
+  ...nonGameState,
+  gameState: {
+    stage: "end",
+    scores: players.map(player => ({ player, score: 1500 }))
   }
 };

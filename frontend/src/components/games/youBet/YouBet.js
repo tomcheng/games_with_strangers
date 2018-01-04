@@ -8,6 +8,7 @@ import Scores from "./Scores";
 import GuessingStage from "./GuessingStage";
 import BettingStage from "./BettingStage";
 import RevealStage from "./RevealStage";
+import EndStage from "./EndStage";
 
 const Question = styled.h1`
   text-align: center;
@@ -80,15 +81,29 @@ const YouBet = ({
           }}
         />
       )}
+      {stage === "end" && (
+        <EndStage
+          scores={scores}
+          youAreModerator={youAreModerator}
+          moderator={moderator}
+          onRestartGame={() => {
+            onPlay({ type: "restart" });
+          }}
+        />
+      )}
     </div>
   );
 };
 
 YouBet.propTypes = {
   gameState: PropTypes.shape({
-    round: PropTypes.number.isRequired,
-    stage: PropTypes.oneOf(["guessing", "betting", "reveal"]).isRequired,
-    question: PropTypes.string.isRequired,
+    scores: PropTypes.arrayOf(
+      PropTypes.shape({
+        player: customTypes.player.isRequired,
+        score: PropTypes.number.isRequired
+      })
+    ).isRequired,
+    stage: PropTypes.oneOf(["guessing", "betting", "reveal", "end"]).isRequired,
     answer: PropTypes.number,
     awaiting_bet: customTypes.players,
     awaiting_guess: customTypes.players,
@@ -108,12 +123,8 @@ YouBet.propTypes = {
         closest: PropTypes.bool.isRequired
       })
     ),
-    scores: PropTypes.arrayOf(
-      PropTypes.shape({
-        player: customTypes.player.isRequired,
-        score: PropTypes.number.isRequired
-      })
-    ).isRequired,
+    question: PropTypes.string,
+    round: PropTypes.number,
     your_bets: PropTypes.arrayOf(
       PropTypes.shape({
         guess: PropTypes.number.isRequired,
