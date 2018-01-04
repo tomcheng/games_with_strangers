@@ -28,7 +28,6 @@ defmodule YouBet do
     |> format_scores
     |> Map.take([:awaiting_guess, :question, :round, :scores, :stage, :your_guess])
   end
-
   def sanitize_state(%{stage: :betting, players: players, final_bets: final_bets, scores: scores} = state, player_id) do
     state
     |> Map.put(:your_bets, final_bets[player_id])
@@ -38,13 +37,17 @@ defmodule YouBet do
     |> format_scores
     |> Map.take([:awaiting_bet, :bet_options, :question, :round, :scores, :stage, :your_bets, :your_score])
   end
-
   def sanitize_state(%{stage: :reveal} = state, _) do
     state
     |> add_closest_guess
     |> format_payouts
     |> format_scores
     |> Map.take([:answer, :closest_guess, :payouts, :question, :round, :scores, :stage])
+  end
+  def sanitize_state(%{stage: :end} = state, _) do
+    state
+    |> format_scores
+    |> Map.take([:stage, :scores])
   end
 
   defp add_bets_to_bet_options(%{bets: bets, bet_options: bet_options} = state) do
@@ -134,6 +137,16 @@ defmodule YouBet do
     |> transition_to_reveal_if_done
   end
 
+  def play(%{round: 7} = state, _player_id, "advance_round", _) do
+    state
+    |> Map.put(:round, nil)
+    |> Map.put(:stage, :end)
+    |> Map.put(:question, nil)
+    |> Map.put(:answer, nil)
+    |> Map.put(:guesses, nil)
+    |> Map.put(:bets, nil)
+    |> Map.put(:final_bets, nil)
+  end
   def play(%{players: players} = state, _player_id, "advance_round", _) do
     {question, answer} = YouBet.Questions.random()
 
@@ -145,6 +158,10 @@ defmodule YouBet do
     |> Map.put(:guesses, initial_map(players))
     |> Map.put(:bets, initial_map(players))
     |> Map.put(:final_bets, initial_map(players))
+  end
+
+  def play(%{players: players}, _player_id, "restart", _) do
+    initial_state(players)
   end
 
   def play(state, _, _, _), do: state

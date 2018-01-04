@@ -230,6 +230,40 @@ defmodule YouBetTest do
     assert state[:awaiting_guess] == [%{id: "2", name: "bar"}, %{id: "3", name: "baz"}]
   end
 
+  test "ends game", %{players: players} do
+    state =
+      players
+      |> YouBet.initial_state
+      |> play_complete_round
+      |> play_complete_round
+      |> play_complete_round
+      |> play_complete_round
+      |> play_complete_round
+      |> play_complete_round
+      |> play_complete_round
+      |> YouBet.sanitize_state("1")
+
+    assert state[:round] == nil
+    assert state[:stage] == :end
+    assert Enum.count(state[:scores]) == 3
+  end
+
+  test "restarts game", %{players: players} do
+    initial_state =
+      players
+      |> YouBet.initial_state
+      |> YouBet.sanitize_state("1")
+
+    state =
+      players
+      |> YouBet.initial_state
+      |> play_complete_round
+      |> YouBet.play("1", "restart", nil)
+      |> YouBet.sanitize_state("1")
+
+    assert Map.drop(state, [:question]) == Map.drop(initial_state, [:question])
+  end
+
   test "handles missing player", %{players: players} do
     state =
       players
@@ -238,5 +272,25 @@ defmodule YouBetTest do
 
     assert state[:round] == 1
     assert state[:stage] == :guessing
+  end
+
+  def play_complete_round(state) do
+    state
+    |> YouBet.play("1", "guess", "1")
+    |> YouBet.play("2", "guess", "1")
+    |> YouBet.play("3", "guess", "999999999999")
+    |> YouBet.play("1", "finalize_bets", [
+      %{"guess" => 1, "base_wager" => 100, "extra_wager" => 0},
+      %{"guess" => 999_999_999_999, "base_wager" => 100, "extra_wager" => 0}
+    ])
+    |> YouBet.play("2", "finalize_bets", [
+      %{"guess" => 1, "base_wager" => 100, "extra_wager" => 0},
+      %{"guess" => 1, "base_wager" => 100, "extra_wager" => 0}
+    ])
+    |> YouBet.play("3", "finalize_bets", [
+      %{"guess" => 999_999_999_999, "base_wager" => 100, "extra_wager" => 0},
+      %{"guess" => 999_999_999_999, "base_wager" => 100, "extra_wager" => 0}
+    ])
+    |> YouBet.play("1", "advance_round", nil)
   end
 end
