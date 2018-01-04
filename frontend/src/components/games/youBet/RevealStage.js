@@ -5,6 +5,7 @@ import { makeList } from "../../../utils/strings";
 import styled from "styled-components";
 import Button from "../../common/Button";
 import SecondaryText from "../../common/SecondaryText";
+import DelayList from "../../common/DelayList";
 import DelayShow from "../../common/DelayShow";
 
 const DELAY_START = 5000;
@@ -72,13 +73,16 @@ const RevealStage = ({
           <Payout>Everybody guessed too high</Payout>
         )}
       </DelayShow>
-      {payoutsFromBetting.map(({ player, delta, closest }, index) => (
-        <DelayShow key={player.id} delay={DELAY_START + index * DELAY_INTERVAL}>
+      <DelayList
+        list={payoutsFromBetting}
+        renderItem={({ player, delta }) => (
           <Payout>
             {player.name} {delta < 0 ? "loses" : "gets"} ${Math.abs(delta)}
           </Payout>
-        </DelayShow>
-      ))}
+        )}
+        initialDelay={DELAY_START}
+        delayInterval={DELAY_INTERVAL}
+      />
       <DelayShow
         delay={DELAY_START + payoutsFromBetting.length * DELAY_INTERVAL}
       >
