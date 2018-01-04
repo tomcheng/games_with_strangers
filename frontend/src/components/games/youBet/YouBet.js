@@ -43,7 +43,7 @@ const YouBet = ({
       <Sidebar backgroundColor="#084160">
         <Scores scores={scores} />
       </Sidebar>
-      <SectionHeader>Round {round}</SectionHeader>
+      <SectionHeader>{stage === "end" ? "Game Over" : `Round ${round}`}</SectionHeader>
       <Question>{question}</Question>
       {stage === "guessing" && (
         <GuessingStage
