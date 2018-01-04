@@ -59,7 +59,7 @@ export const BETTING = {
     ],
     your_bets: null,
     awaiting_bet: [players[2], players[3]],
-    your_score: 1500
+    your_score: 5200
   }
 };
 

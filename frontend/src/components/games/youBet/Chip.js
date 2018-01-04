@@ -43,7 +43,7 @@ const ChipBase = styled.div`
     position: absolute;
     content: "${props => props.amount}";
     text-align: center;
-    font: bold ${DIAMETER / 151 * 50}px/${DIAMETER / 151 * 111}px Arial;
+    font: bold ${props => DIAMETER / 151 * (props.amount >= 1000 ? 40 : 50)}px/${DIAMETER / 151 * 111}px Arial;
     white-space: pre;
     width: ${DIAMETER / 151 * 111}px;
     height: ${DIAMETER / 151 * 111}px;

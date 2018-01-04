@@ -123,7 +123,20 @@ class BettingStage extends Component {
     let id = 3;
     let remaining = score - 200;
 
-    while (remaining >= 500) {
+    while (remaining >= 2500 && score >= 5200) {
+      chips.push({
+        id,
+        amount: 2500,
+        color: "green",
+        base: false,
+        guess: null,
+        position: null
+      });
+      id += 1;
+      remaining -= 2500;
+    }
+
+    while (remaining >= 500 && score >= 1200) {
       chips.push({
         id,
         amount: 500,
