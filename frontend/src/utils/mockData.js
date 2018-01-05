@@ -16,7 +16,11 @@ const nonGameState = {
   gameId: "you_bet",
   playersNeeded: 3
 };
-const defaultGameState = {
+export const waitingForPlayers = {
+  ...nonGameState
+};
+
+const defaultYouBetGameState = {
   you,
   others,
   round: 2,
@@ -24,32 +28,27 @@ const defaultGameState = {
   scores: players.map(player => ({ player, score: 1500 }))
 };
 
-export const WAITING_FOR_PLAYERS = {
-  ...nonGameState
-};
-
-export const GUESSING = {
+export const youBet = {};
+youBet.guessing = {
   ...nonGameState,
   gameState: {
-    ...defaultGameState,
+    ...defaultYouBetGameState,
     stage: "guessing",
     your_guess: null,
     awaiting_guess: [players[2], players[3]]
   }
 };
-
-export const GUESSED = {
-  ...GUESSING,
+youBet.guessed = {
+  ...youBet.guessing,
   gameState: {
-    ...GUESSING.gameState,
+    ...youBet.guessing.gameState,
     your_guess: 50
   }
 };
-
-export const BETTING = {
+youBet.betting = {
   ...nonGameState,
   gameState: {
-    ...defaultGameState,
+    ...defaultYouBetGameState,
     stage: "betting",
     bet_options: [
       { guess: 15, odds: 4, players: [players[0], players[1]] },
@@ -62,20 +61,18 @@ export const BETTING = {
     your_score: 5200
   }
 };
-
-export const BETTED = {
-  ...BETTING,
+youBet.betted = {
+  ...youBet.betting,
   gameState: {
-    ...BETTING.gameState,
+    ...youBet.betting.gameState,
     your_bets: [{ guess: 20, wager: 100 }, { guess: 25, wager: 100 }],
     your_score: 1500
   }
 };
-
-export const REVEAL = {
+youBet.reveal = {
   ...nonGameState,
   gameState: {
-    ...defaultGameState,
+    ...defaultYouBetGameState,
     stage: "reveal",
     answer: 43,
     closest_guess: 40,
@@ -84,15 +81,33 @@ export const REVEAL = {
       { player: players[1], delta: 600, closest: false },
       { player: players[2], delta: 0, closest: false },
       { player: players[3], delta: 0, closest: false },
-      { player: players[4], delta: -200, closest: false },
+      { player: players[4], delta: -200, closest: false }
     ]
   }
 };
-
-export const END_GAME = {
+youBet.end = {
   ...nonGameState,
   gameState: {
     stage: "end",
     scores: players.map(player => ({ player, score: 1500 }))
+  }
+};
+
+const defaultFunPromptsGameState = {
+  round: 1,
+  stage: "writing",
+  scores: players.map(player => ({ player, score: 0 })),
+  prompts: [
+    { id: 1, prompt: "What you shouldn't say at funeral" },
+    { id: 2, prompt: "Worst thing to hear your pilot say" }
+  ]
+};
+
+export const funPrompts = {};
+funPrompts.writing = {
+  ...nonGameState,
+  gameId: "fun_prompts",
+  gameState: {
+    ...defaultFunPromptsGameState
   }
 };

@@ -22,6 +22,7 @@ defmodule FunPromptsTest do
       |> FunPrompts.sanitize_state("1")
 
     assert state[:round] == 1
+    assert state[:stage] == :writing
     assert state[:scores] == [
       %{player: %{id: "2", name: "bar"}, score: 0},
       %{player: %{id: "3", name: "baz"}, score: 0},

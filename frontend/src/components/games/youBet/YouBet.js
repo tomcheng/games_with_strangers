@@ -97,41 +97,17 @@ const YouBet = ({
 
 YouBet.propTypes = {
   gameState: PropTypes.shape({
-    scores: PropTypes.arrayOf(
-      PropTypes.shape({
-        player: customTypes.player.isRequired,
-        score: PropTypes.number.isRequired
-      })
-    ).isRequired,
+    scores: PropTypes.array.isRequired,
     stage: PropTypes.oneOf(["guessing", "betting", "reveal", "end"]).isRequired,
     answer: PropTypes.number,
     awaiting_bet: customTypes.players,
     awaiting_guess: customTypes.players,
-    bet_options: PropTypes.arrayOf(
-      PropTypes.shape({
-        guess: PropTypes.number.isRequired,
-        odds: PropTypes.number.isRequired,
-        players: customTypes.players.isRequired,
-        bets: PropTypes.number.isRequired
-      })
-    ),
+    bet_options: PropTypes.array,
     closest_guess: PropTypes.number,
-    payouts: PropTypes.arrayOf(
-      PropTypes.shape({
-        player: customTypes.player.isRequired,
-        delta: PropTypes.number.isRequired,
-        closest: PropTypes.bool.isRequired
-      })
-    ),
+    payouts: PropTypes.array,
     question: PropTypes.string,
     round: PropTypes.number,
-    your_bets: PropTypes.arrayOf(
-      PropTypes.shape({
-        guess: PropTypes.number.isRequired,
-        base_wager: PropTypes.number.isRequired,
-        extra_wager: PropTypes.number.isRequired
-      })
-    ),
+    your_bets: PropTypes.array,
     your_guess: PropTypes.number,
     your_score: PropTypes.number
   }).isRequired,

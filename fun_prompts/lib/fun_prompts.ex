@@ -10,6 +10,7 @@ defmodule FunPrompts do
 
     %{
       round: 1,
+      stage: :writing,
       scores:
         players
         |> Enum.map(fn {_, p} -> %{player: p, score: 0} end)
@@ -23,7 +24,7 @@ defmodule FunPrompts do
   def sanitize_state(state, player_id) do
     state
     |> add_prompts_for_player(player_id)
-    |> Map.take([:round, :scores, :prompts])
+    |> Map.take([:prompts, :round, :scores, :stage])
   end
 
   defp get_matchups(order, prompts, offset) do
