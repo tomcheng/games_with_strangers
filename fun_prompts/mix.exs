@@ -1,9 +1,9 @@
-defmodule YouBet.Mixfile do
+defmodule FunPrompts.Mixfile do
   use Mix.Project
 
   def project do
     [
-      app: :you_bet,
+      app: :fun_prompts,
       version: "0.1.0",
       elixir: "~> 1.5",
       start_permanent: Mix.env == :prod,
@@ -13,7 +13,7 @@ defmodule YouBet.Mixfile do
 
   def application do
     [
-      extra_applications: [:logger]
+      applications: [:logger]
     ]
   end
 
