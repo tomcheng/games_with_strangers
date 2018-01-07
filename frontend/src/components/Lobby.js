@@ -3,6 +3,7 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import gamesList from "../gamesList";
 import SectionHeader from "./common/SectionHeader";
+import Divider from "./common/Divider";
 import TextInput from "./common/TextInput";
 import Button from "./common/Button";
 import GameCard from "./GameCard";
@@ -47,7 +48,7 @@ class Lobby extends Component {
       nameError: null,
       roomCodeError: null,
       joinGameClicked: false,
-      startGameClicked: false,
+      startGameClicked: false
     };
   }
 
@@ -145,17 +146,19 @@ class Lobby extends Component {
         <Section>
           <SectionHeader>Start a New Game</SectionHeader>
           {gamesList.map(
-            ({ id, displayName, description, playerRequirements }) => (
-              <GameCard
-                key={id}
-                title={displayName}
-                description={description}
-                playerRequirements={playerRequirements}
-                startGameClicked={startGameClicked}
-                onSelect={() => {
-                  this.handleSelectGame(id);
-                }}
-              />
+            ({ id, displayName, description, playerRequirements }, index) => (
+              <Fragment key={id}>
+                {index !== 0 && <Divider />}
+                <GameCard
+                  title={displayName}
+                  description={description}
+                  playerRequirements={playerRequirements}
+                  startGameClicked={startGameClicked}
+                  onSelect={() => {
+                    this.handleSelectGame(id);
+                  }}
+                />
+              </Fragment>
             )
           )}
         </Section>

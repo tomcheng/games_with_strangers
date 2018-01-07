@@ -1,16 +1,15 @@
 import React from "react";
 import styled from "styled-components";
+import Spacing from "./Spacing";
+import Divider from "./Divider";
 
 const Container = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
 `;
 
-const Rule = styled.div`
+const Rule = styled(Divider)`
   flex-grow: 1;
-  border-top: 1px solid rgba(0, 0, 0, 0.5);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 `;
 
 const Text = styled.div`
@@ -22,11 +21,15 @@ const Text = styled.div`
 `;
 
 const SectionHeader = ({ children }) => (
-  <Container>
-    <Rule />
-    <Text>{children}</Text>
-    <Rule />
-  </Container>
+  <Spacing spaceBottom={2}>
+    {({ spacingStyle }) => (
+      <Container style={spacingStyle}>
+        <Rule spaceBottom={0} spaceTop={0} />
+        <Text>{children}</Text>
+        <Rule spaceBottom={0} spaceTop={0} />
+      </Container>
+    )}
+  </Spacing>
 );
 
 export default SectionHeader;
