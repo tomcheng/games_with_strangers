@@ -33,7 +33,6 @@ const wiggle = keyframes`
 const Container = styled.div`
   overflow: hidden;
   position: relative;
-  cursor: pointer;
   animation-name: ${props => (props.shouldWiggle ? wiggle : "")};
   animation-duration: 0.5s;
   animation-iteration-count: 1;
@@ -272,7 +271,6 @@ class Carousel extends React.Component {
         <TouchHandler
           onDrag={this.handleDrag}
           onDragRelease={this.handleDragRelease}
-          onTap={this.goToNextPane}
         >
           <List
             style={{
