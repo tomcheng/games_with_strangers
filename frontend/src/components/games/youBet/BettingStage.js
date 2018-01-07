@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import uniq from "lodash/uniq";
 import map from "lodash/map";
@@ -13,6 +13,7 @@ import ChipDragLayer from "./ChipDragLayer";
 
 const Container = styled.div`
   position: relative;
+  margin-top: 24px;
 `;
 
 const UnplayedChips = styled.div`
@@ -32,8 +33,8 @@ const UnplayedDraggableChip = styled(DraggableChip)`
 const Footer = styled.div`
   margin-top: 24px;
   display: flex;
-  justify-content: center;
-  text-align: center;
+  flex-direction: column;
+  align-items: center;
 `;
 
 export const gatherChips = chips => {
@@ -264,12 +265,12 @@ class BettingStage extends Component {
         ))}
         <Footer>
           {yourBets ? (
-            <div>
+            <Fragment>
               <h3>Your bets have been submitted.</h3>
               <SecondaryText>
                 Waiting for {makeList(awaitingBet.map(b => b.name))}&hellip;
               </SecondaryText>
-            </div>
+            </Fragment>
           ) : (
             <Button
               onClick={this.handleClickFinalize}
