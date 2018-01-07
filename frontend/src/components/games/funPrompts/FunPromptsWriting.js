@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import Heading from "../../common/Heading";
 import Button from "../../common/Button";
+import TextArea from "../../common/TextArea";
 
 class FunPromptsWriting extends Component {
   static propTypes = {
@@ -50,16 +52,16 @@ class FunPromptsWriting extends Component {
 
     return (
       <div>
-        <h1>Answer these prompts</h1>
         {prompts.map(({ id, prompt }) => (
           <form key={id} name={id} onSubmit={this.handleSubmit}>
-            <div>{prompt}</div>
-            <textarea
+            <Heading center spaceBottom={2}>{prompt}</Heading>
+            <TextArea
               value={answers[id]}
               name={id}
               onChange={this.handleChange}
+              center
             />
-            <Button>Submit</Button>
+            <Button center spaceTop={2}>Submit</Button>
           </form>
         ))}
       </div>
