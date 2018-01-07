@@ -28,14 +28,11 @@ const JoinButton = styled(Button)`
   flex-shrink: 0;
 `;
 
-const Error = styled.div`
-  margin-top: 5px;
-`;
-
 class Lobby extends Component {
   static propTypes = {
     onCreateRoom: PropTypes.func.isRequired,
     onJoinRoom: PropTypes.func.isRequired,
+    onSetFlashMessage: PropTypes.func.isRequired,
     previousRoomCode: PropTypes.string
   };
 
@@ -44,9 +41,9 @@ class Lobby extends Component {
 
     this.state = {
       playerName: getPlayerName() || "",
+      playerNameError: false,
       roomCode: props.previousRoomCode || "",
-      nameError: null,
-      roomCodeError: null,
+      roomCodeError: false,
       joinGameClicked: false,
       startGameClicked: null
     };
@@ -54,20 +51,20 @@ class Lobby extends Component {
 
   handleSubmitJoin = evt => {
     evt.preventDefault();
-    const { playerName: playerNameRaw, roomCode: roomCodeRaw } = this.state;
     const { onJoinRoom } = this.props;
+    const { playerName: playerNameRaw, roomCode: roomCodeRaw } = this.state;
     const playerName = playerNameRaw.trim();
     const roomCode = roomCodeRaw.trim();
 
     if (playerName === "") {
-      this.setState({ nameError: "Name is required" });
+      this.setNameError();
       return;
     }
 
     setPlayerName(playerName);
 
     if (roomCode === "") {
-      this.setState({ roomCodeError: "Game code is required" });
+      this.setRoomCodeError();
       return;
     }
 
@@ -76,20 +73,28 @@ class Lobby extends Component {
     onJoinRoom({
       playerName,
       roomCode,
-      onError: this.handleJoinError
+      onError: () => {
+        this.setState({
+          roomCode: "",
+          joinGameClicked: false,
+          roomCodeError: true
+        });
+      }
     });
   };
 
-  handleJoinError = ({ message }) => {
-    this.setState({ roomCodeError: message, joinGameClicked: false });
-  };
-
   handleChange = ({ target }) => {
-    this.setState({ [target.name]: target.value });
+    this.setState({
+      [target.name]: target.value,
+      [target.name + "Error"]: false
+    });
   };
 
   handleChangeCode = ({ target }) => {
-    this.setState({ [target.name]: target.value.trim().toUpperCase() });
+    this.setState({
+      [target.name]: target.value.trim().toUpperCase(),
+      [target.name + "Error"]: false
+    });
   };
 
   handleSelectGame = gameId => {
@@ -98,7 +103,7 @@ class Lobby extends Component {
     const playerName = playerNameRaw.trim();
 
     if (playerName === "") {
-      this.setState({ nameError: "Name is required" });
+      this.setNameError();
       return;
     }
 
@@ -108,14 +113,24 @@ class Lobby extends Component {
     onCreateRoom({ playerName, gameId });
   };
 
+  setNameError = () => {
+    this.props.onSetFlashMessage("A screen name is required");
+    this.setState({ playerNameError: true });
+  };
+
+  setRoomCodeError = () => {
+    this.props.onSetFlashMessage("A game code is required");
+    this.setState({ roomCodeError: true });
+  };
+
   render() {
     const {
       playerName,
       roomCode,
-      nameError,
-      roomCodeError,
       joinGameClicked,
-      startGameClicked
+      startGameClicked,
+      playerNameError,
+      roomCodeError
     } = this.state;
 
     return (
@@ -127,8 +142,8 @@ class Lobby extends Component {
             name="playerName"
             value={playerName}
             onChange={this.handleChange}
+            hasError={playerNameError}
           />
-          {nameError && <Error>{nameError}</Error>}
         </Section>
         <Section>
           <SectionHeader>Join a Game</SectionHeader>
@@ -138,28 +153,26 @@ class Lobby extends Component {
               name="roomCode"
               value={roomCode}
               onChange={this.handleChangeCode}
+              hasError={roomCodeError}
             />
             <JoinButton disabled={joinGameClicked}>Join Game</JoinButton>
           </JoinGameForm>
-          {roomCodeError && <Error>{roomCodeError}</Error>}
         </Section>
         <Section>
           <SectionHeader>Start a New Game</SectionHeader>
-          {gamesList.map(
-            ({ id, displayName, description }, index) => (
-              <Fragment key={id}>
-                {index !== 0 && <Divider />}
-                <GameCard
-                  title={displayName}
-                  description={description}
-                  startGameClicked={startGameClicked === id}
-                  onSelect={() => {
-                    this.handleSelectGame(id);
-                  }}
-                />
-              </Fragment>
-            )
-          )}
+          {gamesList.map(({ id, displayName, description }, index) => (
+            <Fragment key={id}>
+              {index !== 0 && <Divider />}
+              <GameCard
+                title={displayName}
+                description={description}
+                startGameClicked={startGameClicked === id}
+                onSelect={() => {
+                  this.handleSelectGame(id);
+                }}
+              />
+            </Fragment>
+          ))}
         </Section>
       </Fragment>
     );

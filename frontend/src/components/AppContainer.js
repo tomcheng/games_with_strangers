@@ -19,7 +19,8 @@ const INITIAL_STATE = {
   others: null,
   gameId: null,
   playersNeeded: null,
-  gameState: null
+  gameState: null,
+  flashMessage: null
 };
 
 class AppContainer extends Component {
@@ -86,7 +87,11 @@ class AppContainer extends Component {
         this.setState({ roomCode, yourId: player_id });
       })
       .receive("error", message => {
-        onError({ message });
+        if (onError) {
+          onError();
+        }
+
+        this.handleSetFlashMessage(message);
       });
   };
 
@@ -123,6 +128,14 @@ class AppContainer extends Component {
     });
   };
 
+  handleSetFlashMessage = flashMessage => {
+    this.setState({ flashMessage });
+  };
+
+  handleClearFlashMessage = () => {
+    this.setState({ flashMessage: null });
+  };
+
   render() {
     return (
       <App
@@ -134,12 +147,15 @@ class AppContainer extends Component {
           "others",
           "gameId",
           "playersNeeded",
-          "gameState"
+          "gameState",
+          "flashMessage"
         ])}
         onStartGame={this.handleStartGame}
         onPlay={this.handlePlay}
         onCreateRoom={this.handleCreateRoom}
         onJoinRoom={this.handleJoinRoom}
+        onSetFlashMessage={this.handleSetFlashMessage}
+        onClearFlashMessage={this.handleClearFlashMessage}
       />
     );
   }

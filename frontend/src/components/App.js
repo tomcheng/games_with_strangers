@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import styled from "styled-components";
 import AppHeader from "./AppHeader";
 import Lobby from "./Lobby";
@@ -17,65 +17,49 @@ const Content = styled.div`
   max-width: 800px;
 `;
 
-class App extends Component {
-  state = { flashMessage: null };
-
-  handleSetFlashMessage = flashMessage => {
-    this.setState({ flashMessage });
-  };
-
-  handleClearFlashMessage = () => {
-    this.setState({ flashMessage: null });
-  };
-
-  render() {
-    const {
-      previousRoomCode,
-      roomJoined,
-      roomCode,
-      you,
-      others,
-      gameId,
-      playersNeeded,
-      gameState,
-      onStartGame,
-      onPlay,
-      onCreateRoom,
-      onJoinRoom
-    } = this.props;
-    const { flashMessage } = this.state;
-
-    return (
-      <Container>
-        <Content>
-          <AppHeader roomCode={roomCode} />
-          {!roomCode && (
-            <Lobby
-              previousRoomCode={previousRoomCode}
-              onCreateRoom={onCreateRoom}
-              onJoinRoom={onJoinRoom}
-            />
-          )}
-          {roomJoined && (
-            <Room
-              you={you}
-              others={others}
-              gameId={gameId}
-              playersNeeded={playersNeeded}
-              gameState={gameState}
-              onStartGame={onStartGame}
-              onPlay={onPlay}
-              onSetFlashMessage={this.handleSetFlashMessage}
-            />
-          )}
-        </Content>
-        <FlashMessage
-          message={flashMessage}
-          onClear={this.handleClearFlashMessage}
+const App = ({
+  previousRoomCode,
+  roomJoined,
+  roomCode,
+  you,
+  others,
+  gameId,
+  playersNeeded,
+  gameState,
+  flashMessage,
+  onStartGame,
+  onPlay,
+  onCreateRoom,
+  onJoinRoom,
+  onClearFlashMessage,
+  onSetFlashMessage
+}) => (
+  <Container>
+    <Content>
+      <AppHeader roomCode={roomCode} />
+      {!roomCode && (
+        <Lobby
+          previousRoomCode={previousRoomCode}
+          onCreateRoom={onCreateRoom}
+          onJoinRoom={onJoinRoom}
+          onSetFlashMessage={onSetFlashMessage}
         />
-      </Container>
-    );
-  }
-}
+      )}
+      {roomJoined && (
+        <Room
+          you={you}
+          others={others}
+          gameId={gameId}
+          playersNeeded={playersNeeded}
+          gameState={gameState}
+          onStartGame={onStartGame}
+          onPlay={onPlay}
+          onSetFlashMessage={onSetFlashMessage}
+        />
+      )}
+    </Content>
+    <FlashMessage message={flashMessage} onClear={onClearFlashMessage} />
+  </Container>
+);
 
 export default App;
