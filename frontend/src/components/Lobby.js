@@ -48,7 +48,7 @@ class Lobby extends Component {
       nameError: null,
       roomCodeError: null,
       joinGameClicked: false,
-      startGameClicked: false
+      startGameClicked: null
     };
   }
 
@@ -104,7 +104,7 @@ class Lobby extends Component {
 
     setPlayerName(playerName);
 
-    this.setState({ startGameClicked: true });
+    this.setState({ startGameClicked: gameId });
     onCreateRoom({ playerName, gameId });
   };
 
@@ -146,14 +146,13 @@ class Lobby extends Component {
         <Section>
           <SectionHeader>Start a New Game</SectionHeader>
           {gamesList.map(
-            ({ id, displayName, description, playerRequirements }, index) => (
+            ({ id, displayName, description }, index) => (
               <Fragment key={id}>
                 {index !== 0 && <Divider />}
                 <GameCard
                   title={displayName}
                   description={description}
-                  playerRequirements={playerRequirements}
-                  startGameClicked={startGameClicked}
+                  startGameClicked={startGameClicked === id}
                   onSelect={() => {
                     this.handleSelectGame(id);
                   }}

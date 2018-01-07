@@ -1,38 +1,36 @@
 import React from "react";
 import PropTypes from "prop-types";
-import styled from "styled-components";
 import Button from "./common/Button";
-import Heading from "./common/Heading";
-
-const Description = styled.div`
-  margin-bottom: 16px;
-`;
+import Spacing from "./common/Spacing";
 
 const GameCard = ({
   title,
   description,
-  playerRequirements,
   onSelect,
   startGameClicked
 }) => (
-  <div>
-    <Heading>{title}</Heading>
-    <Description>{description}</Description>
-    <Button
-      onClick={onSelect}
-      disabled={startGameClicked}
-      helpText={playerRequirements}
-      center
-    >
-      Start Game
-    </Button>
-  </div>
+  <Spacing spaceBottom={3}>
+    {({ spacingStyle }) => (
+      <div style={spacingStyle}>
+        <div><strong>{title}</strong> &ndash; {description}</div>
+        <Button
+          spaceTop={2}
+          onClick={onSelect}
+          disabled={startGameClicked}
+          variation="secondary"
+          size="small"
+          center
+        >
+          Start {title}
+        </Button>
+      </div>
+    )}
+  </Spacing>
 );
 
 GameCard.propTypes = {
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  playerRequirements: PropTypes.node.isRequired,
   onSelect: PropTypes.func.isRequired,
   startGameClicked: PropTypes.bool.isRequired
 };

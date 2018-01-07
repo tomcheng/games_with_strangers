@@ -64,8 +64,8 @@ const Room = ({
             {pluralize("player", playersNeeded)}&hellip;
           </Waiting>
         )}
-        {you.isModerator && (
-          <Button onClick={onStartGame} disabled={playersNeeded > 0}>
+        {you.isModerator && playersNeeded === 0 && (
+          <Button onClick={onStartGame}>
             Start Game
           </Button>
         )}
