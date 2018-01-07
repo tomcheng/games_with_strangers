@@ -1,8 +1,18 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import styled from "styled-components";
 import Heading from "../../common/Heading";
 import Button from "../../common/Button";
 import TextArea from "../../common/TextArea";
+import Carousel from "../../common/Carousel";
+
+const Container = styled.div`
+  margin: 0 -${props => props.theme.appPadding};
+`;
+
+const StyledForm = styled.form`
+  padding: 0 ${props => props.theme.appPadding};
+`;
 
 class FunPromptsWriting extends Component {
   static propTypes = {
@@ -51,20 +61,26 @@ class FunPromptsWriting extends Component {
     const { answers } = this.state;
 
     return (
-      <div>
-        {prompts.map(({ id, prompt }) => (
-          <form key={id} name={id} onSubmit={this.handleSubmit}>
-            <Heading center spaceBottom={2}>{prompt}</Heading>
-            <TextArea
-              value={answers[id]}
-              name={id}
-              onChange={this.handleChange}
-              center
-            />
-            <Button center spaceTop={2}>Submit</Button>
-          </form>
-        ))}
-      </div>
+      <Container>
+        <Carousel
+          panes={prompts.map(({ id, prompt }) => (
+            <StyledForm key={id} name={id} onSubmit={this.handleSubmit}>
+              <Heading center spaceBottom={2}>
+                {prompt}
+              </Heading>
+              <TextArea
+                value={answers[id]}
+                name={id}
+                onChange={this.handleChange}
+                style={{ textAlign: "center" }}
+              />
+              <Button center spaceTop={2}>
+                Submit
+              </Button>
+            </StyledForm>
+          ))}
+        />
+      </Container>
     );
   }
 }

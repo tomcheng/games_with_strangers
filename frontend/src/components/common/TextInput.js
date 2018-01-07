@@ -16,7 +16,6 @@ const Input = styled.input`
   padding: 0 15px;
   margin-left: ${props => (props.center ? "auto" : 0)};
   margin-right: ${props => (props.center ? "auto" : 0)};
-  text-align: ${props => (props.center ? "center" : "inherit")};
 `;
 
 export const TextInput = ({ type, spaceBottom, ...other }) => (
@@ -28,7 +27,6 @@ export const TextInput = ({ type, spaceBottom, ...other }) => (
 );
 
 TextInput.propTypes = {
-  center: PropTypes.bool,
   spaceBottom: PropTypes.number,
   type: PropTypes.oneOf(["text", "number"])
 };
