@@ -1,37 +1,16 @@
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import * as customTypes from "../../../utils/customTypes";
 import { makeList } from "../../../utils/strings";
-import styled from "styled-components";
 import Button from "../../common/Button";
 import SecondaryText from "../../common/SecondaryText";
+import Heading from "../../common/Heading";
+import Spacing from "../../common/Spacing";
 import DelayList from "../../common/DelayList";
 import DelayShow from "../../common/DelayShow";
 
 const DELAY_START = 5000;
 const DELAY_INTERVAL = 1000;
-
-const Container = styled.div`
-  text-align: center;
-`;
-
-const AnswerLabel = styled.h3`
-  margin-bottom: 8px;
-`;
-
-const Answer = styled.h1`
-  margin-bottom: 16px;
-`;
-
-const Payout = styled.h3`
-  margin-bottom: 16px;
-`;
-
-const Footer = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 24px;
-`;
 
 const RevealStage = ({
   answer,
@@ -50,53 +29,68 @@ const RevealStage = ({
     .filter(p => p.delta !== 0);
 
   return (
-    <Container>
+    <Fragment>
       <DelayShow delay={0}>
-        <AnswerLabel>The correct answer is:</AnswerLabel>
+        <Heading level={3} center>
+          The correct answer is:
+        </Heading>
       </DelayShow>
       <DelayShow delay={1000}>
-        <Answer>{answer}</Answer>
+        <Heading spaceBottom={2} center>
+          {answer}
+        </Heading>
       </DelayShow>
       <DelayShow delay={2000}>
-        <AnswerLabel>The closest without going over is:</AnswerLabel>
+        <Heading level={3} center>
+          The closest without going over is:
+        </Heading>
       </DelayShow>
       <DelayShow delay={3000}>
-        <Answer>{closestGuess}</Answer>
+        <Heading spaceBottom={2} center>
+          {closestGuess}
+        </Heading>
       </DelayShow>
       <DelayShow delay={4000}>
         {closestPlayers.length ? (
-          <Payout>
+          <Heading level={3} spaceBottom={2} center>
             {makeList(closestPlayers.map(p => p.name))} gets $300 for having the
             closest answer
-          </Payout>
+          </Heading>
         ) : (
-          <Payout>Everybody guessed too high</Payout>
+          <Heading level={3} spaceBottom={2} center>
+            Everybody guessed too high
+          </Heading>
         )}
       </DelayShow>
       <DelayList
         list={payoutsFromBetting}
         renderItem={({ player, delta }) => (
-          <Payout>
+          <Heading level={3} spaceBottom={2} center>
             {player.name} {delta < 0 ? "loses" : "gets"} ${Math.abs(delta)}
-          </Payout>
+          </Heading>
         )}
         initialDelay={DELAY_START}
         delayInterval={DELAY_INTERVAL}
       />
-      <DelayShow
-        delay={DELAY_START + payoutsFromBetting.length * DELAY_INTERVAL}
-      >
-        <Footer>
-          {youAreModerator ? (
-            <Button onClick={onAdvanceRound}>Start Next Round</Button>
-          ) : (
-            <SecondaryText>
-              Waiting for {moderator.name} to start next round&hellip;
-            </SecondaryText>
-          )}
-        </Footer>
-      </DelayShow>
-    </Container>
+      <Spacing spaceTop={3}>
+        {({ spacingStyle }) => (
+          <DelayShow
+            delay={DELAY_START + payoutsFromBetting.length * DELAY_INTERVAL}
+            style={spacingStyle}
+          >
+            {youAreModerator ? (
+              <Button onClick={onAdvanceRound} center>
+                Start Next Round
+              </Button>
+            ) : (
+              <SecondaryText center>
+                Waiting for {moderator.name} to start next round&hellip;
+              </SecondaryText>
+            )}
+          </DelayShow>
+        )}
+      </Spacing>
+    </Fragment>
   );
 };
 

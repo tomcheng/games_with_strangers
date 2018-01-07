@@ -1,19 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
 import * as customTypes from "../../../utils/customTypes";
-import styled from "styled-components";
 import SectionHeader from "../../common/SectionHeader";
+import Heading from "../../common/Heading";
 import Sidebar from "../../common/Sidebar";
 import Scores from "./Scores";
 import GuessingStage from "./GuessingStage";
 import BettingStage from "./BettingStage";
 import RevealStage from "./RevealStage";
 import EndStage from "./EndStage";
-
-const Question = styled.h1`
-  text-align: center;
-  margin-bottom: 16px;
-`;
 
 const YouBet = ({
   gameState,
@@ -40,11 +35,15 @@ const YouBet = ({
 
   return (
     <div>
-      <Sidebar backgroundColor="#084160">
+      <Sidebar>
         <Scores scores={scores} />
       </Sidebar>
-      <SectionHeader>{stage === "end" ? "Game Over" : `Round ${round}`}</SectionHeader>
-      <Question>{question}</Question>
+      <SectionHeader>
+        {stage === "end" ? "Game Over" : `Round ${round}`}
+      </SectionHeader>
+      <Heading center spaceBottom={stage === "betting" ? 3 : 2}>
+        {question}
+      </Heading>
       {stage === "guessing" && (
         <GuessingStage
           yourGuess={yourGuess}

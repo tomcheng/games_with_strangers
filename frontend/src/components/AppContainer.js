@@ -10,7 +10,6 @@ import { POST, getChannel } from "../utils/api";
 import { getRoomCodeFromLocation } from "../utils/location";
 import { setPlayerId, getPlayerId } from "../utils/localStorage";
 import App from "./App";
-import { funPrompts } from "../utils/mockData";
 
 const INITIAL_STATE = {
   roomCode: null,
@@ -33,7 +32,7 @@ class AppContainer extends Component {
     const codeFromLocation = getRoomCodeFromLocation(this.history.location);
 
     this.state = {
-      ...funPrompts.writing,
+      ...INITIAL_STATE,
       previousRoomCode: codeFromLocation
     };
 

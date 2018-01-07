@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { DropTarget } from "react-dnd";
 import { makeList } from "../../../utils/strings";
 import SecondaryText from "../../common/SecondaryText";
+import Spacing from "../../common/Spacing";
 import DraggableChip from "./DraggableChip";
 
 const getTranslationStyle = ({ x, y }) => {
@@ -16,7 +17,6 @@ const Container = styled.div`
   border: 2px solid #fff;
   border-radius: 6px;
   padding: 8px 12px;
-  margin-bottom: 12px;
   opacity: ${({ committed, considering }) =>
     committed ? "1" : considering ? "0.7" : "0.4"};
   transition: opacity 0.15s ease-in-out;
@@ -103,18 +103,25 @@ class Answer extends Component {
             onCancelBet={onCancelBet}
           />
         ))}
-        <Container
-          key={guess}
-          committed={selected || (!canDrop && nothingSelected)}
-          considering={canDrop && isOver}
-        >
-          <Odds>Pays {odds} to 1</Odds>
-          <Number>{guess}</Number>
-          <Footer>
-            <SecondaryText>${totalBets} bet</SecondaryText>
-            <SecondaryText>{makeList(players.map(p => p.name))}</SecondaryText>
-          </Footer>
-        </Container>
+        <Spacing spaceBottom={1}>
+          {({ spacingStyle }) => (
+            <Container
+              key={guess}
+              style={spacingStyle}
+              committed={selected || (!canDrop && nothingSelected)}
+              considering={canDrop && isOver}
+            >
+              <Odds>Pays {odds} to 1</Odds>
+              <Number>{guess}</Number>
+              <Footer>
+                <SecondaryText>${totalBets} bet</SecondaryText>
+                <SecondaryText>
+                  {makeList(players.map(p => p.name))}
+                </SecondaryText>
+              </Footer>
+            </Container>
+          )}
+        </Spacing>
       </div>
     );
   }

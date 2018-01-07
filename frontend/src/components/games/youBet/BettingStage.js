@@ -7,13 +7,13 @@ import styled from "styled-components";
 import { makeList } from "../../../utils/strings";
 import Button from "../../common/Button";
 import SecondaryText from "../../common/SecondaryText";
+import Heading from "../../common/Heading";
 import Answer from "./Answer";
 import DraggableChip from "./DraggableChip";
 import ChipDragLayer from "./ChipDragLayer";
 
 const Container = styled.div`
   position: relative;
-  margin-top: 24px;
 `;
 
 const UnplayedChips = styled.div`
@@ -28,13 +28,6 @@ const UnplayedDraggableChip = styled(DraggableChip)`
   bottom: 0;
   right: 0;
   transition: transform 0.2s ease-in-out;
-`;
-
-const Footer = styled.div`
-  margin-top: 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 `;
 
 export const gatherChips = chips => {
@@ -263,23 +256,25 @@ class BettingStage extends Component {
             onCancelBet={this.handleCancelBet}
           />
         ))}
-        <Footer>
-          {yourBets ? (
-            <Fragment>
-              <h3>Your bets have been submitted.</h3>
-              <SecondaryText>
-                Waiting for {makeList(awaitingBet.map(b => b.name))}&hellip;
-              </SecondaryText>
-            </Fragment>
-          ) : (
-            <Button
-              onClick={this.handleClickFinalize}
-              disabled={!baseChipsPlayed}
-            >
-              Finalize Bets
-            </Button>
-          )}
-        </Footer>
+        {yourBets ? (
+          <Fragment>
+            <Heading level={3} center spaceTop={3}>
+              Your bets have been submitted.
+            </Heading>
+            <SecondaryText center>
+              Waiting for {makeList(awaitingBet.map(b => b.name))}&hellip;
+            </SecondaryText>
+          </Fragment>
+        ) : (
+          <Button
+            onClick={this.handleClickFinalize}
+            disabled={!baseChipsPlayed}
+            spaceTop={3}
+            center
+          >
+            Finalize Bets
+          </Button>
+        )}
         <UnplayedChips>
           {unplayedChips.map(({ id, amount, color, base }, index) => (
             <UnplayedDraggableChip

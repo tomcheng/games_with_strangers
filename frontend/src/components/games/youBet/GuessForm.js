@@ -4,16 +4,8 @@ import styled from "styled-components";
 import TextInput from "../../common/TextInput";
 import Button from "../../common/Button";
 
-const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
 const AnswerInput = styled(TextInput)`
-  text-align: center;
   max-width: 280px;
-  margin-bottom: 24px;
 `;
 
 class GuessForm extends Component {
@@ -37,16 +29,18 @@ class GuessForm extends Component {
     const { guess } = this.state;
 
     return (
-      <StyledForm onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit}>
         <AnswerInput
           placeholder="Your Answer"
           type="number"
           name="guess"
           value={guess}
           onChange={this.handleChange}
+          spaceBottom={3}
+          center
         />
-        <Button>Submit Answer</Button>
-      </StyledForm>
+        <Button center>Submit Answer</Button>
+      </form>
     );
   }
 }

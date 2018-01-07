@@ -55,7 +55,7 @@ class Sidebar extends Component {
   };
 
   static defaultProps = {
-    backgroundColor: "#fff",
+    backgroundColor: "#084160",
     open: false,
     sidebarWidth: 280
   };

@@ -9,7 +9,8 @@ const Container = styled.div`
 class DelayShow extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
-    delay: PropTypes.number.isRequired
+    delay: PropTypes.number.isRequired,
+    style: PropTypes.object
   };
 
   state = { show: false };
@@ -29,10 +30,14 @@ class DelayShow extends Component {
   }
 
   render() {
-    const { children } = this.props;
+    const { children, style } = this.props;
     const { show } = this.state;
 
-    return <Container style={{ opacity: show ? 1 : 0 }}>{children}</Container>;
+    return (
+      <Container style={{ ...style, opacity: show ? 1 : 0 }}>
+        {children}
+      </Container>
+    );
   }
 }
 

@@ -1,17 +1,8 @@
 import React from "react";
+import PropTypes from "prop-types";
 import styled from "styled-components";
-import SecondaryText from "./common/SecondaryText";
 import Button from "./common/Button";
-
-const FootNote = styled(SecondaryText)`
-  margin-top: 4px;
-`;
-
-const ActionContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
+import Heading from "./common/Heading";
 
 const Description = styled.div`
   margin-bottom: 16px;
@@ -25,15 +16,25 @@ const GameCard = ({
   startGameClicked
 }) => (
   <div>
-    <h1>{title}</h1>
+    <Heading>{title}</Heading>
     <Description>{description}</Description>
-    <ActionContainer>
-      <Button onClick={onSelect} disabled={startGameClicked}>
-        Start Game
-      </Button>
-      <FootNote>{playerRequirements}</FootNote>
-    </ActionContainer>
+    <Button
+      onClick={onSelect}
+      disabled={startGameClicked}
+      helpText={playerRequirements}
+      center
+    >
+      Start Game
+    </Button>
   </div>
 );
+
+GameCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  playerRequirements: PropTypes.node.isRequired,
+  onSelect: PropTypes.func.isRequired,
+  startGameClicked: PropTypes.bool.isRequired
+};
 
 export default GameCard;
