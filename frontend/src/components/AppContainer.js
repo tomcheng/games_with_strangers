@@ -7,18 +7,10 @@ import camelCase from "lodash/camelCase";
 import pick from "lodash/pick";
 import values from "lodash/values";
 import { POST, getChannel } from "../utils/api";
+import { getRoomCodeFromLocation } from "../utils/location";
 import { setPlayerId, getPlayerId } from "../utils/localStorage";
 import App from "./App";
-
-const getRoomCodeFromLocation = ({ search }) => {
-  const match = search.match(/[?&]c=([A-Z]{4})/);
-
-  if (!match) {
-    return null;
-  }
-
-  return match[1];
-};
+import { funPrompts } from "../utils/mockData";
 
 const INITIAL_STATE = {
   roomCode: null,
@@ -41,7 +33,7 @@ class AppContainer extends Component {
     const codeFromLocation = getRoomCodeFromLocation(this.history.location);
 
     this.state = {
-      ...INITIAL_STATE,
+      ...funPrompts.writing,
       previousRoomCode: codeFromLocation
     };
 
