@@ -76,11 +76,11 @@ defmodule FunPrompts do
     Enum.reduce((1..num), %{}, fn id, acc -> Map.put(acc, id, %{}) end)
   end
 
-  defp add_prompts_for_player(%{match_ups: match_ups} = state, player_id) do
+  defp add_prompts_for_player(%{match_ups: match_ups, answers: answers} = state, player_id) do
     prompts =
       match_ups
-      |> Enum.filter(fn %{player_ids: player_ids} ->
-        Enum.member?(player_ids, player_id)
+      |> Enum.filter(fn %{id: id, player_ids: player_ids} ->
+        Enum.member?(player_ids, player_id) && is_nil(answers[id][player_id])
       end)
       |> Enum.map(fn m -> Map.take(m, [:prompt, :id]) end)
 

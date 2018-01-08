@@ -31,6 +31,16 @@ defmodule FunPromptsTest do
     assert is_binary(List.first(state[:prompts])[:prompt])
   end
 
+  test "removes prompts as you answer", %{players: players} do
+    state =
+      players
+      |> FunPrompts.initial_state
+      |> FunPrompts.play("1", "answer", %{"id" => 1, "answer" => "player 1, answer 1"})
+      |> FunPrompts.sanitize_state("1")
+
+    assert Enum.count(state[:prompts]) == 1
+  end
+
   test "shows players who haven't answered", %{players: players} do
     state =
       players

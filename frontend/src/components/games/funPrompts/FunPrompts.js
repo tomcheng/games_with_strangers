@@ -12,6 +12,7 @@ const FunPrompts = ({ gameState, onPlay }) => (
         onAnswer={payload => {
           onPlay({ type: "answer", payload });
         }}
+        awaitingAnswer={gameState.awaiting_answer}
       />
     )}
   </div>
@@ -22,6 +23,7 @@ FunPrompts.propTypes = {
     round: PropTypes.number.isRequired,
     stage: PropTypes.oneOf(["writing", "voting"]).isRequired,
     scores: PropTypes.array.isRequired,
+    awaiting_answer: PropTypes.array,
     prompts: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.number.isRequired,

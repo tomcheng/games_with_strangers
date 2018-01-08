@@ -111,3 +111,11 @@ funPrompts.writing = {
     ...defaultFunPromptsGameState
   }
 };
+funPrompts.waitingForAnswers = {
+  ...funPrompts.writing,
+  gameState: {
+    ...funPrompts.writing.gameState,
+    prompts: [],
+    awaiting_answer: players,
+  }
+};
