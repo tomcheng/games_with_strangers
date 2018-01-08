@@ -31,6 +31,19 @@ defmodule FunPromptsTest do
     assert is_binary(List.first(state[:prompts])[:prompt])
   end
 
+  test "shows players who haven't answered", %{players: players} do
+    state =
+      players
+      |> FunPrompts.initial_state
+      |> FunPrompts.play("1", "answer", %{"id" => 1, "answer" => "player 1, answer 1"})
+      |> FunPrompts.play("1", "answer", %{"id" => 2, "answer" => "player 1, answer 2"})
+    your_state = FunPrompts.sanitize_state(state, "1")
+    others_state = FunPrompts.sanitize_state(state, "2")
+
+    assert your_state[:awaiting_answer] == [%{id: "2", name: "bar"}]
+    assert others_state[:awaiting_answer] == []
+  end
+
   test "handles answering a prompt", %{players: players} do
     state =
       players

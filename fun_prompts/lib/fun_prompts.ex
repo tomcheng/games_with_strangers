@@ -27,7 +27,8 @@ defmodule FunPrompts do
   def sanitize_state(%{stage: :writing} = state, player_id) do
     state
     |> add_prompts_for_player(player_id)
-    |> Map.take([:prompts, :round, :scores, :stage])
+    |> add_awaiting_answer(player_id)
+    |> Map.take([:awaiting_answer, :prompts, :round, :scores, :stage])
   end
 
   def sanitize_state(
@@ -84,6 +85,24 @@ defmodule FunPrompts do
       |> Enum.map(fn m -> Map.take(m, [:prompt, :id]) end)
 
     Map.put(state, :prompts, prompts)
+  end
+
+  defp add_awaiting_answer(%{players: players, answers: answers} = state, player_id) do
+    answered_id =
+      answers
+      |> Enum.flat_map(fn {_, ans} -> Enum.map(ans, fn {id, _} -> id end) end)
+      |> Enum.group_by(&(&1))
+      |> Enum.reject(fn {_, ids} -> Enum.count(ids) < 2 end)
+      |> Enum.map(fn {id, _} -> id end)
+
+    awaiting =
+      players
+      |> Map.drop([player_id])
+      |> Enum.map(fn {_, p} -> p end)
+      |> Enum.reject(fn p -> Enum.member?(answered_id, p[:id]) end)
+      |> Enum.sort_by(&Map.get(&1, :name))
+
+    Map.put(state, :awaiting_answer, awaiting)
   end
 
   defp change_to_voting_if_all_answers_in(state) do
