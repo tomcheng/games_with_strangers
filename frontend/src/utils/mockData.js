@@ -114,8 +114,20 @@ funPrompts.writing = {
 funPrompts.waitingForAnswers = {
   ...funPrompts.writing,
   gameState: {
-    ...funPrompts.writing.gameState,
+    ...defaultFunPromptsGameState,
     prompts: [],
-    awaiting_answer: players,
+    awaiting_answer: players
+  }
+};
+funPrompts.voting = {
+  ...funPrompts.writing,
+  gameState: {
+    ...defaultFunPromptsGameState,
+    stage: "voting",
+    prompt: "What you shouldn't say at a funeral",
+    choices: [
+      { answer: "fart", player: players[0] },
+      { answer: "well then", player: players[1] }
+    ]
   }
 };
