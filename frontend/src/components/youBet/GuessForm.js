@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import TextInput from "../../common/TextInput";
-import Button from "../../common/Button";
+import TextInput from "../common/TextInput";
+import Button from "../common/Button";
 
 const AnswerInput = styled(TextInput)`
   max-width: 280px;

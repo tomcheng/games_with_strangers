@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import SectionHeader from "../../common/SectionHeader";
+import SectionHeader from "../common/SectionHeader";
 import FunPromptsWriting from "./FunPromptsWriting";
 import FunPromptsVoting from "./FunPromptsVoting";
 

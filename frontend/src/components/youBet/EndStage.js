@@ -1,11 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import * as customTypes from "../../../utils/customTypes";
-import DelayList from "../../common/DelayList";
-import DelayShow from "../../common/DelayShow";
-import SecondaryText from "../../common/SecondaryText";
-import Button from "../../common/Button";
+import * as customTypes from "../../utils/customTypes";
+import DelayList from "../common/DelayList";
+import DelayShow from "../common/DelayShow";
+import SecondaryText from "../common/SecondaryText";
+import Button from "../common/Button";
 
 const Container = styled.div`
   display: flex;

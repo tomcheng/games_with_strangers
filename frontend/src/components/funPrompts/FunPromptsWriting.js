@@ -1,12 +1,12 @@
 import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import { makeList } from "../../../utils/strings";
-import Heading from "../../common/Heading";
-import Button from "../../common/Button";
-import TextArea from "../../common/TextArea";
-import SecondaryText from "../../common/SecondaryText";
-import Carousel from "../../common/Carousel";
+import { makeList } from "../../utils/strings";
+import Heading from "../common/Heading";
+import Button from "../common/Button";
+import TextArea from "../common/TextArea";
+import SecondaryText from "../common/SecondaryText";
+import Carousel from "../common/Carousel";
 
 const Container = styled.div`
   margin: 0 -${props => props.theme.appPadding};

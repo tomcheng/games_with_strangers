@@ -1,9 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import * as customTypes from "../../../utils/customTypes";
-import SectionHeader from "../../common/SectionHeader";
-import Heading from "../../common/Heading";
-import Sidebar from "../../common/Sidebar";
+import * as customTypes from "../../utils/customTypes";
+import SectionHeader from "../common/SectionHeader";
+import Heading from "../common/Heading";
+import Sidebar from "../common/Sidebar";
 import Scores from "./Scores";
 import GuessingStage from "./GuessingStage";
 import BettingStage from "./BettingStage";

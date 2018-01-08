@@ -1,13 +1,13 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
-import * as customTypes from "../../../utils/customTypes";
-import { makeList } from "../../../utils/strings";
-import Button from "../../common/Button";
-import SecondaryText from "../../common/SecondaryText";
-import Heading from "../../common/Heading";
-import Spacing from "../../common/Spacing";
-import DelayList from "../../common/DelayList";
-import DelayShow from "../../common/DelayShow";
+import * as customTypes from "../../utils/customTypes";
+import { makeList } from "../../utils/strings";
+import Button from "../common/Button";
+import SecondaryText from "../common/SecondaryText";
+import Heading from "../common/Heading";
+import Spacing from "../common/Spacing";
+import DelayList from "../common/DelayList";
+import DelayShow from "../common/DelayShow";
 
 const DELAY_START = 5000;
 const DELAY_INTERVAL = 1000;

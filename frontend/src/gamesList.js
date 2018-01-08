@@ -1,5 +1,5 @@
-import YouBet from "./components/games/youBet/YouBet";
-import FunPrompts from "./components/games/funPrompts/FunPrompts";
+import YouBet from "./components/youBet/YouBet";
+import FunPrompts from "./components/funPrompts/FunPrompts";
 
 const gamesList = [
   {

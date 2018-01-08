@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import * as customTypes from "../../../utils/customTypes";
-import SectionHeader from "../../common/SectionHeader";
+import * as customTypes from "../../utils/customTypes";
+import SectionHeader from "../common/SectionHeader";
 import styled from "styled-components";
 
 const Container = styled.div`

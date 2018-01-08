@@ -1,8 +1,8 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import Heading from "../../common/Heading";
-import Card from "../../common/Card";
+import Heading from "../common/Heading";
+import Card from "../common/Card";
 
 const Answer = styled(Card)`
   min-height: 140px;
