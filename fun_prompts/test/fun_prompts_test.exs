@@ -3,9 +3,12 @@ defmodule FunPromptsTest do
   doctest FunPrompts
 
   setup do
+    :rand.seed(:exsplus, {1, 2, 3})
+
     players = %{
       "1" => %{id: "1", name: "foo"},
-      "2" => %{id: "2", name: "bar"}
+      "2" => %{id: "2", name: "bar"},
+      "3" => %{id: "3", name: "baz"}
     }
     %{players: players}
   end
@@ -24,6 +27,7 @@ defmodule FunPromptsTest do
     assert state[:stage] == :writing
     assert state[:scores] == [
       %{player: %{id: "2", name: "bar"}, score: 0},
+      %{player: %{id: "3", name: "baz"}, score: 0},
       %{player: %{id: "1", name: "foo"}, score: 0}
     ]
     assert Enum.count(state[:prompts]) == 2
@@ -50,8 +54,8 @@ defmodule FunPromptsTest do
     your_state = FunPrompts.sanitize_state(state, "1")
     others_state = FunPrompts.sanitize_state(state, "2")
 
-    assert your_state[:awaiting_answer] == [%{id: "2", name: "bar"}]
-    assert others_state[:awaiting_answer] == []
+    assert your_state[:awaiting_answer] == [%{id: "2", name: "bar"}, %{id: "3", name: "baz"}]
+    assert others_state[:awaiting_answer] == [%{id: "3", name: "baz"}]
   end
 
   test "handles answering a prompt", %{players: players} do
@@ -60,13 +64,41 @@ defmodule FunPromptsTest do
       |> FunPrompts.initial_state
       |> FunPrompts.play("1", "answer", %{"id" => 1, "answer" => "player 1, answer 1"})
       |> FunPrompts.play("1", "answer", %{"id" => 2, "answer" => "player 1, answer 2"})
-      |> FunPrompts.play("2", "answer", %{"id" => 1, "answer" => "player 2, answer 1"})
       |> FunPrompts.play("2", "answer", %{"id" => 2, "answer" => "player 2, answer 2"})
+      |> FunPrompts.play("2", "answer", %{"id" => 3, "answer" => "player 2, answer 3"})
+      |> FunPrompts.play("3", "answer", %{"id" => 3, "answer" => "player 3, answer 3"})
+      |> FunPrompts.play("3", "answer", %{"id" => 1, "answer" => "player 3, answer 1"})
       |> FunPrompts.sanitize_state("1")
 
     assert state[:round] == 1
     assert state[:stage] == :voting
     assert is_binary(state[:prompt])
     assert Enum.count(state[:choices]) == 2
+  end
+
+  test "handles a vote", %{players: players} do
+    state =
+      players
+      |> FunPrompts.initial_state
+      |> FunPrompts.play("1", "answer", %{"id" => 1, "answer" => "player 1, answer 1"})
+      |> FunPrompts.play("1", "answer", %{"id" => 2, "answer" => "player 1, answer 2"})
+      |> FunPrompts.play("2", "answer", %{"id" => 2, "answer" => "player 2, answer 2"})
+      |> FunPrompts.play("2", "answer", %{"id" => 3, "answer" => "player 2, answer 3"})
+      |> FunPrompts.play("3", "answer", %{"id" => 3, "answer" => "player 3, answer 3"})
+      |> FunPrompts.play("3", "answer", %{"id" => 1, "answer" => "player 3, answer 1"})
+      |> FunPrompts.play("2", "vote", %{"player_id" => "1"})
+      |> FunPrompts.sanitize_state("1")
+
+    assert state[:round] == 1
+    assert state[:stage] == :voting_reveal
+    assert is_binary(state[:prompt])
+
+    [choice_1, choice_2] = state[:choices]
+
+    assert choice_1[:player][:id] == "3"
+    assert choice_1[:votes] == []
+
+    assert choice_2[:player][:id] == "1"
+    assert choice_2[:votes] == [%{id: "2", name: "bar"}]
   end
 end

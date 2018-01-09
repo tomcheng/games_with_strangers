@@ -9,10 +9,14 @@ const StyledCard = styled.div`
   padding: 8px 12px;
 `;
 
-const Card = ({ spaceBottom, style, className, children }) => (
+const Card = ({ spaceBottom, style, className, children, ...other }) => (
   <Spacing spaceBottom={spaceBottom}>
     {({ spacingStyle }) => (
-      <StyledCard className={className} style={{ ...spacingStyle, ...style }}>
+      <StyledCard
+        {...other}
+        className={className}
+        style={{ ...spacingStyle, ...style }}
+      >
         {children}
       </StyledCard>
     )}

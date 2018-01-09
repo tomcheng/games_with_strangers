@@ -20,6 +20,9 @@ const FunPrompts = ({ gameState, onPlay }) => (
       <FunPromptsVoting
         prompt={gameState.prompt}
         choices={gameState.choices}
+        onVote={({ playerId }) => {
+          onPlay({ type: "vote", payload: { player_id: playerId } });
+        }}
       />
     )}
   </div>

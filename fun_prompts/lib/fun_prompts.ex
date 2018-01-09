@@ -1,5 +1,5 @@
 defmodule FunPrompts do
-  def minimum_players, do: 2
+  def minimum_players, do: 3
 
   def initial_state(players) do
     prompts = FunPrompts.Prompts.get_random(Enum.count(players))
@@ -18,9 +18,10 @@ defmodule FunPrompts do
         |> Enum.sort_by(fn %{player: p} -> p[:name] end),
       order: order,
       all_prompts: prompts,
-      match_ups: get_matchups(order, prompts, 1),
+      matchups: get_matchups(order, prompts, 1),
       current_matchup_id: nil,
-      answers: get_empty_answers(Enum.count(players))
+      answers: get_empty_answers(Enum.count(players)),
+      votes: nil
     }
   end
 
@@ -34,17 +35,18 @@ defmodule FunPrompts do
   def sanitize_state(
     %{
       stage: :voting,
-      current_matchup_id: match_up_id,
-      match_ups: match_ups,
+      current_matchup_id: matchup_id,
+      matchups: matchups,
       answers: answers,
       players: players
     } = state, _player_id
   ) do
-    %{id: match_up_id, player_ids: player_ids, prompt: prompt} =
-      Enum.find(match_ups, &(&1[:id] == match_up_id))
+    %{id: matchup_id, player_ids: player_ids, prompt: prompt} =
+      Enum.find(matchups, &(&1[:id] == matchup_id))
+
     choices =
       player_ids
-      |> Enum.map(fn id -> %{answer: answers[match_up_id][id], player: players[id]} end)
+      |> Enum.map(fn id -> %{answer: answers[matchup_id][id], player: players[id]} end)
 
     state
     |> Map.put(:prompt, prompt)
@@ -52,12 +54,52 @@ defmodule FunPrompts do
     |> Map.take([:choices, :prompt, :round, :scores, :stage])
   end
 
-  def play(state, player_id, "answer", %{"id" => match_up_id, "answer" => answer}) do
+  def sanitize_state(
+    %{
+      stage: :voting_reveal,
+      current_matchup_id: matchup_id,
+      matchups: matchups,
+      answers: answers,
+      players: players,
+      votes: votes
+    } = state, _player_id
+  ) do
+    %{id: matchup_id, player_ids: player_ids, prompt: prompt} =
+      Enum.find(matchups, &(&1[:id] == matchup_id))
+
+    choices =
+      player_ids
+      |> Enum.map(fn id ->
+        %{
+          answer: answers[matchup_id][id],
+          player: players[id],
+          votes:
+            votes
+            |> Enum.filter(fn v -> v[:votee_id] == id end)
+            |> Enum.map(fn %{voter_id: id} -> players[id] end)
+        }
+      end)
+
+    state
+    |> Map.put(:prompt, prompt)
+    |> Map.put(:choices, choices)
+    |> Map.take([:choices, :prompt, :round, :scores, :stage])
+  end
+
+  def play(state, player_id, "answer", %{"id" => matchup_id, "answer" => answer}) do
     state
     |> Map.update!(:answers, fn ans ->
-      Map.update!(ans, match_up_id, &Map.put(&1, player_id, answer))
+      Map.update!(ans, matchup_id, &Map.put(&1, player_id, answer))
     end)
     |> change_to_voting_if_all_answers_in
+  end
+
+  def play(state, player_id, "vote", %{"player_id" => votee_id}) do
+    state
+    |> Map.update!(:votes, fn votes ->
+      [%{voter_id: player_id, votee_id: votee_id}|votes]
+    end)
+    |> change_to_voting_reveal_if_all_votes_in
   end
 
   defp get_matchups(order, prompts, offset) do
@@ -76,9 +118,9 @@ defmodule FunPrompts do
     Enum.reduce((1..num), %{}, fn id, acc -> Map.put(acc, id, %{}) end)
   end
 
-  defp add_prompts_for_player(%{match_ups: match_ups, answers: answers} = state, player_id) do
+  defp add_prompts_for_player(%{matchups: matchups, answers: answers} = state, player_id) do
     prompts =
-      match_ups
+      matchups
       |> Enum.filter(fn %{id: id, player_ids: player_ids} ->
         Enum.member?(player_ids, player_id) && is_nil(answers[id][player_id])
       end)
@@ -110,6 +152,15 @@ defmodule FunPrompts do
       state
       |> Map.put(:stage, :voting)
       |> Map.put(:current_matchup_id, 1)
+      |> Map.put(:votes, [])
+    else
+      state
+    end
+  end
+
+  defp change_to_voting_reveal_if_all_votes_in(%{players: players, votes: votes} = state) do
+    if Enum.count(votes) == Enum.count(players) - 2 do
+      Map.put(state, :stage, :voting_reveal)
     else
       state
     end

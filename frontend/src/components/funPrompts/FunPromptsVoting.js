@@ -11,13 +11,18 @@ const Answer = styled(Card)`
   justify-content: center;
 `;
 
-const FunPromptsVoting = ({ prompt, choices }) => (
+const FunPromptsVoting = ({ prompt, choices, onVote }) => (
   <Fragment>
     <Heading center spaceBottom={3}>
       {prompt}
     </Heading>
     {choices.map(({ answer, player }) => (
-      <Answer key={player.id}>
+      <Answer
+        key={player.id}
+        onClick={() => {
+          onVote({ playerId: player.id });
+        }}
+      >
         <Heading level={3} center>
           {answer}
         </Heading>
@@ -33,7 +38,8 @@ FunPromptsVoting.propTypes = {
       answer: PropTypes.string.isRequired,
       player: PropTypes.shape({ id: PropTypes.string.isRequired }).isRequired
     })
-  ).isRequired
+  ).isRequired,
+  onVote: PropTypes.func.isRequired
 };
 
 export default FunPromptsVoting;
