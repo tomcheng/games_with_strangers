@@ -126,8 +126,9 @@ funPrompts.voting = {
     stage: "voting",
     prompt: "What you shouldn't say at a funeral",
     choices: [
-      { answer: "fart", player: players[0] },
-      { answer: "well then", player: players[1] }
-    ]
+      { answer: "fart", player: players[0], your_answer: true },
+      { answer: "well then", player: players[1], your_answer: false }
+    ],
+    you_answered: true
   }
 };

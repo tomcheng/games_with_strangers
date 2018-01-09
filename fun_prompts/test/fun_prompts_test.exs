@@ -78,9 +78,9 @@ defmodule FunPromptsTest do
     [choice_1, choice_2] = state[:choices]
 
     assert choice_1[:player][:id] == "3"
-    assert choice_1[:your_choice] == false
+    assert choice_1[:your_answer] == false
     assert choice_2[:player][:id] == "1"
-    assert choice_2[:your_choice] == true
+    assert choice_2[:your_answer] == true
   end
 
   test "handles a vote", %{players: players} do

@@ -50,7 +50,7 @@ defmodule FunPrompts do
         %{
           answer: answers[matchup_id][id],
           player: players[id],
-          your_choice: id == player_id
+          your_answer: id == player_id
         }
       end)
 
@@ -58,7 +58,7 @@ defmodule FunPrompts do
     |> Map.take([:round, :scores, :stage])
     |> Map.put(:prompt, prompt)
     |> Map.put(:choices, choices)
-    |> Map.put(:you_answered, Enum.any?(choices, &Map.get(&1, :your_choice)))
+    |> Map.put(:you_answered, Enum.any?(choices, &Map.get(&1, :your_answer)))
   end
 
   def sanitize_state(
