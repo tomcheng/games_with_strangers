@@ -39,19 +39,26 @@ defmodule FunPrompts do
       matchups: matchups,
       answers: answers,
       players: players
-    } = state, _player_id
+    } = state, player_id
   ) do
     %{id: matchup_id, player_ids: player_ids, prompt: prompt} =
       Enum.find(matchups, &(&1[:id] == matchup_id))
 
     choices =
       player_ids
-      |> Enum.map(fn id -> %{answer: answers[matchup_id][id], player: players[id]} end)
+      |> Enum.map(fn id ->
+        %{
+          answer: answers[matchup_id][id],
+          player: players[id],
+          your_choice: id == player_id
+        }
+      end)
 
     state
+    |> Map.take([:round, :scores, :stage])
     |> Map.put(:prompt, prompt)
     |> Map.put(:choices, choices)
-    |> Map.take([:choices, :prompt, :round, :scores, :stage])
+    |> Map.put(:you_answered, Enum.any?(choices, &Map.get(&1, :your_choice)))
   end
 
   def sanitize_state(
@@ -81,9 +88,9 @@ defmodule FunPrompts do
       end)
 
     state
+    |> Map.take([:round, :scores, :stage])
     |> Map.put(:prompt, prompt)
     |> Map.put(:choices, choices)
-    |> Map.take([:choices, :prompt, :round, :scores, :stage])
   end
 
   def play(state, player_id, "answer", %{"id" => matchup_id, "answer" => answer}) do

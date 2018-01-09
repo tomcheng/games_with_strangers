@@ -73,7 +73,14 @@ defmodule FunPromptsTest do
     assert state[:round] == 1
     assert state[:stage] == :voting
     assert is_binary(state[:prompt])
-    assert Enum.count(state[:choices]) == 2
+    assert state[:you_answered] == true
+
+    [choice_1, choice_2] = state[:choices]
+
+    assert choice_1[:player][:id] == "3"
+    assert choice_1[:your_choice] == false
+    assert choice_2[:player][:id] == "1"
+    assert choice_2[:your_choice] == true
   end
 
   test "handles a vote", %{players: players} do
