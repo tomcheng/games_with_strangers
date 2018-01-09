@@ -74,6 +74,8 @@ defmodule FunPromptsTest do
     assert state[:stage] == :voting
     assert is_binary(state[:prompt])
     assert state[:you_answered] == true
+    assert state[:you_voted] == false
+    assert state[:awaiting_vote] == [%{id: "2", name: "bar"}]
 
     [choice_1, choice_2] = state[:choices]
 
@@ -94,18 +96,23 @@ defmodule FunPromptsTest do
       |> FunPrompts.play("3", "answer", %{"id" => 3, "answer" => "player 3, answer 3"})
       |> FunPrompts.play("3", "answer", %{"id" => 1, "answer" => "player 3, answer 1"})
       |> FunPrompts.play("2", "vote", %{"player_id" => "1"})
-      |> FunPrompts.sanitize_state("1")
 
-    assert state[:round] == 1
-    assert state[:stage] == :voting_reveal
-    assert is_binary(state[:prompt])
+    player_1_state = FunPrompts.sanitize_state(state, "1")
+    player_2_state = FunPrompts.sanitize_state(state, "2")
 
-    [choice_1, choice_2] = state[:choices]
+    assert player_1_state[:round] == 1
+    assert player_1_state[:stage] == :voting
+    assert is_binary(player_1_state[:prompt])
+    assert player_1_state[:you_voted] == false
+
+    [choice_1, choice_2] = player_1_state[:choices]
 
     assert choice_1[:player][:id] == "3"
     assert choice_1[:votes] == []
 
     assert choice_2[:player][:id] == "1"
     assert choice_2[:votes] == [%{id: "2", name: "bar"}]
+
+    assert player_2_state[:you_voted] == true
   end
 end
