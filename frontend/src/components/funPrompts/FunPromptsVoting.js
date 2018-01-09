@@ -4,12 +4,23 @@ import styled from "styled-components";
 import Heading from "../common/Heading";
 import Card from "../common/Card";
 
-const Answer = styled(Card)`
+const Answers = styled.div`
+  display: flex;
   min-height: 140px;
+`;
+
+const Answer = styled(Card)`
+  flex-grow: 0;
+  flex-shrink: 1;
+  flex-basis: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  & + & {
+    margin-left: 10px;
+  }
 `;
 
 const FunPromptsVoting = ({ prompt, choices, youAnswered, onVote }) => (
@@ -17,24 +28,26 @@ const FunPromptsVoting = ({ prompt, choices, youAnswered, onVote }) => (
     <Heading center spaceBottom={3}>
       {prompt}
     </Heading>
-    {choices.map(({ answer, player, yourAnswer }) => (
-      <Answer
-        key={player.id}
-        onClick={
-          youAnswered
-            ? null
-            : () => {
-                onVote({ playerId: player.id });
-              }
-        }
-        style={{ opacity: youAnswered ? 0.4 : 1 }}
-      >
-        <Heading level={3} center spaceBottom={0}>
-          {answer}
-        </Heading>
-        {yourAnswer && <div>(your answer)</div>}
-      </Answer>
-    ))}
+    <Answers>
+      {choices.map(({ answer, player, yourAnswer }) => (
+        <Answer
+          key={player.id}
+          onClick={
+            youAnswered
+              ? null
+              : () => {
+                  onVote({ playerId: player.id });
+                }
+          }
+          style={{ opacity: youAnswered ? 0.4 : 1 }}
+        >
+          <Heading level={3} center spaceBottom={0}>
+            {answer}
+          </Heading>
+          {yourAnswer && <div>(your answer)</div>}
+        </Answer>
+      ))}
+    </Answers>
   </Fragment>
 );
 
