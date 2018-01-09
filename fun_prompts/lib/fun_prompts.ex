@@ -82,11 +82,12 @@ defmodule FunPrompts do
     |> change_to_voting_if_all_answers_in
   end
 
-  def play(state, player_id, "vote", %{"player_id" => votee_id}) do
-    state
-    |> Map.update!(:votes, fn votes ->
-      [%{voter_id: player_id, votee_id: votee_id}|votes]
-    end)
+  def play(%{votes: votes} = state, player_id, "vote", %{"player_id" => votee_id}) do
+    if Enum.any?(votes, fn v -> v[:voter_id] == player_id end) do
+      state
+    else
+      Map.put(state, :votes, [%{voter_id: player_id, votee_id: votee_id}|votes])
+    end
   end
 
   defp get_matchups(order, prompts, offset) do

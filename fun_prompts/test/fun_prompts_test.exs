@@ -115,4 +115,27 @@ defmodule FunPromptsTest do
 
     assert player_2_state[:you_voted] == true
   end
+
+  test "cannot vote twice", %{players: players} do
+    state =
+      players
+      |> FunPrompts.initial_state
+      |> FunPrompts.play("1", "answer", %{"id" => 1, "answer" => "player 1, answer 1"})
+      |> FunPrompts.play("1", "answer", %{"id" => 2, "answer" => "player 1, answer 2"})
+      |> FunPrompts.play("2", "answer", %{"id" => 2, "answer" => "player 2, answer 2"})
+      |> FunPrompts.play("2", "answer", %{"id" => 3, "answer" => "player 2, answer 3"})
+      |> FunPrompts.play("3", "answer", %{"id" => 3, "answer" => "player 3, answer 3"})
+      |> FunPrompts.play("3", "answer", %{"id" => 1, "answer" => "player 3, answer 1"})
+      |> FunPrompts.play("2", "vote", %{"player_id" => "1"})
+      |> FunPrompts.play("2", "vote", %{"player_id" => "1"})
+      |> FunPrompts.sanitize_state("1")
+
+    [choice_1, choice_2] = state[:choices]
+
+    assert choice_1[:player][:id] == "3"
+    assert choice_1[:votes] == []
+
+    assert choice_2[:player][:id] == "1"
+    assert choice_2[:votes] == [%{id: "2", name: "bar"}]
+  end
 end
