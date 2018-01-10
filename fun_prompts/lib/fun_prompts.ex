@@ -90,6 +90,12 @@ defmodule FunPrompts do
     end
   end
 
+  def play(%{current_matchup_id: current_matchup_id} = state, _player_id, "advance", _) do
+    state
+    |> Map.put(:current_matchup_id, current_matchup_id + 1)
+    |> Map.put(:votes, [])
+  end
+
   defp get_matchups(order, prompts, offset) do
     order
     |> Enum.with_index

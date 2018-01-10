@@ -4,7 +4,7 @@ import SectionHeader from "../common/SectionHeader";
 import FunPromptsWriting from "./FunPromptsWriting";
 import FunPromptsVoting from "./FunPromptsVoting";
 
-const FunPrompts = ({ gameState, onPlay }) => {
+const FunPrompts = ({ gameState, onPlay, youAreModerator }) => {
   const {
     round,
     prompt,
@@ -15,10 +15,12 @@ const FunPrompts = ({ gameState, onPlay }) => {
     you_answered: youAnswered,
     you_voted: youVoted
   } = gameState;
-  const choices = choicesIn && choicesIn.map(({ your_answer: yourAnswer, ...other }) => ({
-    ...other,
-    yourAnswer
-  }));
+  const choices =
+    choicesIn &&
+    choicesIn.map(({ your_answer: yourAnswer, ...other }) => ({
+      ...other,
+      yourAnswer
+    }));
 
   return (
     <div>
@@ -37,11 +39,15 @@ const FunPrompts = ({ gameState, onPlay }) => {
           awaitingVote={awaitingVote}
           prompt={prompt}
           choices={choices}
+          youAnswered={youAnswered}
+          youVoted={youVoted}
+          youAreModerator={youAreModerator}
           onVote={({ playerId }) => {
             onPlay({ type: "vote", payload: { player_id: playerId } });
           }}
-          youAnswered={youAnswered}
-          youVoted={youVoted}
+          onAdvance={() => {
+            onPlay({ type: "advance" });
+          }}
         />
       )}
     </div>
@@ -66,6 +72,7 @@ FunPrompts.propTypes = {
     you_answered: PropTypes.bool,
     you_voted: PropTypes.bool
   }).isRequired,
+  youAreModerator: PropTypes.bool.isRequired,
   onPlay: PropTypes.func.isRequired
 };
 

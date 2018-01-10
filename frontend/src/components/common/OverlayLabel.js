@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import DelayShow from "../common/DelayShow";
 
 const Container = styled.div`
   position: relative;
@@ -43,9 +44,11 @@ class OverlayLabel extends Component {
     return (
       <Container>
         {children}
-        <LabelContainer>
-          <Label>{label}</Label>
-        </LabelContainer>
+        <DelayShow delay={2000}>
+          <LabelContainer>
+            <Label>{label}</Label>
+          </LabelContainer>
+        </DelayShow>
       </Container>
     );
   }
