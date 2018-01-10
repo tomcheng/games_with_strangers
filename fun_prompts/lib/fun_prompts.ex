@@ -122,11 +122,11 @@ defmodule FunPrompts do
   end
 
   defp update_scores(state) do
-    %{votes: votes} = state
+    %{votes: votes, round: round} = state
 
     Map.update!(state, :scores, fn scores ->
       Enum.reduce(votes, scores, fn v, s ->
-        Map.update!(s, v[:votee_id], &(&1 + 100))
+        Map.update!(s, v[:votee_id], &(&1 + 100 * round))
       end)
     end)
   end

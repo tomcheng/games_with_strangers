@@ -176,6 +176,26 @@ defmodule FunPromptsTest do
     assert is_binary(List.first(state[:prompts])[:prompt])
   end
 
+  test "scores increase in later rounds", %{players: players} do
+    state =
+      players
+      |> FunPrompts.initial_state
+      |> everyone_answer
+      |> everyone_vote
+      |> FunPrompts.play("1", "advance", nil)
+      |> everyone_answer
+      |> everyone_vote
+      |> FunPrompts.sanitize_state("1")
+
+    assert state[:round] == 2
+    assert state[:stage] == :show_scores
+    assert state[:scores] == [
+      %{player: %{id: "1", name: "foo"}, score: 600},
+      %{player: %{id: "2", name: "bar"}, score: 300},
+      %{player: %{id: "3", name: "baz"}, score: 0}
+    ]
+  end
+
   test "ends game after 3 rounds", %{players: players} do
     state =
       players
