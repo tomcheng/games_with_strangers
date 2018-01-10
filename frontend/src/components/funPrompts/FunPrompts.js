@@ -3,12 +3,15 @@ import PropTypes from "prop-types";
 import SectionHeader from "../common/SectionHeader";
 import FunPromptsWriting from "./FunPromptsWriting";
 import FunPromptsVoting from "./FunPromptsVoting";
+import FunPromptsShowScores from "./FunPromptsShowScores";
 
-const FunPrompts = ({ gameState, onPlay, youAreModerator }) => {
+const FunPrompts = ({ gameState, onPlay, youAreModerator, moderator }) => {
   const {
     round,
     prompt,
     prompts,
+    stage,
+    scores,
     awaiting_answer: awaitingAnswer,
     awaiting_vote: awaitingVote,
     choices: choicesIn,
@@ -25,7 +28,7 @@ const FunPrompts = ({ gameState, onPlay, youAreModerator }) => {
   return (
     <div>
       <SectionHeader>Round {round}</SectionHeader>
-      {gameState.stage === "writing" && (
+      {stage === "writing" && (
         <FunPromptsWriting
           prompts={prompts}
           onAnswer={payload => {
@@ -34,7 +37,7 @@ const FunPrompts = ({ gameState, onPlay, youAreModerator }) => {
           awaitingAnswer={awaitingAnswer}
         />
       )}
-      {gameState.stage === "voting" && (
+      {stage === "voting" && (
         <FunPromptsVoting
           awaitingVote={awaitingVote}
           prompt={prompt}
@@ -50,6 +53,16 @@ const FunPrompts = ({ gameState, onPlay, youAreModerator }) => {
           }}
         />
       )}
+      {stage === "show_scores" && (
+        <FunPromptsShowScores
+          scores={scores}
+          youAreModerator={youAreModerator}
+          moderatorName={moderator.name}
+          onAdvance={() => {
+            onPlay({ type: "advance" });
+          }}
+        />
+      )}
     </div>
   );
 };
@@ -57,7 +70,7 @@ const FunPrompts = ({ gameState, onPlay, youAreModerator }) => {
 FunPrompts.propTypes = {
   gameState: PropTypes.shape({
     round: PropTypes.number.isRequired,
-    stage: PropTypes.oneOf(["writing", "voting"]).isRequired,
+    stage: PropTypes.oneOf(["writing", "voting", "show_scores"]).isRequired,
     awaiting_answer: PropTypes.array,
     awaiting_vote: PropTypes.array,
     choices: PropTypes.array,
@@ -68,10 +81,14 @@ FunPrompts.propTypes = {
         prompt: PropTypes.string.isRequired
       })
     ),
+    scores: PropTypes.array,
     you_answered: PropTypes.bool,
     you_voted: PropTypes.bool
   }).isRequired,
   youAreModerator: PropTypes.bool.isRequired,
+  moderator: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+  }).isRequired,
   onPlay: PropTypes.func.isRequired
 };
 

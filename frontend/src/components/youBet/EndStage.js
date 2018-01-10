@@ -53,7 +53,7 @@ const EndStage = ({ scores, youAreModerator, moderator, onRestartGame }) => (
 );
 
 EndStage.propTypes = {
-  moderator: customTypes.player,
+  moderator: customTypes.player.isRequired,
   scores: PropTypes.arrayOf(
     PropTypes.shape({
       player: customTypes.player,

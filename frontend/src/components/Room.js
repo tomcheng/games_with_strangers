@@ -35,7 +35,7 @@ const Room = ({
   onSetFlashMessage
 }) => {
   const game = find(gamesList, g => g.id === gameId);
-  const moderator = others.find(p => p.isModerator);
+  const moderator = you.isModerator ? you : others.find(p => p.isModerator);
 
   if (gameState) {
     const GameComponent = game.component;
@@ -64,16 +64,16 @@ const Room = ({
             {pluralize("player", playersNeeded)}&hellip;
           </Waiting>
         )}
-        {you.isModerator && playersNeeded === 0 && (
-          <Button onClick={onStartGame}>
-            Start Game
-          </Button>
-        )}
-        {!playersNeeded && !you.isModerator && (
-          <Waiting>
-            Waiting for {moderator.name} to start game&hellip;
-          </Waiting>
-        )}
+        {you.isModerator &&
+          playersNeeded === 0 && (
+            <Button onClick={onStartGame}>Start Game</Button>
+          )}
+        {!playersNeeded &&
+          !you.isModerator && (
+            <Waiting>
+              Waiting for {moderator.name} to start game&hellip;
+            </Waiting>
+          )}
       </Content>
     </Fragment>
   );
@@ -84,7 +84,7 @@ Room.propTypes = {
   others: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
-      isModerator: PropTypes.bool.isRequired,
+      isModerator: PropTypes.bool.isRequired
     })
   ).isRequired,
   you: PropTypes.shape({

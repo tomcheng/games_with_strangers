@@ -11,14 +11,14 @@ const Heading = ({ children, level, spaceBottom, spaceTop, center }) => {
   return (
     <Spacing spaceBottom={spaceBottom} spaceTop={spaceTop}>
       {({ spacingStyle }) => (
-        <Comp style={{ ...spacingStyle, ...style }}>{processString(children)}</Comp>
+        <Comp style={{ ...spacingStyle, ...style }}>{typeof children === "string" ? processString(children) : children}</Comp>
       )}
     </Spacing>
   );
 };
 
 Heading.propTypes = {
-  children: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
   center: PropTypes.bool,
   level: PropTypes.oneOf([1, 3]),
   spaceBottom: PropTypes.number,

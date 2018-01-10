@@ -174,3 +174,11 @@ funPrompts.showWinner = {
     awaiting_vote: []
   }
 };
+funPrompts.showScores = {
+  ...funPrompts.writing,
+  gameState: {
+    ...defaultFunPromptsGameState,
+    stage: "show_scores",
+    scores: players.map(p => ({player: p, score: 100})),
+  }
+};
