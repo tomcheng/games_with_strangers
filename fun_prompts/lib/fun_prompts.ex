@@ -48,7 +48,19 @@ defmodule FunPrompts do
     |> Map.put(:you_answered, Enum.any?(choices, &Map.get(&1, :your_answer)))
     |> Map.put(:you_voted, Enum.any?(votes, fn v -> v[:voter_id] == player_id end))
   end
-  def sanitize_state(%{stage: :show_scores} = state, _player_id) do
+  def sanitize_state(%{stage: :show_scores} = state, _) do
+    %{players: players} = state
+
+    state
+    |> Map.update!(:scores, fn scores ->
+      scores
+      |> Enum.map(fn {id, score} -> %{score: score, player: players[id]} end)
+      |> Enum.sort_by(fn s -> s[:player][:name] end)
+      |> Enum.sort_by(fn s -> -s[:score] end)
+    end)
+    |> Map.take([:round, :scores, :stage])
+  end
+  def sanitize_state(%{stage: :end} = state, _) do
     %{players: players} = state
 
     state
@@ -81,12 +93,12 @@ defmodule FunPrompts do
     end
   end
   def play(%{stage: :voting} = state, _, "advance", _) do
-    %{current_matchup_id: current_matchup_id, players: players} = state
+    %{current_matchup_id: current_matchup_id, players: players, round: round} = state
 
     if current_matchup_id === Enum.count(players) do
       state
       |> update_scores
-      |> Map.put(:stage, :show_scores)
+      |> Map.put(:stage, (if round == 3, do: :end, else: :show_scores))
     else
       state
       |> update_scores
@@ -102,6 +114,11 @@ defmodule FunPrompts do
     |> Map.put(:stage, :writing)
     |> Map.put(:matchups, get_matchups(players))
     |> Map.put(:answers, get_empty_answers(Enum.count(players)))
+  end
+  def play(state, _, "restart", _) do
+    %{players: players} = state
+
+    initial_state(players)
   end
 
   defp update_scores(state) do

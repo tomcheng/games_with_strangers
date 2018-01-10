@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import SectionHeader from "../common/SectionHeader";
+import EndStage from "../common/EndStage";
 import FunPromptsWriting from "./FunPromptsWriting";
 import FunPromptsVoting from "./FunPromptsVoting";
 import FunPromptsShowScores from "./FunPromptsShowScores";
@@ -24,6 +25,19 @@ const FunPrompts = ({ gameState, onPlay, youAreModerator, moderator }) => {
       ...other,
       yourAnswer
     }));
+
+  if (stage === "end") {
+    return (
+      <EndStage
+        scores={scores}
+        youAreModerator={youAreModerator}
+        moderator={moderator}
+        onRestartGame={() => {
+          onPlay({ type: "restart" });
+        }}
+      />
+    );
+  }
 
   return (
     <div>
@@ -70,7 +84,7 @@ const FunPrompts = ({ gameState, onPlay, youAreModerator, moderator }) => {
 FunPrompts.propTypes = {
   gameState: PropTypes.shape({
     round: PropTypes.number.isRequired,
-    stage: PropTypes.oneOf(["writing", "voting", "show_scores"]).isRequired,
+    stage: PropTypes.oneOf(["writing", "voting", "show_scores", "end"]).isRequired,
     awaiting_answer: PropTypes.array,
     awaiting_vote: PropTypes.array,
     choices: PropTypes.array,
