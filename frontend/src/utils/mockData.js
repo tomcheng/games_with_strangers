@@ -154,3 +154,23 @@ funPrompts.voted = {
     awaiting_vote: players.slice(3, 5)
   }
 };
+funPrompts.showWinner = {
+  ...funPrompts.writing,
+  gameState: {
+    ...defaultFunPromptsGameState,
+    stage: "voting",
+    prompt: "What you shouldn't say at a funeral",
+    choices: [
+      {
+        answer: "fart",
+        player: players[0],
+        your_answer: false,
+        votes: players.slice(2)
+      },
+      { answer: "well then", player: players[1], your_answer: false, votes: [] }
+    ],
+    you_answered: false,
+    you_voted: true,
+    awaiting_vote: []
+  }
+};
