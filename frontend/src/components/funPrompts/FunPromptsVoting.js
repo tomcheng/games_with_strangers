@@ -101,7 +101,7 @@ class FunPromptsVoting extends Component {
 
     return (
       <Fragment>
-        <Heading center spaceBottom={3}>
+        <Heading center spaceBottom={3} safe>
           {prompt}
         </Heading>
         <Answers>

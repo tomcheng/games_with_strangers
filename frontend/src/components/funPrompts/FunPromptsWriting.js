@@ -73,7 +73,7 @@ class FunPromptsWriting extends Component {
           <Carousel
             panes={prompts.map(({ id, prompt }) => (
               <StyledForm key={id} name={id} onSubmit={this.handleSubmit}>
-                <Heading center spaceBottom={2}>
+                <Heading center spaceBottom={2} safe>
                   {prompt}
                 </Heading>
                 <TextArea

@@ -98,9 +98,14 @@ const defaultFunPromptsGameState = {
   stage: "writing",
   scores: players.map(player => ({ player, score: 0 })),
   prompts: [
-    { id: 1, prompt: "What you shouldn't say at funeral" },
+    {
+      id: 1,
+      prompt:
+        "<i>The Empire Strikes Back</i> would\u2019ve been ruined if Darth Vader said \u201cLuke, I am <BLANK>\u201d"
+    },
     { id: 2, prompt: "Worst thing to hear your pilot say" }
-  ]
+  ],
+  awaiting_answer: []
 };
 
 export const funPrompts = {};
@@ -179,6 +184,6 @@ funPrompts.showScores = {
   gameState: {
     ...defaultFunPromptsGameState,
     stage: "show_scores",
-    scores: players.map(p => ({player: p, score: 100})),
+    scores: players.map(p => ({ player: p, score: 100 }))
   }
 };
