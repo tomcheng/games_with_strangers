@@ -126,9 +126,31 @@ funPrompts.voting = {
     stage: "voting",
     prompt: "What you shouldn't say at a funeral",
     choices: [
-      { answer: "fart", player: players[0], your_answer: true },
-      { answer: "well then", player: players[1], your_answer: false }
+      { answer: "fart", player: players[0], your_answer: true, votes: [] },
+      { answer: "well then", player: players[1], your_answer: false, votes: [] }
     ],
-    you_answered: true
+    you_answered: true,
+    you_voted: false,
+    awaiting_vote: players
+  }
+};
+funPrompts.voted = {
+  ...funPrompts.writing,
+  gameState: {
+    ...defaultFunPromptsGameState,
+    stage: "voting",
+    prompt: "What you shouldn't say at a funeral",
+    choices: [
+      {
+        answer: "fart",
+        player: players[0],
+        your_answer: false,
+        votes: players.slice(2)
+      },
+      { answer: "well then", player: players[1], your_answer: false, votes: [] }
+    ],
+    you_answered: false,
+    you_voted: true,
+    awaiting_vote: players.slice(3, 5)
   }
 };
