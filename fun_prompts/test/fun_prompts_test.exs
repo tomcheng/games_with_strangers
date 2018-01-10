@@ -162,7 +162,8 @@ defmodule FunPromptsTest do
     assert choice_2[:votes] == []
   end
 
-  test "goes to next round when everything has been voted on", %{players: players} do
+
+  test "shows scores after all votes are in", %{players: players} do
     state =
       players
       |> FunPrompts.initial_state
@@ -177,6 +178,34 @@ defmodule FunPromptsTest do
       |> FunPrompts.play("3", "vote", %{"player_id" => "1"})
       |> FunPrompts.play("1", "advance", nil)
       |> FunPrompts.play("1", "vote", %{"player_id" => "2"})
+      |> FunPrompts.play("1", "advance", nil)
+      |> FunPrompts.sanitize_state("1")
+
+    assert state[:round] == 1
+    assert state[:stage] == :show_scores
+    assert state[:scores] == [
+      %{player: %{id: "1", name: "foo"}, score: 200},
+      %{player: %{id: "2", name: "bar"}, score: 100},
+      %{player: %{id: "3", name: "baz"}, score: 0}
+    ]
+  end
+
+  test "goes to next round after advancing from showing scores", %{players: players} do
+    state =
+      players
+      |> FunPrompts.initial_state
+      |> FunPrompts.play("1", "answer", %{"id" => 1, "answer" => "player 1, answer 1"})
+      |> FunPrompts.play("1", "answer", %{"id" => 2, "answer" => "player 1, answer 2"})
+      |> FunPrompts.play("2", "answer", %{"id" => 2, "answer" => "player 2, answer 2"})
+      |> FunPrompts.play("2", "answer", %{"id" => 3, "answer" => "player 2, answer 3"})
+      |> FunPrompts.play("3", "answer", %{"id" => 3, "answer" => "player 3, answer 3"})
+      |> FunPrompts.play("3", "answer", %{"id" => 1, "answer" => "player 3, answer 1"})
+      |> FunPrompts.play("2", "vote", %{"player_id" => "1"})
+      |> FunPrompts.play("1", "advance", nil)
+      |> FunPrompts.play("3", "vote", %{"player_id" => "1"})
+      |> FunPrompts.play("1", "advance", nil)
+      |> FunPrompts.play("1", "vote", %{"player_id" => "2"})
+      |> FunPrompts.play("1", "advance", nil)
       |> FunPrompts.play("1", "advance", nil)
       |> FunPrompts.sanitize_state("1")
 
