@@ -161,4 +161,29 @@ defmodule FunPromptsTest do
     assert choice_2[:player][:id] == "2"
     assert choice_2[:votes] == []
   end
+
+  test "goes to next round when everything has been voted on", %{players: players} do
+    state =
+      players
+      |> FunPrompts.initial_state
+      |> FunPrompts.play("1", "answer", %{"id" => 1, "answer" => "player 1, answer 1"})
+      |> FunPrompts.play("1", "answer", %{"id" => 2, "answer" => "player 1, answer 2"})
+      |> FunPrompts.play("2", "answer", %{"id" => 2, "answer" => "player 2, answer 2"})
+      |> FunPrompts.play("2", "answer", %{"id" => 3, "answer" => "player 2, answer 3"})
+      |> FunPrompts.play("3", "answer", %{"id" => 3, "answer" => "player 3, answer 3"})
+      |> FunPrompts.play("3", "answer", %{"id" => 1, "answer" => "player 3, answer 1"})
+      |> FunPrompts.play("2", "vote", %{"player_id" => "1"})
+      |> FunPrompts.play("1", "advance", nil)
+      |> FunPrompts.play("3", "vote", %{"player_id" => "1"})
+      |> FunPrompts.play("1", "advance", nil)
+      |> FunPrompts.play("1", "vote", %{"player_id" => "2"})
+      |> FunPrompts.play("1", "advance", nil)
+      |> FunPrompts.sanitize_state("1")
+
+    assert state[:round] == 2
+    assert state[:stage] == :writing
+    assert Enum.count(state[:prompts]) == 2
+    assert is_number(List.first(state[:prompts])[:id])
+    assert is_binary(List.first(state[:prompts])[:prompt])
+  end
 end

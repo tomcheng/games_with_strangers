@@ -58,7 +58,6 @@ FunPrompts.propTypes = {
   gameState: PropTypes.shape({
     round: PropTypes.number.isRequired,
     stage: PropTypes.oneOf(["writing", "voting"]).isRequired,
-    scores: PropTypes.array.isRequired,
     awaiting_answer: PropTypes.array,
     awaiting_vote: PropTypes.array,
     choices: PropTypes.array,

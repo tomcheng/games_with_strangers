@@ -2,20 +2,12 @@ defmodule FunPrompts do
   def minimum_players, do: 3
 
   def initial_state(players) do
-    prompts =
-      players
-      |> Enum.count
-      |> FunPrompts.Prompts.get_random
-
     %{
       round: 1,
       stage: :writing,
       players: players,
-      matchups: get_matchups(players, prompts),
-      answers:
-        players
-        |> Enum.count
-        |> get_empty_answers
+      matchups: get_matchups(players),
+      answers: get_empty_answers(Enum.count(players))
     }
   end
 
@@ -85,7 +77,8 @@ defmodule FunPrompts do
       state
       |> Map.update!(:round, &(&1 + 1))
       |> Map.put(:stage, :writing)
-      |> Map.put(:current_matchup_id, nil)
+      |> Map.put(:matchups, get_matchups(players))
+      |> Map.put(:answers, get_empty_answers(Enum.count(players)))
     else
       state
       |> Map.put(:current_matchup_id, current_matchup_id + 1)
@@ -93,7 +86,11 @@ defmodule FunPrompts do
     end
   end
 
-  defp get_matchups(players, prompts) do
+  defp get_matchups(players) do
+    prompts =
+      players
+      |> Enum.count
+      |> FunPrompts.Prompts.get_random
     player_ids =
       players
       |> Enum.map(fn {id, _} -> id end)
