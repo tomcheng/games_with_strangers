@@ -13,7 +13,7 @@ const FunPromptsShowScores = ({
   onAdvance
 }) => (
   <Fragment>
-    <Heading center>Scores</Heading>
+    <Heading spaceBottom={2} center>Scores</Heading>
     <DelayList
       initialDelay={1000}
       list={scores}
@@ -25,11 +25,11 @@ const FunPromptsShowScores = ({
     />
     <DelayShow delay={1000 + scores.length * 1000}>
       {youAreModerator ? (
-        <Button center spaceTop={2} onClick={onAdvance}>
+        <Button center spaceTop={3} onClick={onAdvance}>
           Start Next Round
         </Button>
       ) : (
-        <SecondaryText center spaceTop={2}>
+        <SecondaryText center spaceTop={3}>
           Waiting for {moderatorName} to start next round&hellip;
         </SecondaryText>
       )}

@@ -1,55 +1,39 @@
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
-import styled from "styled-components";
 import * as customTypes from "../../utils/customTypes";
+import SectionHeader from "../common/SectionHeader";
+import Heading from "../common/Heading";
 import DelayList from "../common/DelayList";
 import DelayShow from "../common/DelayShow";
 import SecondaryText from "../common/SecondaryText";
 import Button from "../common/Button";
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Title = styled.h3`
-  margin-bottom: 16px;
-`;
-
-const Score = styled.h3`
-  margin-bottom: 16px;
-`;
-
-const Footer = styled.div`
-  margin-top: 24px;
-`;
-
 const EndStage = ({ scores, youAreModerator, moderator, onRestartGame }) => (
-  <Container>
-    <Title>Final Score:</Title>
+  <Fragment>
+    <SectionHeader>Game Over</SectionHeader>
+    <Heading spaceBottom={2} center>Final Score</Heading>
     <DelayList
       list={scores}
       initialDelay={1000}
       delayInterval={1000}
       renderItem={({ score, player }) => (
-        <Score>
+        <Heading level={3} center>
           {player.name}: {score}
-        </Score>
+        </Heading>
       )}
     />
     <DelayShow delay={1000 + scores.length * 1000}>
-      <Footer>
-        {youAreModerator ? (
-          <Button onClick={onRestartGame}>Restart Game</Button>
-        ) : (
-          <SecondaryText>
-            Waiting for {moderator.name} to restart&hellip;
-          </SecondaryText>
-        )}
-      </Footer>
+      {youAreModerator ? (
+        <Button onClick={onRestartGame} spaceTop={3} center>
+          Restart Game
+        </Button>
+      ) : (
+        <SecondaryText spaceTop={3} center>
+          Waiting for {moderator.name} to restart&hellip;
+        </SecondaryText>
+      )}
     </DelayShow>
-  </Container>
+  </Fragment>
 );
 
 EndStage.propTypes = {

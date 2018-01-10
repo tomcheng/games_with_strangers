@@ -33,14 +33,25 @@ const YouBet = ({
     your_score: yourScore
   } = gameState;
 
+  if (stage === "end") {
+    return (
+      <EndStage
+        scores={scores}
+        youAreModerator={youAreModerator}
+        moderator={moderator}
+        onRestartGame={() => {
+          onPlay({ type: "restart" });
+        }}
+      />
+    );
+  }
+
   return (
     <div>
       <Sidebar>
         <Scores scores={scores} />
       </Sidebar>
-      <SectionHeader>
-        {stage === "end" ? "Game Over" : `Round ${round}`}
-      </SectionHeader>
+      <SectionHeader>Round {round}</SectionHeader>
       <Heading center spaceBottom={stage === "betting" ? 3 : 2}>
         {question}
       </Heading>
@@ -77,16 +88,6 @@ const YouBet = ({
           moderator={moderator}
           onAdvanceRound={() => {
             onPlay({ type: "advance_round" });
-          }}
-        />
-      )}
-      {stage === "end" && (
-        <EndStage
-          scores={scores}
-          youAreModerator={youAreModerator}
-          moderator={moderator}
-          onRestartGame={() => {
-            onPlay({ type: "restart" });
           }}
         />
       )}
