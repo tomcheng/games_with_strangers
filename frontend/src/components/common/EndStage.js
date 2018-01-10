@@ -1,12 +1,12 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import * as customTypes from "../../utils/customTypes";
-import SectionHeader from "../common/SectionHeader";
-import Heading from "../common/Heading";
-import DelayList from "../common/DelayList";
-import DelayShow from "../common/DelayShow";
-import SecondaryText from "../common/SecondaryText";
-import Button from "../common/Button";
+import SectionHeader from "./SectionHeader";
+import Heading from "./Heading";
+import DelayList from "./DelayList";
+import DelayShow from "./DelayShow";
+import SecondaryText from "./SecondaryText";
+import Button from "./Button";
 
 const EndStage = ({ scores, youAreModerator, moderator, onRestartGame }) => (
   <Fragment>

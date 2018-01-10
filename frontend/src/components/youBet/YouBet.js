@@ -8,7 +8,7 @@ import Scores from "./Scores";
 import GuessingStage from "./GuessingStage";
 import BettingStage from "./BettingStage";
 import RevealStage from "./RevealStage";
-import EndStage from "./EndStage";
+import EndStage from "../common/EndStage";
 
 const YouBet = ({
   gameState,
