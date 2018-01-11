@@ -21,14 +21,18 @@ defmodule YouBet do
     }
   end
 
-  def sanitize_state(%{stage: :guessing, players: players, guesses: guesses} = state, player_id) do
+  def sanitize_state(%{stage: :guessing} = state, player_id) do
+    %{players: players, guesses: guesses} = state
+
     state
     |> Map.put(:your_guess, guesses[player_id])
     |> Map.put(:awaiting_guess, get_awaiting(guesses, players, player_id))
     |> format_scores
     |> Map.take([:awaiting_guess, :question, :round, :scores, :stage, :your_guess])
   end
-  def sanitize_state(%{stage: :betting, players: players, final_bets: final_bets, scores: scores} = state, player_id) do
+  def sanitize_state(%{stage: :betting} = state, player_id) do
+    %{players: players, final_bets: final_bets, scores: scores} = state
+
     state
     |> Map.put(:your_bets, final_bets[player_id])
     |> Map.put(:awaiting_bet, get_awaiting(final_bets, players, player_id))
@@ -50,7 +54,9 @@ defmodule YouBet do
     |> Map.take([:stage, :scores])
   end
 
-  defp add_bets_to_bet_options(%{bets: bets, bet_options: bet_options} = state) do
+  defp add_bets_to_bet_options(state) do
+    %{bets: bets, bet_options: bet_options} = state
+
     new_bet_options = Enum.map(bet_options, fn %{guess: guess} = option ->
       Map.put(
         option,
@@ -71,7 +77,9 @@ defmodule YouBet do
     Map.put(state, :bet_options, new_bet_options)
   end
 
-  defp add_closest_guess(%{guesses: guesses, answer: answer} = state) do
+  defp add_closest_guess(state) do
+    %{guesses: guesses, answer: answer} = state
+
     closest_guess =
       guesses
       |> Map.values
@@ -82,7 +90,9 @@ defmodule YouBet do
     Map.put(state, :closest_guess, closest_guess)
   end
 
-  defp format_payouts(%{payouts: payouts, players: players} = state) do
+  defp format_payouts(state) do
+    %{payouts: payouts, players: players} = state
+
     state
     |> Map.put(
       :payouts,
@@ -94,7 +104,9 @@ defmodule YouBet do
     )
   end
 
-  defp format_scores(%{scores: scores, players: players} = state) do
+  defp format_scores(state) do
+    %{scores: scores, players: players} = state
+
     state
     |> Map.put(
       :scores,
@@ -137,7 +149,7 @@ defmodule YouBet do
     |> transition_to_reveal_if_done
   end
 
-  def play(%{round: 7} = state, _player_id, "advance_round", _) do
+  def play(%{round: 7} = state, _, "advance_round", _) do
     state
     |> Map.put(:round, nil)
     |> Map.put(:stage, :end)
@@ -147,7 +159,9 @@ defmodule YouBet do
     |> Map.put(:bets, nil)
     |> Map.put(:final_bets, nil)
   end
-  def play(%{players: players} = state, _player_id, "advance_round", _) do
+  def play(state, _, "advance_round", _) do
+    %{players: players} = state
+
     {question, answer} = YouBet.Questions.random()
 
     state
@@ -159,15 +173,16 @@ defmodule YouBet do
     |> Map.put(:bets, initial_map(players))
     |> Map.put(:final_bets, initial_map(players))
   end
-
-  def play(%{players: players}, _player_id, "restart", _) do
-    initial_state(players)
+  def play(state, _player_id, "restart", _) do
+    initial_state(state[:players])
   end
 
   def play(state, _, _, _), do: state
   def play(state, _, _), do: state
 
-  defp transition_to_betting_if_done(%{guesses: guesses, players: players} = state) do
+  defp transition_to_betting_if_done(state) do
+    %{guesses: guesses, players: players} = state
+
     if all_populated?(guesses) do
       odds = get_odds(guesses)
       bet_options = get_bet_options(guesses, players, odds)
@@ -181,7 +196,9 @@ defmodule YouBet do
     end
   end
 
-  defp transition_to_reveal_if_done(%{final_bets: final_bets} = state) do
+  defp transition_to_reveal_if_done(state) do
+    %{final_bets: final_bets} = state
+
     if all_populated?(final_bets) do
       state
       |> update_scores
@@ -197,15 +214,10 @@ defmodule YouBet do
     |> Enum.all?(&(!is_nil(&1)))
   end
 
-  defp update_scores(%{
-    scores: scores,
-    players: players,
-    guesses: guesses,
-    odds: odds,
-    final_bets: final_bets,
-    answer: answer
-  } = state) do
+  defp update_scores(state) do
+    %{scores: scores, players: players, guesses: guesses, odds: odds, final_bets: final_bets, answer: answer} = state
     {new_scores, payouts} = YouBet.Scores.update(scores, players, guesses, odds, final_bets, answer)
+
     state
     |> Map.put(:payouts, payouts)
     |> Map.put(:scores, new_scores)
