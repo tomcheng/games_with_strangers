@@ -29,13 +29,14 @@ defmodule GWS.RoomTest do
       |> GWS.Room.start_game
       |> GWS.Room.get_state(1)
 
-    assert game_state == %{
+    assert Map.drop(game_state, [:question]) == %{
       "player-id-1" => %{id: "player-id-1", name: "Harold"},
       "player-id-2" => %{id: "player-id-2", name: "Bob"},
       "player-id-3" => %{id: "player-id-3", name: "Andy"}
     }
     |> YouBet.initial_state
     |> YouBet.sanitize_state("player-id-1")
+    |> Map.drop([:question])
   end
 
   test "makes play", %{room: room} do
@@ -49,7 +50,7 @@ defmodule GWS.RoomTest do
       |> GWS.Room.make_play("player-id-1", "guess", "20")
       |> GWS.Room.get_state(1)
 
-    assert game_state == %{
+    assert Map.drop(game_state, [:question]) == %{
       "player-id-1" => %{id: "player-id-1", name: "Harold"},
       "player-id-2" => %{id: "player-id-2", name: "Bob"},
       "player-id-3" => %{id: "player-id-3", name: "Andy"}
@@ -57,6 +58,7 @@ defmodule GWS.RoomTest do
     |> YouBet.initial_state
     |> YouBet.play("player-id-1", "guess", "20")
     |> YouBet.sanitize_state("player-id-1")
+    |> Map.drop([:question])
   end
 
   test "adds players", %{room: room} do
