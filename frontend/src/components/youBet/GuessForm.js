@@ -10,6 +10,7 @@ const AnswerInput = styled(TextInput)`
 
 class GuessForm extends Component {
   static propTypes = {
+    onSetFlashMessage: PropTypes.func.isRequired,
     onSubmitGuess: PropTypes.func.isRequired
   };
 
@@ -18,7 +19,15 @@ class GuessForm extends Component {
   handleSubmit = evt => {
     evt.preventDefault();
 
-    this.props.onSubmitGuess(this.state);
+    const { onSetFlashMessage, onSubmitGuess } = this.props;
+    const { guess } = this.state;
+
+    if (!guess || parseInt(guess, 10) < 1) {
+      onSetFlashMessage("Must be a positive integer");
+      return;
+    }
+
+    onSubmitGuess({ guess });
   };
 
   handleChange = ({ target }) => {

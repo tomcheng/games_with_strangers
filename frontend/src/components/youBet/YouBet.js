@@ -62,6 +62,7 @@ const YouBet = ({
             onPlay({ type: "guess", payload: guess });
           }}
           awaitingGuess={awaitingGuess}
+          onSetFlashMessage={onSetFlashMessage}
         />
       )}
       {stage === "betting" && (
