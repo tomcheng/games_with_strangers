@@ -11,4 +11,8 @@ defmodule GWSTest do
 
     assert is_pid(room)
   end
+
+  test "returns error when room not found" do
+    assert GWS.get_room("foo") == {:error, "Room not found"}
+  end
 end

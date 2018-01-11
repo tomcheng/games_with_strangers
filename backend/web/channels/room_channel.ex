@@ -20,8 +20,8 @@ defmodule GamesWithStrangers.RoomChannel do
         send(self(), :after_join)
 
         {:ok, %{player_id: player_id}, socket}
-      :error ->
-        {:error, "Room not found"}
+      {:error, msg} ->
+        {:error, msg}
     end
   end
 

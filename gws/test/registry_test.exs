@@ -7,7 +7,7 @@ defmodule GWS.RegistryTest do
   end
 
   test "returns error if room code not found", %{registry: registry} do
-    assert GWS.Registry.get_room(registry, "ZZZZ") == :error
+    assert GWS.Registry.get_room(registry, "ZZZZ") == {:error, "Room not found"}
   end
 
   test "spawns rooms", %{registry: registry} do
@@ -27,7 +27,7 @@ defmodule GWS.RegistryTest do
     {:ok, room} = GWS.Registry.get_room(registry, code)
     Agent.stop(room)
 
-    assert GWS.Registry.get_room(registry, code) == :error
+    assert GWS.Registry.get_room(registry, code) == {:error, "Room not found"}
   end
 
   test "removes room on crash", %{registry: registry} do
@@ -35,7 +35,7 @@ defmodule GWS.RegistryTest do
     {:ok, room} = GWS.Registry.get_room(registry, code)
 
     Agent.stop(room, :shutdown)
-    assert GWS.Registry.get_room(registry, code) == :error
+    assert GWS.Registry.get_room(registry, code) == {:error, "Room not found"}
   end
 
   test "gets room count", %{registry: registry} do

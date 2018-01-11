@@ -31,7 +31,10 @@ defmodule GWS.Registry do
   end
 
   def handle_call({:get_room, code}, _from, {codes, _} = state) do
-    {:reply, Map.fetch(codes, code), state}
+    case Map.fetch(codes, code) do
+      :error -> {:reply, {:error, "Room not found"}, state}
+      pid -> {:reply, pid, state}
+    end
   end
 
   def handle_call({:get_room_count}, _from, {codes, _} = state) do
