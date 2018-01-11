@@ -47,7 +47,7 @@ export const gatherChips = chips => {
   return map(gathered, (value, key) => ({
     base_wager: value.base_wager,
     extra_wager: value.extra_wager,
-    guess: parseInt(key, 10)
+    guess: key === "less" ? key : parseInt(key, 10)
   }));
 };
 
@@ -56,10 +56,10 @@ class YouBetBetting extends Component {
     awaitingBet: customTypes.players.isRequired,
     betOptions: PropTypes.arrayOf(
       PropTypes.shape({
-        guess: PropTypes.number.isRequired,
+        guess: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
         odds: PropTypes.number.isRequired,
-        players: customTypes.players.isRequired,
-        bets: PropTypes.number.isRequired
+        bets: PropTypes.number.isRequired,
+        players: customTypes.players
       })
     ).isRequired,
     yourBet: PropTypes.arrayOf(

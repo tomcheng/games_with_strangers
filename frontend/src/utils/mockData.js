@@ -51,6 +51,7 @@ youBet.betting = {
     ...defaultYouBetGameState,
     stage: "betting",
     bet_options: [
+      { guess: "less", odds: 5, bets: 0 },
       { guess: 15, odds: 4, players: [players[0], players[1]], bets: 0 },
       { guess: 20, odds: 3, players: [players[2]], bets: 0 },
       { guess: 25, odds: 3, players: [players[3]], bets: 200 },

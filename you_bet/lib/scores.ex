@@ -35,6 +35,6 @@ defmodule YouBet.Scores do
     guesses
     |> Map.values
     |> Enum.reject(&(&1 > answer))
-    |> Enum.max(fn -> nil end)
+    |> Enum.max(fn -> "less" end)
   end
 end

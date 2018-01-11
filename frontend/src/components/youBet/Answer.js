@@ -58,14 +58,14 @@ class Answer extends Component {
     ).isRequired,
     connectDropTarget: PropTypes.func.isRequired,
     finalized: PropTypes.bool.isRequired,
-    guess: PropTypes.number.isRequired,
+    guess: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
     isOver: PropTypes.bool.isRequired,
     nothingSelected: PropTypes.bool.isRequired,
     odds: PropTypes.number.isRequired,
-    players: customTypes.players.isRequired,
     totalBets: PropTypes.number.isRequired,
     onBet: PropTypes.func.isRequired,
     onCancelBet: PropTypes.func.isRequired,
+    players: customTypes.players,
     innerRef: PropTypes.func
   };
 
@@ -109,7 +109,11 @@ class Answer extends Component {
           <Number>{guess}</Number>
           <Footer>
             <SecondaryText>${totalBets} bet</SecondaryText>
-            <SecondaryText>{makeList(players.map(p => p.name))}</SecondaryText>
+            {players && (
+              <SecondaryText>
+                {makeList(players.map(p => p.name))}
+              </SecondaryText>
+            )}
           </Footer>
         </Container>
       </div>

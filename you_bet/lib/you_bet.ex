@@ -225,20 +225,23 @@ defmodule YouBet do
   end
 
   defp get_bet_options(guesses_by_player_id, players, odds) do
-    guesses_by_player_id
-    |> Map.values
-    |> Enum.uniq
-    |> Enum.sort
-    |> Enum.map(fn guess ->
-      %{
-        guess: guess,
-        players: guesses_by_player_id
-          |> Enum.filter(fn {_, g} -> g == guess end)
-          |> Enum.map(fn {id, _} -> players[id] end)
-          |> Enum.sort_by(fn p -> p[:name] end),
-        odds: odds[guess]
-      }
-    end)
+    bet_options =
+      guesses_by_player_id
+      |> Map.values
+      |> Enum.uniq
+      |> Enum.sort
+      |> Enum.map(fn guess ->
+        %{
+          guess: guess,
+          players: guesses_by_player_id
+            |> Enum.filter(fn {_, g} -> g == guess end)
+            |> Enum.map(fn {id, _} -> players[id] end)
+            |> Enum.sort_by(fn p -> p[:name] end),
+          odds: odds[guess]
+        }
+      end)
+
+    [%{guess: "less", odds: odds["less"]}|bet_options]
   end
 
   defp get_odds(guesses_by_player_id) do
@@ -251,11 +254,16 @@ defmodule YouBet do
     mid_point = num_guesses / 2 - 0.5
     base = if rem(num_guesses, 2) == 0, do: 2.5, else: 2
 
-    guesses
-    |> Enum.with_index
-    |> Enum.reduce(%{}, fn {guess, index}, odds ->
-      Map.put(odds, guess, Float.round(abs(index - mid_point) + base))
-    end)
+    odds =
+      guesses
+      |> Enum.with_index
+      |> Enum.reduce(%{}, fn {guess, index}, acc ->
+        Map.put(acc, guess, Float.round(abs(index - mid_point) + base))
+      end)
+
+    {_, max_odds} = Enum.max_by(odds, fn {_, o} -> o end)
+
+    Map.put(odds, "less", max_odds + 1)
   end
 
   defp initial_map(players, initial_value \\ nil) do
