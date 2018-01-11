@@ -106,7 +106,7 @@ class Answer extends Component {
           considering={canDrop && isOver}
         >
           <Odds>Pays {odds} to 1</Odds>
-          <Number>{guess}</Number>
+          <Number>{guess === "less" ? "lower" : guess}</Number>
           <Footer>
             <SecondaryText>${totalBets} bet</SecondaryText>
             {players && (
