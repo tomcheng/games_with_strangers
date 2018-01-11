@@ -5,9 +5,9 @@ import SectionHeader from "../common/SectionHeader";
 import Heading from "../common/Heading";
 import Sidebar from "../common/Sidebar";
 import Scores from "./Scores";
-import GuessingStage from "./GuessingStage";
-import BettingStage from "./BettingStage";
-import RevealStage from "./RevealStage";
+import YouBetGuessing from "./YouBetGuessing";
+import YouBetBetting from "./YouBetBetting";
+import YouBetReveal from "./YouBetReveal";
 import EndStage from "../common/EndStage";
 
 const YouBet = ({
@@ -56,7 +56,7 @@ const YouBet = ({
         {question}
       </Heading>
       {stage === "guessing" && (
-        <GuessingStage
+        <YouBetGuessing
           yourGuess={yourGuess}
           onSubmitGuess={({ guess }) => {
             onPlay({ type: "guess", payload: guess });
@@ -66,7 +66,7 @@ const YouBet = ({
         />
       )}
       {stage === "betting" && (
-        <BettingStage
+        <YouBetBetting
           awaitingBet={awaitingBet}
           betOptions={betOptions}
           yourBets={yourBets}
@@ -81,7 +81,7 @@ const YouBet = ({
         />
       )}
       {stage === "reveal" && (
-        <RevealStage
+        <YouBetReveal
           answer={answer}
           closestGuess={closestGuess}
           payouts={payouts}

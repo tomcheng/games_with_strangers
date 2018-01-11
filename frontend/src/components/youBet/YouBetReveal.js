@@ -7,7 +7,7 @@ import SecondaryText from "../common/SecondaryText";
 import Heading from "../common/Heading";
 import DelayList from "../common/DelayList";
 
-const RevealStage = ({
+const YouBetReveal = ({
   answer,
   closestGuess,
   payouts,
@@ -78,7 +78,7 @@ const RevealStage = ({
   return <DelayList list={displayList} />;
 };
 
-RevealStage.propTypes = {
+YouBetReveal.propTypes = {
   answer: PropTypes.number.isRequired,
   payouts: PropTypes.arrayOf(
     PropTypes.shape({
@@ -93,4 +93,4 @@ RevealStage.propTypes = {
   moderator: customTypes.player
 };
 
-export default RevealStage;
+export default YouBetReveal;

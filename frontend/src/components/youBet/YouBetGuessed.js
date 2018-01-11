@@ -5,7 +5,7 @@ import { makeList } from "../../utils/strings";
 import SecondaryText from "../common/SecondaryText";
 import Heading from "../common/Heading";
 
-const Guessed = ({ yourGuess, awaitingGuess }) => (
+const YouBetGuessed = ({ yourGuess, awaitingGuess }) => (
   <Fragment>
     <Heading level={3} center>You Answered: {yourGuess}</Heading>
     <SecondaryText center>
@@ -14,9 +14,9 @@ const Guessed = ({ yourGuess, awaitingGuess }) => (
   </Fragment>
 );
 
-Guessed.propTypes = {
+YouBetGuessed.propTypes = {
   yourGuess: PropTypes.number.isRequired,
   awaitingGuess: customTypes.players.isRequired
 };
 
-export default Guessed;
+export default YouBetGuessed;

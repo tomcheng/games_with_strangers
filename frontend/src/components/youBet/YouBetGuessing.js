@@ -1,28 +1,28 @@
 import React from "react";
 import PropTypes from "prop-types";
-import GuessForm from "./GuessForm";
-import Guessed from "./Guessed";
+import YouBetGuessingForm from "./YouBetGuessingForm";
+import YouBetGuessed from "./YouBetGuessed";
 
-const GuessingStage = ({
+const YouBetGuessing = ({
   yourGuess,
   onSubmitGuess,
   awaitingGuess,
   onSetFlashMessage
 }) =>
   yourGuess === null ? (
-    <GuessForm
+    <YouBetGuessingForm
       onSubmitGuess={onSubmitGuess}
       onSetFlashMessage={onSetFlashMessage}
     />
   ) : (
-    <Guessed yourGuess={yourGuess} awaitingGuess={awaitingGuess} />
+    <YouBetGuessed yourGuess={yourGuess} awaitingGuess={awaitingGuess} />
   );
 
-GuessingStage.propTypes = {
+YouBetGuessing.propTypes = {
   awaitingGuess: PropTypes.array.isRequired,
   onSetFlashMessage: PropTypes.func.isRequired,
   onSubmitGuess: PropTypes.func.isRequired,
   yourGuess: PropTypes.number
 };
 
-export default GuessingStage;
+export default YouBetGuessing;

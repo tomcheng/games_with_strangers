@@ -8,7 +8,7 @@ const AnswerInput = styled(TextInput)`
   max-width: 280px;
 `;
 
-class GuessForm extends Component {
+class YouBetGuessingForm extends Component {
   static propTypes = {
     onSetFlashMessage: PropTypes.func.isRequired,
     onSubmitGuess: PropTypes.func.isRequired
@@ -54,4 +54,4 @@ class GuessForm extends Component {
   }
 }
 
-export default GuessForm;
+export default YouBetGuessingForm;

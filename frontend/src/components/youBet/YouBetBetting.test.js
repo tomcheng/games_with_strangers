@@ -1,4 +1,4 @@
-import { gatherChips } from "./BettingStage";
+import { gatherChips } from "./YouBetBetting";
 
 describe("getting bets from chips", () => {
   it("handles an empty array", () => {

@@ -51,7 +51,7 @@ export const gatherChips = chips => {
   }));
 };
 
-class BettingStage extends Component {
+class YouBetBetting extends Component {
   static propTypes = {
     awaitingBet: customTypes.players.isRequired,
     betOptions: PropTypes.arrayOf(
@@ -296,4 +296,4 @@ class BettingStage extends Component {
   }
 }
 
-export default BettingStage;
+export default YouBetBetting;
