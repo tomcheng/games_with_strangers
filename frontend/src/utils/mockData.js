@@ -74,14 +74,14 @@ youBet.reveal = {
   gameState: {
     ...defaultYouBetGameState,
     stage: "reveal",
-    answer: 43,
-    closest_guess: 40,
+    answer: 1,
+    closest_guess: null,
     payouts: [
-      { player: players[0], delta: 300, closest: true },
-      { player: players[1], delta: 600, closest: false },
-      { player: players[2], delta: 0, closest: false },
+      { player: players[0], delta: 200, closest: false },
+      { player: players[1], delta: 100, closest: false },
+      { player: players[2], delta: -200, closest: false },
       { player: players[3], delta: 0, closest: false },
-      { player: players[4], delta: -200, closest: false }
+      { player: players[4], delta: 0, closest: false }
     ]
   }
 };

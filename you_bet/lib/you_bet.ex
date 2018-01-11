@@ -80,12 +80,13 @@ defmodule YouBet do
   defp add_closest_guess(state) do
     %{guesses: guesses, answer: answer} = state
 
-    closest_guess =
+    valid_guesses =
       guesses
       |> Map.values
       |> Enum.reject(fn g -> g > answer end)
       |> Enum.sort_by(fn g -> -g end)
-      |> hd
+
+    closest_guess = if Enum.count(valid_guesses) > 0, do: hd(valid_guesses), else: nil
 
     Map.put(state, :closest_guess, closest_guess)
   end

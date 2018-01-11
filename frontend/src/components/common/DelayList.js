@@ -11,14 +11,15 @@ const DelayList = ({ list, renderItem, initialDelay, delayInterval }) =>
 
 DelayList.propTypes = {
   list: PropTypes.arrayOf(PropTypes.any).isRequired,
-  renderItem: PropTypes.func.isRequired,
   delayInterval: PropTypes.number,
-  initialDelay: PropTypes.number
+  initialDelay: PropTypes.number,
+  renderItem: PropTypes.func
 };
 
 DelayList.defaultProps = {
   initialDelay: 0,
-  delayInterval: 1000
+  delayInterval: 1000,
+  renderItem: a => a
 };
 
 export default DelayList;

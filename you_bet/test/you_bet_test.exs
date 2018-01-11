@@ -200,6 +200,42 @@ defmodule YouBetTest do
     ]
   end
 
+  test "handles when all bets are higher than actual answer", %{players: players} do
+    state =
+      players
+      |> YouBet.initial_state
+      |> YouBet.play("1", "guess", "999999999999")
+      |> YouBet.play("2", "guess", "999999999999")
+      |> YouBet.play("3", "guess", "999999999999")
+      |> YouBet.play("1", "finalize_bets", [
+        %{"guess" => 999_999_999_999, "base_wager" => 200, "extra_wager" => 0}
+      ])
+      |> YouBet.play("2", "finalize_bets", [
+        %{"guess" => 999_999_999_999, "base_wager" => 200, "extra_wager" => 0}
+      ])
+      |> YouBet.play("3", "finalize_bets", [
+        %{"guess" => 999_999_999_999, "base_wager" => 200, "extra_wager" => 0}
+      ])
+      |> YouBet.sanitize_state("1")
+
+    assert state[:round] == 1
+    assert state[:stage] == :reveal
+    assert String.match?(state[:question], ~r/.*\?$/)
+    assert is_integer(state[:answer])
+    assert state[:closest_guess] == nil
+    assert state[:payouts] == [
+      %{player: %{id: "2", name: "bar"}, delta: 0, closest: false},
+      %{player: %{id: "3", name: "baz"}, delta: 0, closest: false},
+      %{player: %{id: "1", name: "foo"}, delta: 0, closest: false}
+    ]
+
+    assert state[:scores] == [
+      %{player: %{id: "2", name: "bar"}, score: 200},
+      %{player: %{id: "3", name: "baz"}, score: 200},
+      %{player: %{id: "1", name: "foo"}, score: 200}
+    ]
+  end
+
   test "advances to next round", %{players: players} do
     state =
       players
