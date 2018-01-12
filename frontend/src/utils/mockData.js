@@ -19,6 +19,10 @@ const nonGameState = {
 export const waitingForPlayers = {
   ...nonGameState
 };
+export const doneWaiting = {
+  ...nonGameState,
+  playersNeeded: 0
+};
 
 const defaultYouBetGameState = {
   you,

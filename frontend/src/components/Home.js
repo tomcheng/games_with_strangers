@@ -28,7 +28,7 @@ const JoinButton = styled(Button)`
   flex-shrink: 0;
 `;
 
-class Lobby extends Component {
+class Home extends Component {
   static propTypes = {
     onCreateRoom: PropTypes.func.isRequired,
     onJoinRoom: PropTypes.func.isRequired,
@@ -179,4 +179,4 @@ class Lobby extends Component {
   }
 }
 
-export default Lobby;
+export default Home;

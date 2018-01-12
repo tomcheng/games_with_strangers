@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import AppHeader from "./AppHeader";
-import Lobby from "./Lobby";
+import Home from "./Home";
 import Room from "./Room";
 import FlashMessage from "./FlashMessage";
 import "./App.css";
@@ -38,7 +38,7 @@ const App = ({
     <Content>
       <AppHeader roomCode={roomCode} />
       {!roomCode && (
-        <Lobby
+        <Home
           previousRoomCode={previousRoomCode}
           onCreateRoom={onCreateRoom}
           onJoinRoom={onJoinRoom}
