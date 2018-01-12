@@ -1,26 +1,11 @@
 import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
-import styled from "styled-components";
 import { pluralize } from "../utils/strings";
+import Heading from "./common/Heading";
 import SectionHeader from "./common/SectionHeader";
 import Button from "./common/Button";
 import SecondaryText from "./common/SecondaryText";
-
-const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const Players = styled.div`
-  text-align: center;
-  margin-bottom: 16px;
-`;
-
-const PlayersWaiting = styled(SecondaryText)`
-  margin-top: -8px;
-  margin-bottom: 24px;
-`;
+import Spacing from "./common/Spacing";
 
 class Waiting extends Component {
   static propTypes = {
@@ -52,28 +37,30 @@ class Waiting extends Component {
     return (
       <Fragment>
         <SectionHeader>About to Play: {gameName}</SectionHeader>
-        <Content>
-          <Players>
-            <h1>{yourName}</h1>
-            {others.map(player => <h1 key={player.id}>{player.name}</h1>)}
-          </Players>
-          {!!playersNeeded && (
-            <PlayersWaiting>
-              Waiting for {playersNeeded} more{" "}
-              {pluralize("player", playersNeeded)}&hellip;
-            </PlayersWaiting>
+        <Heading center>{yourName}</Heading>
+        {others.map(player => (
+          <Heading key={player.id} center>
+            {player.name}
+          </Heading>
+        ))}
+        {!!playersNeeded && (
+          <SecondaryText spaceTop={3} center>
+            Waiting for {playersNeeded} more{" "}
+            {pluralize("player", playersNeeded)}&hellip;
+          </SecondaryText>
+        )}
+        {youAreModerator &&
+          playersNeeded === 0 && (
+            <Button spaceTop={3} onClick={onStartGame} center>
+              Start Game
+            </Button>
           )}
-          {youAreModerator &&
-            playersNeeded === 0 && (
-              <Button onClick={onStartGame}>Start Game</Button>
-            )}
-          {!playersNeeded &&
-            !youAreModerator && (
-              <PlayersWaiting>
-                Waiting for {moderatorName} to start game&hellip;
-              </PlayersWaiting>
-            )}
-        </Content>
+        {!playersNeeded &&
+          !youAreModerator && (
+            <SecondaryText spaceTop={3} center>
+              Waiting for {moderatorName} to start game&hellip;
+            </SecondaryText>
+          )}
       </Fragment>
     );
   }
