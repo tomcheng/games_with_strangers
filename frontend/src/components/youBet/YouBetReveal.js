@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import * as customTypes from "../../utils/customTypes";
-import { makeList } from "../../utils/strings";
+import { makeList, addCommas } from "../../utils/strings";
 import Button from "../common/Button";
 import SecondaryText from "../common/SecondaryText";
 import Heading from "../common/Heading";
@@ -28,7 +28,7 @@ const YouBetReveal = ({
       The correct answer is:
     </Heading>,
     <Heading spaceBottom={2} center>
-      {answer}
+      {addCommas(answer)}
     </Heading>
   ];
 
@@ -44,7 +44,7 @@ const YouBetReveal = ({
         The closest without going over is:
       </Heading>,
       <Heading spaceBottom={2} center>
-        {closestGuess}
+        {addCommas(closestGuess)}
       </Heading>,
       <Heading level={3} spaceBottom={2} center>
         {makeList(closestPlayers.map(p => p.name))} gets $300 for having the

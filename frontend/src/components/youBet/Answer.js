@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import * as customTypes from "../../utils/customTypes";
 import styled from "styled-components";
 import { DropTarget } from "react-dnd";
-import { makeList } from "../../utils/strings";
+import { makeList, addCommas } from "../../utils/strings";
 import SecondaryText from "../common/SecondaryText";
 import Card from "../common/Card";
 import DraggableChip from "./DraggableChip";
@@ -106,7 +106,7 @@ class Answer extends Component {
           considering={canDrop && isOver}
         >
           <Odds>Pays {odds} to 1</Odds>
-          <Number>{guess === "less" ? "lower" : guess}</Number>
+          <Number>{guess === "less" ? "lower" : addCommas(guess)}</Number>
           <Footer>
             <SecondaryText>${totalBets} bet</SecondaryText>
             {players && (

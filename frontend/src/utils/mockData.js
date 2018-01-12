@@ -42,7 +42,7 @@ youBet.guessed = {
   ...youBet.guessing,
   gameState: {
     ...youBet.guessing.gameState,
-    your_guess: 50
+    your_guess: 50000000
   }
 };
 youBet.betting = {
@@ -55,7 +55,7 @@ youBet.betting = {
       { guess: 15, odds: 4, players: [players[0], players[1]], bets: 0 },
       { guess: 20, odds: 3, players: [players[2]], bets: 0 },
       { guess: 25, odds: 3, players: [players[3]], bets: 200 },
-      { guess: 40, odds: 4, players: [players[4]], bets: 0 }
+      { guess: 4000000, odds: 4, players: [players[4]], bets: 0 }
     ],
     your_bets: null,
     awaiting_bet: [players[2], players[3]],
