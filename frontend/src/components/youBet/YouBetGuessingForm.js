@@ -31,7 +31,7 @@ class YouBetGuessingForm extends Component {
   };
 
   handleChange = ({ target }) => {
-    this.setState({ [target.name]: target.value });
+    this.setState({ [target.name]: target.value.replace(/[^0-9]/g, "") });
   };
 
   render() {
