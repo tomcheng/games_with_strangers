@@ -327,6 +327,18 @@ defmodule YouBetTest do
     assert state[:awaiting_guess] == [%{id: "2", name: "bar"}, %{id: "3", name: "baz"}]
   end
 
+  test "indicates it's the final round", %{players: players} do
+    state =
+      players
+      |> YouBet.initial_state(%{"rounds" => 3})
+      |> play_complete_round
+      |> play_complete_round
+      |> YouBet.sanitize_state("1")
+
+    assert state[:round] == 3
+    assert state[:final_round] == true
+  end
+
   test "ends game", %{players: players} do
     state =
       players

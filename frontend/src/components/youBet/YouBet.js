@@ -27,6 +27,7 @@ const YouBet = ({
     awaiting_guess: awaitingGuess,
     bet_options: betOptions,
     closest_guess: closestGuess,
+    final_round: finalRound,
     your_bets: yourBets,
     your_guess: yourGuess,
     your_score: yourScore
@@ -37,7 +38,9 @@ const YouBet = ({
       <Sidebar>
         <Scores scores={scores} />
       </Sidebar>
-      <SectionHeader>Round {round}</SectionHeader>
+      <SectionHeader>
+        {finalRound ? "Final Round" : `Round ${round}`}
+      </SectionHeader>
       <Heading center spaceBottom={stage === "betting" ? 3 : 2}>
         {question}
       </Heading>
@@ -91,6 +94,7 @@ YouBet.propTypes = {
     awaiting_guess: customTypes.players,
     bet_options: PropTypes.array,
     closest_guess: PropTypes.number,
+    final_round: PropTypes.bool,
     payouts: PropTypes.array,
     question: PropTypes.string,
     round: PropTypes.number,

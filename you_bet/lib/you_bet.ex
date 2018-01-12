@@ -29,7 +29,8 @@ defmodule YouBet do
     |> Map.put(:your_guess, guesses[player_id])
     |> Map.put(:awaiting_guess, get_awaiting(guesses, players, player_id))
     |> format_scores
-    |> Map.take([:awaiting_guess, :question, :round, :scores, :stage, :your_guess])
+    |> add_final_round
+    |> Map.take([:awaiting_guess, :final_round, :question, :round, :scores, :stage, :your_guess])
   end
   def sanitize_state(%{stage: :betting} = state, player_id) do
     %{players: players, final_bets: final_bets, scores: scores} = state
@@ -40,14 +41,16 @@ defmodule YouBet do
     |> Map.put(:your_score, scores[player_id])
     |> add_bets_to_bet_options
     |> format_scores
-    |> Map.take([:awaiting_bet, :bet_options, :question, :round, :scores, :stage, :your_bets, :your_score])
+    |> add_final_round
+    |> Map.take([:awaiting_bet, :bet_options, :final_round, :question, :round, :scores, :stage, :your_bets, :your_score])
   end
   def sanitize_state(%{stage: :reveal} = state, _) do
     state
     |> add_closest_guess
     |> format_payouts
     |> format_scores
-    |> Map.take([:answer, :closest_guess, :payouts, :question, :round, :scores, :stage])
+    |> add_final_round
+    |> Map.take([:answer, :closest_guess, :final_round, :payouts, :question, :round, :scores, :stage])
   end
   def sanitize_state(%{stage: :end} = state, _) do
     state
@@ -265,6 +268,10 @@ defmodule YouBet do
     {_, max_odds} = Enum.max_by(odds, fn {_, o} -> o end)
 
     Map.put(odds, "less", max_odds + 1)
+  end
+
+  defp add_final_round(state) do
+    Map.put(state, :final_round, state[:round] == state[:total_rounds])
   end
 
   defp initial_map(players, initial_value \\ nil) do
