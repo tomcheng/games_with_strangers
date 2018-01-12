@@ -11,6 +11,11 @@ export const makeList = strings =>
 
 export const addCommas = nStr => {
   nStr += "";
+
+  if (nStr.length <= 4) {
+    return nStr;
+  }
+
   const x = nStr.split(".");
   let x1 = x[0];
   const x2 = x.length > 1 ? "." + x[1] : "";
