@@ -15,11 +15,15 @@ defmodule GamesWithStrangers.RoomChannel do
       {:ok, room} ->
         player_id = player_id_in || UUID.uuid4()
 
-        GWS.Room.add_player(room, player_id, player_name, channel)
+        case GWS.Room.add_player(room, player_id, player_name, channel) do
+          {:error, msg} ->
+            {:error, msg}
+          _ ->
+            GWS.Room.add_player(room, player_id, player_name, channel)
+            send(self(), :after_join)
+            {:ok, %{player_id: player_id}, socket}
+        end
 
-        send(self(), :after_join)
-
-        {:ok, %{player_id: player_id}, socket}
       {:error, msg} ->
         {:error, msg}
     end
