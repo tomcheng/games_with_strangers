@@ -29,8 +29,12 @@ defmodule GWS.Room do
           |> update_moderator
         end)
         room
-      _ ->
-        {:error, "Game already started"}
+      game_state ->
+        if game_state[:players][player_id] do
+          room
+        else
+          {:error, "Game already started"}
+        end
     end
   end
 

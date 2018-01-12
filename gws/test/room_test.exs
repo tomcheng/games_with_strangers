@@ -39,7 +39,7 @@ defmodule GWS.RoomTest do
     |> Map.drop([:question])
   end
 
-  test "doesn't allow players to join after game started", %{room: room} do
+  test "doesn't allow other players to join after game started", %{room: room} do
     result =
       room
       |> GWS.Room.set_game("you_bet")
@@ -50,6 +50,19 @@ defmodule GWS.RoomTest do
       |> GWS.Room.add_player("player-id-4", "Dan", 4)
 
     assert result == {:error, "Game already started"}
+  end
+
+  test "allows a player to rejoin a room after game started", %{room: room} do
+    result =
+      room
+      |> GWS.Room.set_game("you_bet")
+      |> GWS.Room.add_player("player-id-1", "Harold", 1)
+      |> GWS.Room.add_player("player-id-2", "Bob", 2)
+      |> GWS.Room.add_player("player-id-3", "Andy", 3)
+      |> GWS.Room.start_game(%{"rounds" => 7})
+      |> GWS.Room.add_player("player-id-3", "Andy", 4)
+
+    assert is_pid(result)
   end
 
   test "makes play", %{room: room} do
