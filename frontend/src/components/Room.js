@@ -7,6 +7,7 @@ import gamesList from "../gamesList";
 import SectionHeader from "./common/SectionHeader";
 import Button from "./common/Button";
 import SecondaryText from "./common/SecondaryText";
+import EndStage from "./common/EndStage";
 
 const Content = styled.div`
   display: flex;
@@ -35,14 +36,30 @@ const Room = ({
   onSetFlashMessage
 }) => {
   const game = find(gamesList, g => g.id === gameId);
-  const moderator = you.isModerator ? you : others.find(p => p.isModerator);
+  const youAreModerator = you.isModerator;
+  const moderator = youAreModerator ? you : others.find(p => p.isModerator);
 
   if (gameState) {
+    const { stage, scores } = gameState;
     const GameComponent = game.component;
+
+    if (stage === "end") {
+      return (
+        <EndStage
+          scores={scores}
+          youAreModerator={youAreModerator}
+          moderator={moderator}
+          onRestartGame={() => {
+            onPlay({ type: "restart" });
+          }}
+        />
+      );
+    }
+
     return (
       <GameComponent
         gameState={gameState}
-        youAreModerator={you.isModerator}
+        youAreModerator={youAreModerator}
         moderator={moderator}
         onPlay={onPlay}
         onSetFlashMessage={onSetFlashMessage}
@@ -64,12 +81,12 @@ const Room = ({
             {pluralize("player", playersNeeded)}&hellip;
           </Waiting>
         )}
-        {you.isModerator &&
+        {youAreModerator &&
           playersNeeded === 0 && (
             <Button onClick={onStartGame}>Start Game</Button>
           )}
         {!playersNeeded &&
-          !you.isModerator && (
+          !youAreModerator && (
             <Waiting>
               Waiting for {moderator.name} to start game&hellip;
             </Waiting>
@@ -92,7 +109,10 @@ Room.propTypes = {
     isModerator: PropTypes.bool.isRequired
   }).isRequired,
   onStartGame: PropTypes.func.isRequired,
-  gameState: PropTypes.object,
+  gameState: PropTypes.shape({
+    scores: PropTypes.array,
+    stage: PropTypes.string.isRequired
+  }),
   playersNeeded: PropTypes.number
 };
 

@@ -8,7 +8,6 @@ import Scores from "./Scores";
 import YouBetGuessing from "./YouBetGuessing";
 import YouBetBetting from "./YouBetBetting";
 import YouBetReveal from "./YouBetReveal";
-import EndStage from "../common/EndStage";
 
 const YouBet = ({
   gameState,
@@ -32,19 +31,6 @@ const YouBet = ({
     your_guess: yourGuess,
     your_score: yourScore
   } = gameState;
-
-  if (stage === "end") {
-    return (
-      <EndStage
-        scores={scores}
-        youAreModerator={youAreModerator}
-        moderator={moderator}
-        onRestartGame={() => {
-          onPlay({ type: "restart" });
-        }}
-      />
-    );
-  }
 
   return (
     <div>
@@ -99,7 +85,7 @@ const YouBet = ({
 YouBet.propTypes = {
   gameState: PropTypes.shape({
     scores: PropTypes.array.isRequired,
-    stage: PropTypes.oneOf(["guessing", "betting", "reveal", "end"]).isRequired,
+    stage: PropTypes.oneOf(["guessing", "betting", "reveal"]).isRequired,
     answer: PropTypes.number,
     awaiting_bet: customTypes.players,
     awaiting_guess: customTypes.players,
