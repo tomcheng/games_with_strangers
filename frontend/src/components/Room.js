@@ -23,6 +23,7 @@ const Room = ({
     return (
       <Waiting
         gameName={game.displayName}
+        gameOptions={game.options}
         youAreModerator={youAreModerator}
         moderatorName={moderator.name}
         onStartGame={onStartGame}

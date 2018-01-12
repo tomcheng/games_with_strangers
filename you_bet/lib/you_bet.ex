@@ -1,11 +1,12 @@
 defmodule YouBet do
   def minimum_players, do: 3
 
-  def initial_state(players) do
+  def initial_state(players, %{"rounds" => rounds}) do
     {question, answer} = YouBet.Questions.random()
 
     %{
       round: 1,
+      total_rounds: rounds,
       stage: :guessing,
       question: question,
       answer: answer,
@@ -150,7 +151,7 @@ defmodule YouBet do
     |> transition_to_reveal_if_done
   end
 
-  def play(%{round: 7} = state, _, "advance_round", _) do
+  def play(%{round: a, total_rounds: a} = state, _, "advance_round", _) do
     state
     |> Map.put(:round, nil)
     |> Map.put(:stage, :end)
@@ -175,7 +176,7 @@ defmodule YouBet do
     |> Map.put(:final_bets, initial_map(players))
   end
   def play(state, _player_id, "restart", _) do
-    initial_state(state[:players])
+    initial_state(state[:players], %{"rounds" => state[:total_rounds]})
   end
 
   def play(state, _, _, _), do: state

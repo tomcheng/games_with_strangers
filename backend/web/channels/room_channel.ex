@@ -44,10 +44,10 @@ defmodule GamesWithStrangers.RoomChannel do
     end
   end
 
-  def handle_in("start_game", _, %{topic: "room:" <> room_code} = socket) do
+  def handle_in("start_game", options, %{topic: "room:" <> room_code} = socket) do
     {:ok, room} = GWS.get_room(room_code)
 
-     GWS.Room.start_game(room)
+     GWS.Room.start_game(room, options)
 
     broadcast(socket, "new_state", %{room: room})
 

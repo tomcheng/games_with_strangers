@@ -111,10 +111,10 @@ defmodule GWS.Room do
     end
   end
 
-  def start_game(room) do
+  def start_game(room, options) do
     Agent.update(room, fn %{game: game} = state ->
       %{players: normal_players} = normalize_players(state)
-      Map.put(state, :game_state, game |> get_module |> apply(:initial_state, [normal_players]))
+      Map.put(state, :game_state, game |> get_module |> apply(:initial_state, [normal_players, options]))
     end)
     room
   end

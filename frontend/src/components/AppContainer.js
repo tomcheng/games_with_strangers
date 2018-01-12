@@ -64,8 +64,8 @@ class AppContainer extends Component {
     });
   };
 
-  handleStartGame = () => {
-    this.channel.push("start_game");
+  handleStartGame = options => {
+    this.channel.push("start_game", options);
   };
 
   handlePlay = args => {

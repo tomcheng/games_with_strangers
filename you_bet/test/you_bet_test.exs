@@ -18,7 +18,7 @@ defmodule YouBetTest do
   test "initial game state", %{players: players} do
     state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> YouBet.sanitize_state("1")
 
     assert state[:round] == 1
@@ -37,7 +37,7 @@ defmodule YouBetTest do
   test "makes an empty play", %{players: players} do
     state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> YouBet.play("1", "foo")
       |> YouBet.sanitize_state("1")
 
@@ -48,7 +48,7 @@ defmodule YouBetTest do
   test "handles a guess", %{players: players} do
     state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> YouBet.play("1", "guess", "20")
 
     your_state = YouBet.sanitize_state(state, "1")
@@ -63,7 +63,7 @@ defmodule YouBetTest do
   test "handles an invalid guess", %{players: players} do
     state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> YouBet.play("1", "guess", "")
 
     your_state = YouBet.sanitize_state(state, "1")
@@ -78,7 +78,7 @@ defmodule YouBetTest do
   test "sets stage to betting when all guesses are in", %{players: players} do
     state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> YouBet.play("1", "guess", "30")
       |> YouBet.play("2", "guess", "20")
       |> YouBet.play("3", "guess", "10")
@@ -106,7 +106,7 @@ defmodule YouBetTest do
   test "sets correct odds for even number of guesses", %{players: players} do
     state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> YouBet.play("1", "guess", "20")
       |> YouBet.play("2", "guess", "20")
       |> YouBet.play("3", "guess", "10")
@@ -122,7 +122,7 @@ defmodule YouBetTest do
   test "handles bets", %{players: players} do
     state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> YouBet.play("1", "guess", "30")
       |> YouBet.play("2", "guess", "20")
       |> YouBet.play("3", "guess", "10")
@@ -143,7 +143,7 @@ defmodule YouBetTest do
   test "handles betting on less", %{players: players} do
     state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> YouBet.play("1", "guess", "30")
       |> YouBet.play("2", "guess", "20")
       |> YouBet.play("3", "guess", "10")
@@ -164,7 +164,7 @@ defmodule YouBetTest do
   test "handles finalizing bets", %{players: players} do
     state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> YouBet.play("1", "guess", "30")
       |> YouBet.play("2", "guess", "20")
       |> YouBet.play("3", "guess", "10")
@@ -190,7 +190,7 @@ defmodule YouBetTest do
   test "changes to reveal stage when all bets are in and updates scores", %{players: players} do
     state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> YouBet.play("1", "guess", "1")
       |> YouBet.play("2", "guess", "1")
       |> YouBet.play("3", "guess", "999999999999")
@@ -227,7 +227,7 @@ defmodule YouBetTest do
   test "updates score when someone guesses less correctly", %{players: players} do
     state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> YouBet.play("1", "guess", "999999999999")
       |> YouBet.play("2", "guess", "999999999999")
       |> YouBet.play("3", "guess", "999999999999")
@@ -264,7 +264,7 @@ defmodule YouBetTest do
   test "handles when all bets are higher than actual answer", %{players: players} do
     state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> YouBet.play("1", "guess", "999999999999")
       |> YouBet.play("2", "guess", "999999999999")
       |> YouBet.play("3", "guess", "999999999999")
@@ -300,7 +300,7 @@ defmodule YouBetTest do
   test "advances to next round", %{players: players} do
     state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> YouBet.play("1", "guess", "1")
       |> YouBet.play("2", "guess", "1")
       |> YouBet.play("3", "guess", "999999999999")
@@ -330,7 +330,7 @@ defmodule YouBetTest do
   test "ends game", %{players: players} do
     state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> play_complete_round
       |> play_complete_round
       |> play_complete_round
@@ -348,12 +348,12 @@ defmodule YouBetTest do
   test "restarts game", %{players: players} do
     initial_state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> YouBet.sanitize_state("1")
 
     state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> play_complete_round
       |> YouBet.play("1", "restart", nil)
       |> YouBet.sanitize_state("1")
@@ -361,10 +361,23 @@ defmodule YouBetTest do
     assert Map.drop(state, [:question]) == Map.drop(initial_state, [:question])
   end
 
+  test "sets rounds properly", %{players: players} do
+    state =
+      players
+      |> YouBet.initial_state(%{"rounds" => 3})
+      |> play_complete_round
+      |> play_complete_round
+      |> play_complete_round
+      |> YouBet.sanitize_state("1")
+
+    assert state[:round] == nil
+    assert state[:stage] == :end
+  end
+
   test "handles missing player", %{players: players} do
     state =
       players
-      |> YouBet.initial_state
+      |> YouBet.initial_state(%{"rounds" => 7})
       |> YouBet.sanitize_state(nil)
 
     assert state[:round] == 1

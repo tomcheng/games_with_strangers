@@ -13,7 +13,18 @@ const gamesList = [
     id: "you_bet",
     displayName: "You Bet",
     description: "Answer general trivia questions and wager on guesses.",
-    component: YouBet
+    component: YouBet,
+    options: [
+      {
+        name: "rounds",
+        options: [
+          { value: 3, label: "3 Rounds" },
+          { value: 5, label: "5 Rounds" },
+          { value: 7, label: "7 Rounds" }
+        ],
+        defaultValue: 7
+      }
+    ]
   }
 ];
 

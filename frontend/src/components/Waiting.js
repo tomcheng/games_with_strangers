@@ -5,7 +5,7 @@ import Heading from "./common/Heading";
 import SectionHeader from "./common/SectionHeader";
 import Button from "./common/Button";
 import SecondaryText from "./common/SecondaryText";
-import Spacing from "./common/Spacing";
+import Select from "./common/Select";
 
 class Waiting extends Component {
   static propTypes = {
@@ -20,7 +20,55 @@ class Waiting extends Component {
     playersNeeded: PropTypes.number.isRequired,
     youAreModerator: PropTypes.bool.isRequired,
     yourName: PropTypes.string.isRequired,
-    onStartGame: PropTypes.func.isRequired
+    onStartGame: PropTypes.func.isRequired,
+    gameOptions: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        options: PropTypes.arrayOf(
+          PropTypes.shape({
+            label: PropTypes.string.isRequired,
+            value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+              .isRequired
+          })
+        ).isRequired,
+        defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+          .isRequired
+      })
+    )
+  };
+
+  constructor(props) {
+    super();
+
+    const { gameOptions } = props;
+
+    this.state = {
+      config: gameOptions
+        ? gameOptions.reduce(
+            (acc, opt) => ({
+              ...acc,
+              [opt.name]: opt.defaultValue
+            }),
+            {}
+          )
+        : {}
+    };
+  }
+
+  handleChange = ({ target }) => {
+    const { gameOptions } = this.props;
+    const { config } = this.state;
+    const newValue =
+      typeof gameOptions.find(opt => opt.name === target.name).defaultValue ===
+      "number"
+        ? parseInt(target.value, 10)
+        : target.value;
+
+    this.setState({ config: { ...config, [target.name]: newValue } });
+  };
+
+  handleStartGame = () => {
+    this.props.onStartGame(this.state.config);
   };
 
   render() {
@@ -30,9 +78,10 @@ class Waiting extends Component {
       others,
       playersNeeded,
       youAreModerator,
-      onStartGame,
-      moderatorName
+      moderatorName,
+      gameOptions
     } = this.props;
+    const { config } = this.state;
 
     return (
       <Fragment>
@@ -51,9 +100,27 @@ class Waiting extends Component {
         )}
         {youAreModerator &&
           playersNeeded === 0 && (
-            <Button spaceTop={3} onClick={onStartGame} center>
-              Start Game
-            </Button>
+            <Fragment>
+              {gameOptions &&
+                gameOptions.map(({ name, options }) => (
+                  <Select
+                    key={name}
+                    value={config[name]}
+                    onChange={this.handleChange}
+                    name={name}
+                    options={options}
+                    spaceTop={2}
+                    center
+                  />
+                ))}
+              <Button
+                spaceTop={gameOptions ? 2 : 3}
+                onClick={this.handleStartGame}
+                center
+              >
+                Start Game
+              </Button>
+            </Fragment>
           )}
         {!playersNeeded &&
           !youAreModerator && (

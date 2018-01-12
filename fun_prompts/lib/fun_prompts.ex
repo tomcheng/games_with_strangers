@@ -1,7 +1,7 @@
 defmodule FunPrompts do
   def minimum_players, do: 3
 
-  def initial_state(players) do
+  def initial_state(players, _ \\ %{}) do
     %{
       round: 1,
       stage: :writing,
