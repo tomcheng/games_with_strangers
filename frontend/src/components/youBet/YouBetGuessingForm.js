@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import TextInput from "../common/TextInput";
+import NumberInput from "../common/NumberInput";
 import Button from "../common/Button";
 
-const AnswerInput = styled(TextInput)`
+const AnswerInput = styled(NumberInput)`
   max-width: 280px;
 `;
 
@@ -41,7 +41,6 @@ class YouBetGuessingForm extends Component {
       <form onSubmit={this.handleSubmit}>
         <AnswerInput
           placeholder="Your Answer"
-          type="number"
           name="guess"
           value={guess}
           onChange={this.handleChange}
