@@ -21,9 +21,6 @@ defmodule GWS.Mixfile do
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
-    [
-      {:you_bet, path: "../you_bet"},
-      {:fun_prompts, path: "../fun_prompts"}
-    ]
+    []
   end
 end
