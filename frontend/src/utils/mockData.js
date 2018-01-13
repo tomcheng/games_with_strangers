@@ -13,7 +13,7 @@ const nonGameState = {
   roomCode: "FOOB",
   roomJoined: true,
   yourId: "1",
-  gameId: "you_bet",
+  gameId: "fun_prompts",
   playersNeeded: 3
 };
 export const waitingForPlayers = {

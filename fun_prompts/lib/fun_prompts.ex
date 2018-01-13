@@ -1,10 +1,11 @@
 defmodule FunPrompts do
   def minimum_players, do: 3
 
-  def initial_state(players, _ \\ %{}) do
+  def initial_state(players, %{"rounds" => rounds}) do
     %{
       round: 1,
       stage: :writing,
+      total_rounds: rounds,
       players: players,
       scores: Enum.reduce(players, %{}, fn {id, _}, acc -> Map.put(acc, id, 0) end),
       matchups: get_matchups(players),
@@ -93,12 +94,12 @@ defmodule FunPrompts do
     end
   end
   def play(%{stage: :voting} = state, _, "advance", _) do
-    %{current_matchup_id: current_matchup_id, players: players, round: round} = state
+    %{current_matchup_id: current_matchup_id, players: players, round: round, total_rounds: total_rounds} = state
 
     if current_matchup_id === Enum.count(players) do
       state
       |> update_scores
-      |> Map.put(:stage, (if round == 3, do: :end, else: :show_scores))
+      |> Map.put(:stage, (if round == total_rounds, do: :end, else: :show_scores))
     else
       state
       |> update_scores
@@ -116,9 +117,9 @@ defmodule FunPrompts do
     |> Map.put(:answers, get_empty_answers(Enum.count(players)))
   end
   def play(state, _, "restart", _) do
-    %{players: players} = state
+    %{players: players, total_rounds: total_rounds} = state
 
-    initial_state(players)
+    initial_state(players, %{"rounds" => total_rounds})
   end
 
   defp update_scores(state) do

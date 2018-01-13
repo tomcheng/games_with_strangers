@@ -7,13 +7,23 @@ const gamesList = [
     displayName: "Fun Prompts",
     description:
       "Write funny responses to prompts and vote on which responses you like best.",
+    options: [
+      {
+        name: "rounds",
+        options: [
+          { value: 2, label: "2 Rounds" },
+          { value: 3, label: "3 Rounds" },
+          { value: 4, label: "4 Rounds" }
+        ],
+        defaultValue: 3
+      }
+    ],
     component: FunPrompts
   },
   {
     id: "you_bet",
     displayName: "You Bet",
     description: "Answer general trivia questions and wager on guesses.",
-    component: YouBet,
     options: [
       {
         name: "rounds",
@@ -24,7 +34,8 @@ const gamesList = [
         ],
         defaultValue: 7
       }
-    ]
+    ],
+    component: YouBet
   }
 ];
 

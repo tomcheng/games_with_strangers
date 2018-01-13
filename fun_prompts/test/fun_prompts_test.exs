@@ -20,7 +20,7 @@ defmodule FunPromptsTest do
   test "gets initial state", %{players: players} do
     state =
       players
-      |> FunPrompts.initial_state
+      |> FunPrompts.initial_state(%{"rounds" => 3})
       |> FunPrompts.sanitize_state("1")
 
     assert state[:round] == 1
@@ -33,7 +33,7 @@ defmodule FunPromptsTest do
   test "removes prompts as you answer", %{players: players} do
     state =
       players
-      |> FunPrompts.initial_state
+      |> FunPrompts.initial_state(%{"rounds" => 3})
       |> FunPrompts.play("1", "answer", %{"id" => 2, "answer" => "player 1, answer 2"})
       |> FunPrompts.sanitize_state("1")
 
@@ -43,7 +43,7 @@ defmodule FunPromptsTest do
   test "shows players who haven't answered", %{players: players} do
     state =
       players
-      |> FunPrompts.initial_state
+      |> FunPrompts.initial_state(%{"rounds" => 3})
       |> FunPrompts.play("1", "answer", %{"id" => 1, "answer" => "player 1, answer 1"})
       |> FunPrompts.play("1", "answer", %{"id" => 2, "answer" => "player 1, answer 2"})
     your_state = FunPrompts.sanitize_state(state, "1")
@@ -56,7 +56,7 @@ defmodule FunPromptsTest do
   test "handles answering a prompt", %{players: players} do
     state =
       players
-      |> FunPrompts.initial_state
+      |> FunPrompts.initial_state(%{"rounds" => 3})
       |> everyone_answer
       |> FunPrompts.sanitize_state("1")
 
@@ -78,7 +78,7 @@ defmodule FunPromptsTest do
   test "handles a vote", %{players: players} do
     state =
       players
-      |> FunPrompts.initial_state
+      |> FunPrompts.initial_state(%{"rounds" => 3})
       |> everyone_answer
       |> FunPrompts.play("1", "vote", %{"player_id" => "2"})
 
@@ -104,7 +104,7 @@ defmodule FunPromptsTest do
   test "cannot vote twice", %{players: players} do
     state =
       players
-      |> FunPrompts.initial_state
+      |> FunPrompts.initial_state(%{"rounds" => 3})
       |> everyone_answer
       |> FunPrompts.play("2", "vote", %{"player_id" => "1"})
       |> FunPrompts.play("2", "vote", %{"player_id" => "1"})
@@ -122,7 +122,7 @@ defmodule FunPromptsTest do
   test "goes to next vote", %{players: players} do
     state =
       players
-      |> FunPrompts.initial_state
+      |> FunPrompts.initial_state(%{"rounds" => 3})
       |> everyone_answer
       |> FunPrompts.play("2", "vote", %{"player_id" => "1"})
       |> FunPrompts.play("1", "advance", nil)
@@ -146,7 +146,7 @@ defmodule FunPromptsTest do
   test "shows scores after all votes are in", %{players: players} do
     state =
       players
-      |> FunPrompts.initial_state
+      |> FunPrompts.initial_state(%{"rounds" => 3})
       |> everyone_answer
       |> everyone_vote
       |> FunPrompts.sanitize_state("1")
@@ -163,7 +163,7 @@ defmodule FunPromptsTest do
   test "goes to next round after advancing from showing scores", %{players: players} do
     state =
       players
-      |> FunPrompts.initial_state
+      |> FunPrompts.initial_state(%{"rounds" => 3})
       |> everyone_answer
       |> everyone_vote
       |> FunPrompts.play("1", "advance", nil)
@@ -179,7 +179,7 @@ defmodule FunPromptsTest do
   test "scores increase in later rounds", %{players: players} do
     state =
       players
-      |> FunPrompts.initial_state
+      |> FunPrompts.initial_state(%{"rounds" => 3})
       |> everyone_answer
       |> everyone_vote
       |> FunPrompts.play("1", "advance", nil)
@@ -199,7 +199,7 @@ defmodule FunPromptsTest do
   test "ends game after 3 rounds", %{players: players} do
     state =
       players
-      |> FunPrompts.initial_state
+      |> FunPrompts.initial_state(%{"rounds" => 3})
       |> everyone_answer
       |> everyone_vote
       |> FunPrompts.play("1", "advance", nil)
@@ -214,10 +214,25 @@ defmodule FunPromptsTest do
     refute is_nil(state[:scores])
   end
 
+  test "sets number of rounds", %{players: players} do
+    state =
+      players
+      |> FunPrompts.initial_state(%{"rounds" => 2})
+      |> everyone_answer
+      |> everyone_vote
+      |> FunPrompts.play("1", "advance", nil)
+      |> everyone_answer
+      |> everyone_vote
+      |> FunPrompts.sanitize_state("1")
+
+    assert state[:stage] == :end
+    refute is_nil(state[:scores])
+  end
+
   test "restarts game", %{players: players} do
     state =
       players
-      |> FunPrompts.initial_state
+      |> FunPrompts.initial_state(%{"rounds" => 3})
       |> everyone_answer
       |> everyone_vote
       |> FunPrompts.play("1", "advance", nil)
