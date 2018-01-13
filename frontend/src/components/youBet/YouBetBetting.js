@@ -56,7 +56,8 @@ class YouBetBetting extends Component {
     awaitingBet: customTypes.players.isRequired,
     betOptions: PropTypes.arrayOf(
       PropTypes.shape({
-        guess: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+        guess: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+          .isRequired,
         odds: PropTypes.number.isRequired,
         bets: PropTypes.number.isRequired,
         players: customTypes.players
@@ -180,7 +181,7 @@ class YouBetBetting extends Component {
     const newChip = { ...chips.find(c => c.id === chipId), guess, position };
     const newChips = chips.filter(chip => chip.id !== chipId).concat(newChip);
 
-    this.setState({ chips: newChips });
+    this.setState({ chips: newChips, betsFinalized: false });
 
     this.cleanUpChips({
       callback: () => {
@@ -201,6 +202,7 @@ class YouBetBetting extends Component {
     const { chips } = this.state;
 
     onFinalizeBets(gatherChips(chips));
+    this.setState({ betsFinalized: true });
   };
 
   moveChipBack = chipId => {
@@ -231,7 +233,7 @@ class YouBetBetting extends Component {
 
   render() {
     const { betOptions, yourBets, awaitingBet } = this.props;
-    const { chips } = this.state;
+    const { chips, betsFinalized } = this.state;
     const unplayedChips = chips.filter(({ guess }) => !guess);
     const baseChipsPlayed = chips.every(({ guess, base }) => !base || !!guess);
 
@@ -268,7 +270,7 @@ class YouBetBetting extends Component {
         ) : (
           <Button
             onClick={this.handleClickFinalize}
-            disabled={!baseChipsPlayed}
+            disabled={!baseChipsPlayed || betsFinalized}
             spaceTop={3}
             center
           >
