@@ -74,7 +74,7 @@ class FunPromptsVoting extends Component {
   isTie = (props = this.props) => {
     const { awaitingVote, choices } = props;
     return (
-      awaitingVote.length === 0 && choices[0].length === choices[1].votes.length
+      awaitingVote.length === 0 && choices[0].votes.length === choices[1].votes.length
     );
   };
 
