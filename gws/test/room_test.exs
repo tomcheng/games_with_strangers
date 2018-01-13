@@ -53,7 +53,7 @@ defmodule GWS.RoomTest do
   end
 
   test "allows a player to rejoin a room after game started", %{room: room} do
-    result =
+    {:ok, state} =
       room
       |> GWS.Room.set_game("you_bet")
       |> GWS.Room.add_player("player-id-1", "Harold", 1)
@@ -61,8 +61,9 @@ defmodule GWS.RoomTest do
       |> GWS.Room.add_player("player-id-3", "Andy", 3)
       |> GWS.Room.start_game(%{"rounds" => 7})
       |> GWS.Room.add_player("player-id-3", "Andy", 4)
+      |> GWS.Room.get_state(4)
 
-    assert is_pid(result)
+    assert state[:you] == %{id: "player-id-3", name: "Andy", is_moderator: false}
   end
 
   test "makes play", %{room: room} do

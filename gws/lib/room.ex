@@ -19,22 +19,19 @@ defmodule GWS.Room do
   defp get_module(game), do: String.to_atom("Elixir." <> Macro.camelize(game))
 
   def add_player(room, player_id, name, channel) do
-    case Agent.get(room, &Map.get(&1, :game_state)) do
-      nil ->
-        Agent.update(room, fn state ->
-          state
-          |> Map.update!(:players, fn ps ->
-            Map.put(ps, player_id, %{ id: player_id, name: name, channel: channel })
-          end)
-          |> update_moderator
+    game_state = Agent.get(room, &Map.get(&1, :game_state))
+
+    if game_state && !game_state[:players][player_id] do
+      {:error, "Game already started"}
+    else
+      Agent.update(room, fn state ->
+        state
+        |> Map.update!(:players, fn ps ->
+          Map.put(ps, player_id, %{ id: player_id, name: name, channel: channel })
         end)
-        room
-      game_state ->
-        if game_state[:players][player_id] do
-          room
-        else
-          {:error, "Game already started"}
-        end
+        |> update_moderator
+      end)
+      room
     end
   end
 
