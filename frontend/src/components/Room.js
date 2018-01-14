@@ -27,8 +27,6 @@ const Room = ({
   const game = find(gamesList, g => g.id === gameId);
   const youAreModerator = you.isModerator;
   const moderator = youAreModerator ? you : others.find(p => p.isModerator);
-  const playerColors = getPlayerColors(gameState.players);
-  playerColors[you.id] = "black";
 
   if (!gameState) {
     return (
@@ -45,13 +43,10 @@ const Room = ({
     );
   }
 
-  const { stage, scores } = gameState;
-  const GameComponent = game.component;
-
-  if (stage === "end") {
+  if (gameState.stage === "end") {
     return (
       <EndStage
-        scores={scores}
+        scores={gameState.scores}
         youAreModerator={youAreModerator}
         moderator={moderator}
         onRestartGame={() => {
@@ -60,6 +55,10 @@ const Room = ({
       />
     );
   }
+
+  const playerColors = getPlayerColors(gameState.players);
+  playerColors[you.id] = "black";
+  const GameComponent = game.component;
 
   return (
     <GameComponent
