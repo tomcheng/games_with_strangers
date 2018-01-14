@@ -17,7 +17,8 @@ defmodule FunPrompts do
     state
     |> add_prompts_for_player(player_id)
     |> add_awaiting_answer(player_id)
-    |> Map.take([:awaiting_answer, :prompts, :round, :stage])
+    |> format_players
+    |> Map.take([:awaiting_answer, :players, :prompts, :round, :stage])
   end
   def sanitize_state(%{stage: :voting} = state, player_id) do
     %{current_matchup_id: matchup_id, matchups: matchups, answers: answers, players: players, votes: votes} = state
@@ -36,7 +37,8 @@ defmodule FunPrompts do
     end)
 
     state
-    |> Map.take([:round, :stage])
+    |> format_players
+    |> Map.take([:players, :round, :stage])
     |> Map.put(:prompt, prompt)
     |> Map.put(:choices, choices)
     |> Map.put(
@@ -59,7 +61,8 @@ defmodule FunPrompts do
       |> Enum.sort_by(fn s -> s[:player][:name] end)
       |> Enum.sort_by(fn s -> -s[:score] end)
     end)
-    |> Map.take([:round, :scores, :stage])
+    |> format_players
+    |> Map.take([:players, :round, :scores, :stage])
   end
   def sanitize_state(%{stage: :end} = state, _) do
     %{players: players} = state
@@ -71,7 +74,8 @@ defmodule FunPrompts do
       |> Enum.sort_by(fn s -> s[:player][:name] end)
       |> Enum.sort_by(fn s -> -s[:score] end)
     end)
-    |> Map.take([:round, :scores, :stage])
+    |> format_players
+    |> Map.take([:players, :round, :scores, :stage])
   end
 
   def play(state, player_id, "answer", payload) do
@@ -120,6 +124,15 @@ defmodule FunPrompts do
     %{players: players, total_rounds: total_rounds} = state
 
     initial_state(players, %{"rounds" => total_rounds})
+  end
+
+  defp format_players(state) do
+    state
+    |> Map.update!(:players, fn ps ->
+      ps
+      |> Enum.sort_by(fn {_, player} -> player[:name] end)
+      |> Enum.map(fn {_, player} -> player end)
+    end)
   end
 
   defp update_scores(state) do

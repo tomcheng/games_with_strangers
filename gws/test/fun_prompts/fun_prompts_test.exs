@@ -25,6 +25,11 @@ defmodule FunPromptsTest do
 
     assert state[:round] == 1
     assert state[:stage] == :writing
+    assert state[:players] == [
+      %{id: "2", name: "bar"},
+      %{id: "3", name: "baz"},
+      %{id: "1", name: "foo"}
+    ]
     assert Enum.count(state[:prompts]) == 2
     assert is_number(List.first(state[:prompts])[:id])
     assert is_binary(List.first(state[:prompts])[:prompt])
@@ -62,6 +67,11 @@ defmodule FunPromptsTest do
 
     assert state[:round] == 1
     assert state[:stage] == :voting
+    assert state[:players] == [
+      %{id: "2", name: "bar"},
+      %{id: "3", name: "baz"},
+      %{id: "1", name: "foo"}
+    ]
     assert is_binary(state[:prompt])
     assert state[:you_answered] == false
     assert state[:you_voted] == false
@@ -153,6 +163,11 @@ defmodule FunPromptsTest do
 
     assert state[:round] == 1
     assert state[:stage] == :show_scores
+    assert state[:players] == [
+      %{id: "2", name: "bar"},
+      %{id: "3", name: "baz"},
+      %{id: "1", name: "foo"}
+    ]
     assert state[:scores] == [
       %{player: %{id: "1", name: "foo"}, score: 200},
       %{player: %{id: "2", name: "bar"}, score: 100},
@@ -211,6 +226,11 @@ defmodule FunPromptsTest do
       |> FunPrompts.sanitize_state("1")
 
     assert state[:stage] == :end
+    assert state[:players] == [
+      %{id: "2", name: "bar"},
+      %{id: "3", name: "baz"},
+      %{id: "1", name: "foo"}
+    ]
     refute is_nil(state[:scores])
   end
 
