@@ -1,9 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
 import find from "lodash/find";
+import sortBy from "lodash/sortBy";
 import gamesList from "../gamesList";
 import EndStage from "./common/EndStage";
 import Waiting from "./Waiting";
+
+const COLORS = ["red", "white", "blue", "orange", "purple", "yellow", "green"];
+
+const getPlayerColors = players =>
+  sortBy(players, p => p.id).reduce(
+    (acc, p, index) => ({ ...acc, [p.id]: COLORS[index % COLORS.length] }),
+    {}
+  );
 
 const Room = ({
   gameId,
@@ -18,6 +27,7 @@ const Room = ({
   const game = find(gamesList, g => g.id === gameId);
   const youAreModerator = you.isModerator;
   const moderator = youAreModerator ? you : others.find(p => p.isModerator);
+  const playerColors = getPlayerColors(others.concat(you));
 
   if (!gameState) {
     return (
@@ -57,6 +67,7 @@ const Room = ({
       moderator={moderator}
       onPlay={onPlay}
       onSetFlashMessage={onSetFlashMessage}
+      playerColors={playerColors}
     />
   );
 };

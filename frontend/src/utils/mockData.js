@@ -35,6 +35,7 @@ const defaultYouBetGameState = {
 export const youBet = {};
 youBet.guessing = {
   ...nonGameState,
+  gameId: "you_bet",
   gameState: {
     ...defaultYouBetGameState,
     stage: "guessing",
@@ -51,16 +52,25 @@ youBet.guessed = {
 };
 youBet.betting = {
   ...nonGameState,
+  gameId: "you_bet",
   gameState: {
     ...defaultYouBetGameState,
     stage: "betting",
     final_round: true,
     bet_options: [
-      { guess: "less", odds: 5, bets: 0 },
-      { guess: 15, odds: 4, players: [players[0], players[1]], bets: 0 },
-      { guess: 20, odds: 3, players: [players[2]], bets: 0 },
-      { guess: 25, odds: 3, players: [players[3]], bets: 200 },
-      { guess: 4000000, odds: 4, players: [players[4]], bets: 0 }
+      { guess: "less", odds: 5, bets: [] },
+      {
+        guess: 15,
+        odds: 4,
+        players: [players[0], players[1]],
+        bets: [
+          { player: players[0], amount: 100 },
+          { player: players[1], amount: 500 }
+        ]
+      },
+      { guess: 20, odds: 3, players: [players[2]], bets: [] },
+      { guess: 25, odds: 3, players: [players[3]], bets: [] },
+      { guess: 4000000, odds: 4, players: [players[4]], bets: [] }
     ],
     your_bets: null,
     awaiting_bet: [players[2], players[3]],
@@ -77,6 +87,7 @@ youBet.betted = {
 };
 youBet.reveal = {
   ...nonGameState,
+  gameId: "you_bet",
   gameState: {
     ...defaultYouBetGameState,
     stage: "reveal",
@@ -93,6 +104,7 @@ youBet.reveal = {
 };
 youBet.end = {
   ...nonGameState,
+  gameId: "you_bet",
   gameState: {
     stage: "end",
     scores: players.map(player => ({ player, score: 1500 }))

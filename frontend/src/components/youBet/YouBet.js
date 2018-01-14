@@ -14,7 +14,8 @@ const YouBet = ({
   youAreModerator,
   onPlay,
   onSetFlashMessage,
-  moderator
+  moderator,
+  playerColors
 }) => {
   const {
     answer,
@@ -60,6 +61,7 @@ const YouBet = ({
           betOptions={betOptions}
           yourBets={yourBets}
           yourScore={yourScore}
+          playerColors={playerColors}
           onBet={payload => {
             onPlay({ type: "bet", payload });
           }}
@@ -102,6 +104,7 @@ YouBet.propTypes = {
     your_guess: PropTypes.number,
     your_score: PropTypes.number
   }).isRequired,
+  playerColors: PropTypes.object.isRequired,
   youAreModerator: PropTypes.bool.isRequired,
   onPlay: PropTypes.func.isRequired,
   onSetFlashMessage: PropTypes.func.isRequired,

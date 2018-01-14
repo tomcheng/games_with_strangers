@@ -59,10 +59,16 @@ class YouBetBetting extends Component {
         guess: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
           .isRequired,
         odds: PropTypes.number.isRequired,
-        bets: PropTypes.number.isRequired,
+        bets: PropTypes.arrayOf(
+          PropTypes.shape({
+            player: customTypes.player.isRequired,
+            amount: PropTypes.number.isRequired
+          })
+        ).isRequired,
         players: customTypes.players
       })
     ).isRequired,
+    playerColors: PropTypes.object.isRequired,
     yourBet: PropTypes.arrayOf(
       PropTypes.shape({
         guess: PropTypes.number.isRequired
@@ -232,7 +238,7 @@ class YouBetBetting extends Component {
   };
 
   render() {
-    const { betOptions, yourBets, awaitingBet } = this.props;
+    const { betOptions, yourBets, awaitingBet, playerColors } = this.props;
     const { chips, betsFinalized } = this.state;
     const unplayedChips = chips.filter(({ guess }) => !guess);
     const baseChipsPlayed = chips.every(({ guess, base }) => !base || !!guess);
@@ -253,7 +259,8 @@ class YouBetBetting extends Component {
             guess={guess}
             odds={odds}
             players={players}
-            totalBets={bets}
+            playerColors={playerColors}
+            bets={bets}
             onBet={this.handleBet}
             onCancelBet={this.handleCancelBet}
           />

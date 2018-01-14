@@ -3,9 +3,11 @@ import PropTypes from "prop-types";
 import * as customTypes from "../../utils/customTypes";
 import styled from "styled-components";
 import { DropTarget } from "react-dnd";
-import { makeList, addCommas } from "../../utils/strings";
+import { addCommas } from "../../utils/strings";
 import SecondaryText from "../common/SecondaryText";
+import Heading from "../common/Heading";
 import Card from "../common/Card";
+import Dot from "../common/Dot";
 import DraggableChip from "./DraggableChip";
 
 const getTranslationStyle = ({ x, y }) => {
@@ -17,6 +19,20 @@ const Container = styled(Card)`
   opacity: ${({ committed, considering }) =>
     committed ? "1" : considering ? "0.7" : "0.4"};
   transition: opacity 0.15s ease-in-out;
+  display: flex;
+  align-items: stretch;
+`;
+
+const LeftSide = styled.div`
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const Divider = styled.div`
+  border-left: 1px solid rgba(255,255,255,0.5);
+  margin: 0 12px;
 `;
 
 const Odds = styled(SecondaryText)`
@@ -26,22 +42,16 @@ const Odds = styled(SecondaryText)`
   letter-spacing: 2px;
   font-size: 12px;
   line-height: 16px;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 `;
 
-const Number = styled.h1`
-  margin-bottom: 4px;
-  text-align: center;
+const Entry = styled.span`
+  margin-right: 10px;
 `;
 
 const StyledChip = styled(DraggableChip)`
   position: absolute;
   z-index: 1;
-`;
-
-const Footer = styled.div`
-  display: flex;
-  justify-content: space-between;
 `;
 
 class Answer extends Component {
@@ -62,7 +72,12 @@ class Answer extends Component {
     isOver: PropTypes.bool.isRequired,
     nothingSelected: PropTypes.bool.isRequired,
     odds: PropTypes.number.isRequired,
-    totalBets: PropTypes.number.isRequired,
+    bets: PropTypes.arrayOf(
+      PropTypes.shape({
+        player: customTypes.player.isRequired,
+        amount: PropTypes.number.isRequired
+      })
+    ).isRequired,
     onBet: PropTypes.func.isRequired,
     onCancelBet: PropTypes.func.isRequired,
     players: customTypes.players,
@@ -81,7 +96,8 @@ class Answer extends Component {
       canDrop,
       chips,
       onCancelBet,
-      totalBets,
+      bets,
+      playerColors,
       innerRef
     } = this.props;
     const selected = chips.length > 0;
@@ -104,17 +120,33 @@ class Answer extends Component {
           key={guess}
           committed={selected || (!canDrop && nothingSelected)}
           considering={canDrop && isOver}
+          spaceBottom={0.5}
         >
-          <Odds>Pays {odds} to 1</Odds>
-          <Number>{guess === "less" ? "lower" : addCommas(guess)}</Number>
-          <Footer>
-            <SecondaryText>${totalBets} bet</SecondaryText>
+          <LeftSide>
+            <Odds>Pays {odds} to 1</Odds>
+            <Heading center level={3} spaceBottom={0}>
+              {guess === "less" ? "lower" : addCommas(guess)}
+            </Heading>
+          </LeftSide>
+          <Divider />
+          <div>
             {players && (
               <SecondaryText>
-                {makeList(players.map(p => p.name))}
+                {players.map(p => (
+                  <Entry key={p.id}>
+                    <Dot color={playerColors[p.id]} /> {p.name}
+                  </Entry>
+                ))}
               </SecondaryText>
             )}
-          </Footer>
+            <SecondaryText>
+              {bets.map(({ player, amount }) => (
+                <Entry key={player.id}>
+                  <Dot color={playerColors[player.id]} /> ${amount}
+                </Entry>
+              ))}
+            </SecondaryText>
+          </div>
         </Container>
       </div>
     );
