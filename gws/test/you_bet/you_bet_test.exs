@@ -23,6 +23,11 @@ defmodule YouBetTest do
 
     assert state[:round] == 1
     assert state[:stage] == :guessing
+    assert state[:players] == [
+      %{id: "2", name: "bar"},
+      %{id: "3", name: "baz"},
+      %{id: "1", name: "foo"}
+    ]
     assert String.match?(state[:question], ~r/.*\?$/)
     assert state[:answer] == nil
     assert state[:your_guess] == nil
@@ -86,14 +91,19 @@ defmodule YouBetTest do
 
     assert state[:round] == 1
     assert state[:stage] == :betting
+    assert state[:players] == [
+      %{id: "2", name: "bar"},
+      %{id: "3", name: "baz"},
+      %{id: "1", name: "foo"}
+    ]
     assert String.match?(state[:question], ~r/.*\?$/)
     assert state[:your_guess] == nil
     assert state[:your_bets] == nil
     assert state[:bet_options] == [
-      %{guess: "less", odds: 4, bets: 0},
-      %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}], bets: 0},
-      %{guess: 20, odds: 2, players: [%{id: "2", name: "bar"}], bets: 0},
-      %{guess: 30, odds: 3, players: [%{id: "1", name: "foo"}], bets: 0}
+      %{guess: "less", odds: 4, bets: []},
+      %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}], bets: []},
+      %{guess: 20, odds: 2, players: [%{id: "2", name: "bar"}], bets: []},
+      %{guess: 30, odds: 3, players: [%{id: "1", name: "foo"}], bets: []}
     ]
     assert state[:scores] == [
       %{player: %{id: "2", name: "bar"}, score: 200},
@@ -113,9 +123,9 @@ defmodule YouBetTest do
       |> YouBet.sanitize_state("1")
 
     assert state[:bet_options] == [
-      %{guess: "less", odds: 4, bets: 0},
-      %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}], bets: 0},
-      %{guess: 20, odds: 3, players: [%{id: "2", name: "bar"}, %{id: "1", name: "foo"}], bets: 0},
+      %{guess: "less", odds: 4, bets: []},
+      %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}], bets: []},
+      %{guess: 20, odds: 3, players: [%{id: "2", name: "bar"}, %{id: "1", name: "foo"}], bets: []},
     ]
   end
 
@@ -133,10 +143,10 @@ defmodule YouBetTest do
       |> YouBet.sanitize_state("1")
 
     assert state[:bet_options] == [
-      %{guess: "less", odds: 4, bets: 0},
-      %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}], bets: 0},
-      %{guess: 20, odds: 2, players: [%{id: "2", name: "bar"}], bets: 100},
-      %{guess: 30, odds: 3, players: [%{id: "1", name: "foo"}], bets: 100}
+      %{guess: "less", odds: 4, bets: []},
+      %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}], bets: []},
+      %{guess: 20, odds: 2, players: [%{id: "2", name: "bar"}], bets: [%{player: %{id: "1", name: "foo"}, amount: 100}]},
+      %{guess: 30, odds: 3, players: [%{id: "1", name: "foo"}], bets: [%{player: %{id: "1", name: "foo"}, amount: 100}]}
     ]
   end
 
@@ -154,10 +164,10 @@ defmodule YouBetTest do
       |> YouBet.sanitize_state("1")
 
     assert state[:bet_options] == [
-      %{guess: "less", odds: 4, bets: 100},
-      %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}], bets: 0},
-      %{guess: 20, odds: 2, players: [%{id: "2", name: "bar"}], bets: 0},
-      %{guess: 30, odds: 3, players: [%{id: "1", name: "foo"}], bets: 100}
+      %{guess: "less", odds: 4, bets: [%{player: %{id: "1", name: "foo"}, amount: 100}]},
+      %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}], bets: []},
+      %{guess: 20, odds: 2, players: [%{id: "2", name: "bar"}], bets: []},
+      %{guess: 30, odds: 3, players: [%{id: "1", name: "foo"}], bets: [%{player: %{id: "1", name: "foo"}, amount: 100}]}
     ]
   end
 
@@ -208,6 +218,11 @@ defmodule YouBetTest do
 
     assert state[:round] == 1
     assert state[:stage] == :reveal
+    assert state[:players] == [
+      %{id: "2", name: "bar"},
+      %{id: "3", name: "baz"},
+      %{id: "1", name: "foo"}
+    ]
     assert String.match?(state[:question], ~r/.*\?$/)
     assert is_integer(state[:answer])
     assert state[:closest_guess] == 1
@@ -384,6 +399,11 @@ defmodule YouBetTest do
 
     assert state[:round] == nil
     assert state[:stage] == :end
+    assert state[:players] == [
+      %{id: "2", name: "bar"},
+      %{id: "3", name: "baz"},
+      %{id: "1", name: "foo"}
+    ]
   end
 
   test "handles missing player", %{players: players} do

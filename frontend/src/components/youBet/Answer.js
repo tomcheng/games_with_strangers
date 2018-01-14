@@ -21,10 +21,17 @@ const Container = styled(Card)`
   transition: opacity 0.15s ease-in-out;
   display: flex;
   align-items: stretch;
+  min-height: 80px;
 `;
 
 const LeftSide = styled.div`
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
+const RightSide = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -129,7 +136,7 @@ class Answer extends Component {
             </Heading>
           </LeftSide>
           <Divider />
-          <div>
+          <RightSide>
             {players && (
               <SecondaryText>
                 {players.map(p => (
@@ -146,7 +153,7 @@ class Answer extends Component {
                 </Entry>
               ))}
             </SecondaryText>
-          </div>
+          </RightSide>
         </Container>
       </div>
     );

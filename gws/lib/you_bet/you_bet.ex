@@ -30,7 +30,8 @@ defmodule YouBet do
     |> Map.put(:awaiting_guess, get_awaiting(guesses, players, player_id))
     |> format_scores
     |> add_final_round
-    |> Map.take([:awaiting_guess, :final_round, :question, :round, :scores, :stage, :your_guess])
+    |> format_players
+    |> Map.take([:awaiting_guess, :final_round, :players, :question, :round, :scores, :stage, :your_guess])
   end
   def sanitize_state(%{stage: :betting} = state, player_id) do
     %{players: players, final_bets: final_bets, scores: scores} = state
@@ -42,7 +43,8 @@ defmodule YouBet do
     |> add_bets_to_bet_options
     |> format_scores
     |> add_final_round
-    |> Map.take([:awaiting_bet, :bet_options, :final_round, :question, :round, :scores, :stage, :your_bets, :your_score])
+    |> format_players
+    |> Map.take([:awaiting_bet, :bet_options, :final_round, :players, :question, :round, :scores, :stage, :your_bets, :your_score])
   end
   def sanitize_state(%{stage: :reveal} = state, _) do
     state
@@ -50,31 +52,33 @@ defmodule YouBet do
     |> format_payouts
     |> format_scores
     |> add_final_round
-    |> Map.take([:answer, :closest_guess, :final_round, :payouts, :question, :round, :scores, :stage])
+    |> format_players
+    |> Map.take([:answer, :closest_guess, :final_round, :payouts, :players, :question, :round, :scores, :stage])
   end
   def sanitize_state(%{stage: :end} = state, _) do
     state
     |> format_scores
-    |> Map.take([:stage, :scores])
+    |> format_players
+    |> Map.take([:players, :stage, :scores])
   end
 
   defp add_bets_to_bet_options(state) do
-    %{bets: bets, bet_options: bet_options} = state
+    %{bets: bets, bet_options: bet_options, players: players} = state
 
     new_bet_options = Enum.map(bet_options, fn %{guess: guess} = option ->
       Map.put(
         option,
         :bets,
         bets
-        |> Enum.flat_map(fn {_, bs} ->
+        |> Enum.flat_map(fn {player_id, bs} ->
           if is_nil(bs) do
             []
           else
-            Enum.map(bs, fn b -> %{guess: b[:guess], total: b[:base_wager] + b[:extra_wager]} end)
+            Enum.map(bs, fn b -> %{guess: b[:guess], amount: b[:base_wager] + b[:extra_wager], player: players[player_id]} end)
           end
         end)
         |> Enum.filter(fn b -> b[:guess] == guess end)
-        |> Enum.reduce(0, fn b, sum -> sum + b[:total] end)
+        |> Enum.map(&Map.drop(&1, [:guess]))
       )
     end)
 
@@ -120,6 +124,15 @@ defmodule YouBet do
       |> Enum.sort_by(fn %{player: %{name: name}} -> name end)
       |> Enum.sort_by(fn %{score: score} -> -score end)
     )
+  end
+
+  defp format_players(state) do
+    state
+    |> Map.update!(:players, fn ps ->
+      ps
+      |> Enum.sort_by(fn {_, player} -> player[:name] end)
+      |> Enum.map(fn {_, player} -> player end)
+    end)
   end
 
   defp get_awaiting(actions, players, player_id) do

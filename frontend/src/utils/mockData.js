@@ -29,7 +29,8 @@ const defaultYouBetGameState = {
   others,
   round: 2,
   question: "What percentage of US house holds own a dog?",
-  scores: players.map(player => ({ player, score: 1500 }))
+  scores: players.map(player => ({ player, score: 1500 })),
+  players
 };
 
 export const youBet = {};

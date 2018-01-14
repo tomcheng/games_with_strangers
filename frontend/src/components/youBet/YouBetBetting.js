@@ -20,7 +20,7 @@ const UnplayedChips = styled.div`
   position: fixed;
   z-index: 1;
   bottom: 8px;
-  right: -24px;
+  right: -20px;
 `;
 
 const UnplayedDraggableChip = styled(DraggableChip)`
