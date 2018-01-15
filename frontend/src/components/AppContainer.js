@@ -68,6 +68,10 @@ class AppContainer extends Component {
     this.channel.push("start_game", options);
   };
 
+  handleRestartGame = () => {
+    this.channel.push("restart_game");
+  };
+
   handlePlay = args => {
     this.channel.push("make_play", { ...args, player_id: this.state.yourId });
   };
@@ -153,6 +157,7 @@ class AppContainer extends Component {
           "playersInGame",
           "flashMessage"
         ])}
+        onRestartGame={this.handleRestartGame}
         onStartGame={this.handleStartGame}
         onPlay={this.handlePlay}
         onCreateRoom={this.handleCreateRoom}

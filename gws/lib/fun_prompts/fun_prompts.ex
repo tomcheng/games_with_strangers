@@ -116,11 +116,6 @@ defmodule FunPrompts do
     |> Map.put(:matchups, get_matchups(players))
     |> Map.put(:answers, get_empty_answers(Enum.count(players)))
   end
-  def play(state, _, "restart", _) do
-    %{players: players, total_rounds: total_rounds} = state
-
-    initial_state(players, %{"rounds" => total_rounds})
-  end
 
   defp update_scores(state) do
     %{votes: votes, round: round} = state

@@ -45,6 +45,21 @@ defmodule GWS.RoomTest do
     ]
   end
 
+  test "restarts game", %{room: room} do
+    {:ok, state} =
+      room
+      |> GWS.Room.set_game("you_bet")
+      |> GWS.Room.add_player("player-id-1", "Harold", 1)
+      |> GWS.Room.add_player("player-id-2", "Bob", 2)
+      |> GWS.Room.add_player("player-id-3", "Andy", 3)
+      |> GWS.Room.start_game(%{"rounds" => 7})
+      |> GWS.Room.restart_game
+      |> GWS.Room.get_state(1)
+
+    assert state[:game_state] == nil
+    assert state[:players_in_game] == nil
+  end
+
   test "doesn't allow other players to join after game started", %{room: room} do
     result =
       room

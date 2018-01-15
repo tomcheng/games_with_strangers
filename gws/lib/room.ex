@@ -135,6 +135,15 @@ defmodule GWS.Room do
     room
   end
 
+  def restart_game(room) do
+    Agent.update(room, fn state ->
+      state
+      |> Map.put(:game_state, nil)
+      |> Map.put(:players_in_game, nil)
+    end)
+    room
+  end
+
   def destroy_room(room) do
     Agent.stop(room)
   end

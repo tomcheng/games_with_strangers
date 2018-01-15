@@ -28,6 +28,7 @@ const App = ({
   roomCode,
   roomJoined,
   you,
+  onRestartGame,
   onStartGame,
   onPlay,
   onCreateRoom,
@@ -54,6 +55,7 @@ const App = ({
           playersNeeded={playersNeeded}
           playersInGame={playersInGame}
           you={you}
+          onRestartGame={onRestartGame}
           onStartGame={onStartGame}
           onPlay={onPlay}
           onSetFlashMessage={onSetFlashMessage}

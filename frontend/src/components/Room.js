@@ -31,6 +31,7 @@ const Room = ({
   you,
   others,
   onStartGame,
+  onRestartGame,
   onPlay,
   onSetFlashMessage
 }) => {
@@ -59,9 +60,7 @@ const Room = ({
         scores={gameState.scores}
         youAreModerator={youAreModerator}
         moderator={moderator}
-        onRestartGame={() => {
-          onPlay({ type: "restart" });
-        }}
+        onRestartGame={onRestartGame}
       />
     );
   }
@@ -94,6 +93,7 @@ Room.propTypes = {
     id: PropTypes.string.isRequired,
     isModerator: PropTypes.bool.isRequired
   }).isRequired,
+  onRestartGame: PropTypes.func.isRequired,
   onStartGame: PropTypes.func.isRequired,
   gameState: PropTypes.shape({
     stage: PropTypes.string.isRequired,

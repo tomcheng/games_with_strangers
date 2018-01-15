@@ -229,25 +229,6 @@ defmodule FunPromptsTest do
     refute is_nil(state[:scores])
   end
 
-  test "restarts game", %{players: players} do
-    state =
-      players
-      |> FunPrompts.initial_state(%{"rounds" => 3})
-      |> everyone_answer
-      |> everyone_vote
-      |> FunPrompts.play("1", "advance", nil)
-      |> everyone_answer
-      |> everyone_vote
-      |> FunPrompts.play("1", "advance", nil)
-      |> everyone_answer
-      |> everyone_vote
-      |> FunPrompts.play("1", "restart", nil)
-      |> FunPrompts.sanitize_state("1")
-
-    assert state[:round] == 1
-    assert state[:stage] == :writing
-  end
-
   defp everyone_answer(state) do
     state
     |> FunPrompts.play("1", "answer", %{"id" => 1, "answer" => "player 1, answer 1"})

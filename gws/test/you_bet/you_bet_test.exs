@@ -357,22 +357,6 @@ defmodule YouBetTest do
     assert Enum.count(state[:scores]) == 3
   end
 
-  test "restarts game", %{players: players} do
-    initial_state =
-      players
-      |> YouBet.initial_state(%{"rounds" => 7})
-      |> YouBet.sanitize_state("1")
-
-    state =
-      players
-      |> YouBet.initial_state(%{"rounds" => 7})
-      |> play_complete_round
-      |> YouBet.play("1", "restart", nil)
-      |> YouBet.sanitize_state("1")
-
-    assert Map.drop(state, [:question]) == Map.drop(initial_state, [:question])
-  end
-
   test "sets rounds properly", %{players: players} do
     state =
       players

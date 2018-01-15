@@ -178,9 +178,6 @@ defmodule YouBet do
     |> Map.put(:bets, initial_map(players))
     |> Map.put(:final_bets, initial_map(players))
   end
-  def play(state, _player_id, "restart", _) do
-    initial_state(state[:players], %{"rounds" => state[:total_rounds]})
-  end
 
   def play(state, _, _, _), do: state
   def play(state, _, _), do: state
