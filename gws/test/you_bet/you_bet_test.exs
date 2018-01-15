@@ -23,11 +23,6 @@ defmodule YouBetTest do
 
     assert state[:round] == 1
     assert state[:stage] == :guessing
-    assert state[:players] == [
-      %{id: "2", name: "bar"},
-      %{id: "3", name: "baz"},
-      %{id: "1", name: "foo"}
-    ]
     assert String.match?(state[:question], ~r/.*\?$/)
     assert state[:answer] == nil
     assert state[:your_guess] == nil
@@ -91,11 +86,6 @@ defmodule YouBetTest do
 
     assert state[:round] == 1
     assert state[:stage] == :betting
-    assert state[:players] == [
-      %{id: "2", name: "bar"},
-      %{id: "3", name: "baz"},
-      %{id: "1", name: "foo"}
-    ]
     assert String.match?(state[:question], ~r/.*\?$/)
     assert state[:your_guess] == nil
     assert state[:your_bets] == nil
@@ -218,11 +208,6 @@ defmodule YouBetTest do
 
     assert state[:round] == 1
     assert state[:stage] == :reveal
-    assert state[:players] == [
-      %{id: "2", name: "bar"},
-      %{id: "3", name: "baz"},
-      %{id: "1", name: "foo"}
-    ]
     assert String.match?(state[:question], ~r/.*\?$/)
     assert is_integer(state[:answer])
     assert state[:closest_guess] == 1
@@ -399,11 +384,6 @@ defmodule YouBetTest do
 
     assert state[:round] == nil
     assert state[:stage] == :end
-    assert state[:players] == [
-      %{id: "2", name: "bar"},
-      %{id: "3", name: "baz"},
-      %{id: "1", name: "foo"}
-    ]
   end
 
   test "handles missing player", %{players: players} do

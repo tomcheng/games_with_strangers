@@ -20,7 +20,7 @@ defmodule GWS.RoomTest do
   end
 
   test "starts game", %{room: room} do
-    {:ok, %{game_state: game_state}} =
+    {:ok, state} =
       room
       |> GWS.Room.set_game("you_bet")
       |> GWS.Room.add_player("player-id-1", "Harold", 1)
@@ -29,7 +29,7 @@ defmodule GWS.RoomTest do
       |> GWS.Room.start_game(%{"rounds" => 7})
       |> GWS.Room.get_state(1)
 
-    assert Map.drop(game_state, [:question]) == %{
+    assert Map.drop(state[:game_state], [:question]) == %{
       "player-id-1" => %{id: "player-id-1", name: "Harold"},
       "player-id-2" => %{id: "player-id-2", name: "Bob"},
       "player-id-3" => %{id: "player-id-3", name: "Andy"}
@@ -37,6 +37,12 @@ defmodule GWS.RoomTest do
     |> YouBet.initial_state(%{"rounds" => 7})
     |> YouBet.sanitize_state("player-id-1")
     |> Map.drop([:question])
+
+    assert state[:players_in_game] == [
+      %{id: "player-id-3", name: "Andy"},
+      %{id: "player-id-2", name: "Bob"},
+      %{id: "player-id-1", name: "Harold"}
+    ]
   end
 
   test "doesn't allow other players to join after game started", %{room: room} do

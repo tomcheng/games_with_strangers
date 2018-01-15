@@ -109,6 +109,7 @@ class AppContainer extends Component {
     game,
     game_state,
     minimum_players,
+    players_in_game,
     you: youRaw,
     others: othersRaw
   }) => {
@@ -122,6 +123,7 @@ class AppContainer extends Component {
       roomJoined: true,
       gameId: game,
       gameState: game_state,
+      playersInGame: players_in_game,
       you,
       others,
       playersNeeded
@@ -148,6 +150,7 @@ class AppContainer extends Component {
           "gameId",
           "playersNeeded",
           "gameState",
+          "playersInGame",
           "flashMessage"
         ])}
         onStartGame={this.handleStartGame}

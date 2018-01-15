@@ -115,7 +115,15 @@ defmodule GWS.Room do
   def start_game(room, options) do
     Agent.update(room, fn %{game: game} = state ->
       %{players: normal_players} = normalize_players(state)
-      Map.put(state, :game_state, game |> get_module |> apply(:initial_state, [normal_players, options]))
+      state
+      |> Map.put(
+        :players_in_game,
+        normal_players
+        |> Map.values
+        |> Enum.map(&Map.drop(&1, [:is_moderator]))
+        |> Enum.sort_by(&Map.get(&1, :name))
+      )
+      |> Map.put(:game_state, game |> get_module |> apply(:initial_state, [normal_players, options]))
     end)
     room
   end

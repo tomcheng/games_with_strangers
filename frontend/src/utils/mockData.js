@@ -10,6 +10,7 @@ const others = players.slice(1);
 const nonGameState = {
   you,
   others,
+  playersInGame: players,
   roomCode: "FOOB",
   roomJoined: true,
   yourId: "1",
@@ -29,8 +30,7 @@ const defaultYouBetGameState = {
   others,
   round: 2,
   question: "What percentage of US house holds own a dog?",
-  scores: players.map(player => ({ player, score: 1500 })),
-  players
+  scores: players.map(player => ({ player, score: 1500 }))
 };
 
 export const youBet = {};

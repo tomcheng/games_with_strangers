@@ -6,7 +6,16 @@ import gamesList from "../gamesList";
 import EndStage from "./common/EndStage";
 import Waiting from "./Waiting";
 
-const COLORS = ["red", "white", "blue", "orange", "purple", "yellow", "green", "brown"];
+const COLORS = [
+  "red",
+  "white",
+  "blue",
+  "orange",
+  "purple",
+  "yellow",
+  "green",
+  "brown"
+];
 
 const getPlayerColors = players =>
   sortBy(players, p => p.id).reduce(
@@ -18,6 +27,7 @@ const Room = ({
   gameId,
   gameState,
   playersNeeded,
+  playersInGame,
   you,
   others,
   onStartGame,
@@ -56,7 +66,7 @@ const Room = ({
     );
   }
 
-  const playerColors = getPlayerColors(gameState.players);
+  const playerColors = getPlayerColors(playersInGame);
   playerColors[you.id] = "black";
   const GameComponent = game.component;
 
@@ -86,14 +96,14 @@ Room.propTypes = {
   }).isRequired,
   onStartGame: PropTypes.func.isRequired,
   gameState: PropTypes.shape({
-    players: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired
-      })
-    ).isRequired,
     stage: PropTypes.string.isRequired,
     scores: PropTypes.array.isRequired
   }),
+  playersInGame: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired
+    })
+  ),
   playersNeeded: PropTypes.number
 };
 

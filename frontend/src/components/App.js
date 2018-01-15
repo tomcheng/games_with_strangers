@@ -18,15 +18,16 @@ const Content = styled.div`
 `;
 
 const App = ({
-  previousRoomCode,
-  roomJoined,
-  roomCode,
-  you,
-  others,
-  gameId,
-  playersNeeded,
-  gameState,
   flashMessage,
+  gameId,
+  gameState,
+  others,
+  playersNeeded,
+  playersInGame,
+  previousRoomCode,
+  roomCode,
+  roomJoined,
+  you,
   onStartGame,
   onPlay,
   onCreateRoom,
@@ -47,11 +48,12 @@ const App = ({
       )}
       {roomJoined && (
         <Room
-          you={you}
-          others={others}
           gameId={gameId}
-          playersNeeded={playersNeeded}
           gameState={gameState}
+          others={others}
+          playersNeeded={playersNeeded}
+          playersInGame={playersInGame}
+          you={you}
           onStartGame={onStartGame}
           onPlay={onPlay}
           onSetFlashMessage={onSetFlashMessage}
