@@ -10,6 +10,8 @@ PRODUCTION_HOSTS="104.131.161.102"
 PRODUCTION_USER="deploy"
 DELIVER_TO="/home/deploy"
 
+AUTO_VERSION=commit-count+git-revision+branch-unless-master
+
 pre_init_app_remotely() {
   ACTUAL_PROJECT_DIR="$DELIVER_TO"
   DELIVER_TO="$(dirname $DELIVER_TO)"
