@@ -19,21 +19,31 @@ defmodule FunPrompts do
     |> add_awaiting_answer(player_id)
     |> Map.take([:awaiting_answer, :prompts, :round, :stage])
   end
-  def sanitize_state(%{stage: :voting} = state, player_id) do
-    %{current_matchup_id: matchup_id, matchups: matchups, answers: answers, players: players, votes: votes} = state
-    %{id: matchup_id, player_ids: player_ids, prompt: prompt} = Enum.find(matchups, &(&1[:id] == matchup_id))
 
-    choices = Enum.map(player_ids, fn id ->
-      %{
-        answer: answers[matchup_id][id],
-        player: players[id],
-        your_answer: id == player_id,
-        votes:
-          votes
-          |> Enum.filter(fn v -> v[:votee_id] == id end)
-          |> Enum.map(fn %{voter_id: id} -> players[id] end)
-      }
-    end)
+  def sanitize_state(%{stage: :voting} = state, player_id) do
+    %{
+      current_matchup_id: matchup_id,
+      matchups: matchups,
+      answers: answers,
+      players: players,
+      votes: votes
+    } = state
+
+    %{id: matchup_id, player_ids: player_ids, prompt: prompt} =
+      Enum.find(matchups, &(&1[:id] == matchup_id))
+
+    choices =
+      Enum.map(player_ids, fn id ->
+        %{
+          answer: answers[matchup_id][id],
+          player: players[id],
+          your_answer: id == player_id,
+          votes:
+            votes
+            |> Enum.filter(fn v -> v[:votee_id] == id end)
+            |> Enum.map(fn %{voter_id: id} -> players[id] end)
+        }
+      end)
 
     state
     |> Map.take([:round, :stage])
@@ -42,13 +52,14 @@ defmodule FunPrompts do
     |> Map.put(
       :awaiting_vote,
       players
-      |> Map.values
+      |> Map.values()
       |> Enum.reject(fn p -> Enum.any?(choices, fn c -> c[:player][:id] == p[:id] end) end)
       |> Enum.reject(fn p -> Enum.any?(votes, fn v -> v[:voter_id] == p[:id] end) end)
     )
     |> Map.put(:you_answered, Enum.any?(choices, &Map.get(&1, :your_answer)))
     |> Map.put(:you_voted, Enum.any?(votes, fn v -> v[:voter_id] == player_id end))
   end
+
   def sanitize_state(%{stage: :show_scores} = state, _) do
     %{players: players} = state
 
@@ -61,6 +72,7 @@ defmodule FunPrompts do
     end)
     |> Map.take([:round, :scores, :stage])
   end
+
   def sanitize_state(%{stage: :end} = state, _) do
     %{players: players} = state
 
@@ -83,6 +95,7 @@ defmodule FunPrompts do
     end)
     |> change_to_voting_if_all_answers_in
   end
+
   def play(state, player_id, "vote", payload) do
     %{votes: votes} = state
     %{"player_id" => votee_id} = payload
@@ -90,16 +103,22 @@ defmodule FunPrompts do
     if Enum.any?(votes, fn v -> v[:voter_id] == player_id end) do
       state
     else
-      Map.put(state, :votes, [%{voter_id: player_id, votee_id: votee_id}|votes])
+      Map.put(state, :votes, [%{voter_id: player_id, votee_id: votee_id} | votes])
     end
   end
+
   def play(%{stage: :voting} = state, _, "advance", _) do
-    %{current_matchup_id: current_matchup_id, players: players, round: round, total_rounds: total_rounds} = state
+    %{
+      current_matchup_id: current_matchup_id,
+      players: players,
+      round: round,
+      total_rounds: total_rounds
+    } = state
 
     if current_matchup_id === Enum.count(players) do
       state
       |> update_scores
-      |> Map.put(:stage, (if round == total_rounds, do: :end, else: :show_scores))
+      |> Map.put(:stage, if(round == total_rounds, do: :end, else: :show_scores))
     else
       state
       |> update_scores
@@ -107,6 +126,7 @@ defmodule FunPrompts do
       |> Map.put(:votes, [])
     end
   end
+
   def play(%{stage: :show_scores} = state, _, "advance", _) do
     %{players: players} = state
 
@@ -130,15 +150,16 @@ defmodule FunPrompts do
   defp get_matchups(players) do
     prompts =
       players
-      |> Enum.count
-      |> FunPrompts.Prompts.get_random
+      |> Enum.count()
+      |> FunPrompts.Prompts.get_random()
+
     player_ids =
       players
       |> Enum.map(fn {id, _} -> id end)
-      |> Enum.shuffle
+      |> Enum.shuffle()
 
     player_ids
-    |> Enum.with_index
+    |> Enum.with_index()
     |> Enum.map(fn {id, index} ->
       %{
         id: index + 1,
@@ -149,7 +170,7 @@ defmodule FunPrompts do
   end
 
   defp get_empty_answers(num) do
-    Enum.reduce((1..num), %{}, fn id, acc -> Map.put(acc, id, %{}) end)
+    Enum.reduce(1..num, %{}, fn id, acc -> Map.put(acc, id, %{}) end)
   end
 
   defp add_prompts_for_player(state, player_id) do
@@ -171,7 +192,7 @@ defmodule FunPrompts do
     answered_id =
       answers
       |> Enum.flat_map(fn {_, ans} -> Enum.map(ans, fn {id, _} -> id end) end)
-      |> Enum.group_by(&(&1))
+      |> Enum.group_by(& &1)
       |> Enum.reject(fn {_, ids} -> Enum.count(ids) < 2 end)
       |> Enum.map(fn {id, _} -> id end)
 

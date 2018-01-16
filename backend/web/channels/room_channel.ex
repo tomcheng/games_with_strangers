@@ -1,16 +1,17 @@
 defmodule GamesWithStrangers.RoomChannel do
   use GamesWithStrangers.Web, :channel
 
-  intercept ["new_state"]
+  intercept(["new_state"])
 
   def join(_, %{"player_name" => ""}, _socket) do
     {:error, "Name is required"}
   end
+
   def join(
-    "room:" <> room_code,
-    %{"player_id" => player_id_in, "player_name" => player_name},
-    %{channel_pid: channel} = socket
-  ) do
+        "room:" <> room_code,
+        %{"player_id" => player_id_in, "player_name" => player_name},
+        %{channel_pid: channel} = socket
+      ) do
     case GWS.get_room(room_code) do
       {:ok, room} ->
         player_id = player_id_in || UUID.uuid4()
@@ -18,6 +19,7 @@ defmodule GamesWithStrangers.RoomChannel do
         case GWS.Room.add_player(room, player_id, player_name, channel) do
           {:error, msg} ->
             {:error, msg}
+
           _ ->
             GWS.Room.add_player(room, player_id, player_name, channel)
             send(self(), :after_join)
@@ -64,7 +66,11 @@ defmodule GamesWithStrangers.RoomChannel do
     {:noreply, socket}
   end
 
-  def handle_in("make_play", %{"player_id" => player_id, "type" => type} = params, %{topic: "room:" <> room_code} = socket) do
+  def handle_in(
+        "make_play",
+        %{"player_id" => player_id, "type" => type} = params,
+        %{topic: "room:" <> room_code} = socket
+      ) do
     {:ok, room} = GWS.get_room(room_code)
 
     GWS.Room.make_play(room, player_id, type, params["payload"])
