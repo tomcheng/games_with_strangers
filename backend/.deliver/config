@@ -18,13 +18,3 @@ pre_init_app_remotely() {
 pre_erlang_get_and_update_deps() {
   DELIVER_TO="$ACTUAL_PROJECT_DIR"
 }
-
-pre_erlang_clean_compile() {
-  __sync_remote " # runs the commands on the build host
-    set -e # fail if any command fails (recommended)
-    cd '$BUILD_AT' # enter the build directory on the build host (required)
-
-    # run your custom task
-    APP='$APP' MIX_ENV='$TARGET_MIX_ENV' $MIX_CMD $SILENCE
-  "
-}
