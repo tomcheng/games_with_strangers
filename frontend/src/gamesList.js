@@ -1,5 +1,6 @@
 import YouBet from "./components/youBet/YouBet";
 import FunPrompts from "./components/funPrompts/FunPrompts";
+import Idioms from "./components/idioms/Idioms";
 
 const gamesList = [
   {
@@ -36,6 +37,12 @@ const gamesList = [
       }
     ],
     component: YouBet
+  },
+  {
+    id: "idioms",
+    displayName: "Idioms",
+    description: "Get your teammates to say the adage without saying it yourself.",
+    component: Idioms
   }
 ];
 
