@@ -6,6 +6,8 @@ BUILD_AT="/tmp/edeliver/$APP/builds"
 SUB_DIR="backend"
 BUILD_AT="$BUILD_AT/$SUB_DIR"
 
+RELEASE_DIR="/tmp/edeliver/$APP/builds/_build/prod/rel/$APP"
+
 PRODUCTION_HOSTS="104.131.161.102"
 PRODUCTION_USER="deploy"
 DELIVER_TO="/home/deploy"
