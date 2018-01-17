@@ -2,12 +2,12 @@ defmodule GamesWithStrangers.Router do
   use GamesWithStrangers.Web, :router
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug(:accepts, ["json"])
   end
 
   scope "/api", GamesWithStrangers do
-    pipe_through :api
+    pipe_through(:api)
 
-    post "/rooms", RoomController, :create
+    post("/rooms", RoomController, :create)
   end
 end
