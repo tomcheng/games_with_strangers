@@ -8,6 +8,6 @@ defmodule GamesWithStrangers.RoomController do
     GWS.Room.set_game(room, game)
 
     conn
-    |> json(%{ room_code: room_code })
+    |> json(%{room_code: room_code})
   end
 end
