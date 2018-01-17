@@ -18,7 +18,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "git stash && git checkout build && react-scripts build && mv build _build && git add _build/* && git commit -m 'build' && git push origin build && git checkout master && git stash pop",
+    "build": "git checkout build && react-scripts build && mv build _build && git add _build/* && git commit -m 'build' && git push origin build && git checkout master",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   }
