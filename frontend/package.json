@@ -18,7 +18,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && git checkout build && rm -rf _build && mv build _build && git add _build/* && git commit -m 'build' && git push origin build && git checkout master",
+    "build": "react-scripts build && git checkout build && rm -rf _build && git commit -m 'clean' && mv build _build && git add _build/* && git commit -m 'build' && git push origin build && git checkout master",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   }
