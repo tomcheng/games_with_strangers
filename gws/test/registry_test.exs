@@ -39,7 +39,7 @@ defmodule GWS.RegistryTest do
   end
 
   test "gets room count", %{registry: registry} do
-    (1..10)
+    1..10
     |> Enum.each(fn _ ->
       GWS.Registry.create(registry)
     end)
@@ -48,7 +48,7 @@ defmodule GWS.RegistryTest do
   end
 
   test "ensures no room code collisions", %{registry: registry} do
-    (1..2000)
+    1..2000
     |> Enum.each(fn _ ->
       GWS.Registry.create(registry)
     end)

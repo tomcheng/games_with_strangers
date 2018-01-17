@@ -1,6 +1,7 @@
 {
   "name": "games-with-strangers",
   "version": "0.1.0",
+  "homepage": "https://gameswithstrangers.com",
   "private": true,
   "dependencies": {
     "history": "4.7.2",
@@ -12,14 +13,18 @@
     "react-dnd": "2.5.4",
     "react-dnd-touch-backend": "0.3.19",
     "react-dom": "16.2.0",
-    "react-scripts": "1.0.17",
     "react-textarea-autosize": "5.2.1",
     "styled-components": "2.4.0"
+  },
+  "devDependencies": {
+    "gh-pages": "1.1.0",
+    "react-scripts": "1.0.17"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -b build -d build"
   }
 }

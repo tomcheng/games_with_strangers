@@ -16,7 +16,7 @@ defmodule GWS.RoomTest do
     {:ok, state} = GWS.Room.get_state(room)
 
     assert state[:game] == "you_bet"
-    assert state[:minimum_players] == YouBet.minimum_players
+    assert state[:minimum_players] == YouBet.minimum_players()
   end
 
   test "starts game", %{room: room} do
@@ -29,20 +29,21 @@ defmodule GWS.RoomTest do
       |> GWS.Room.start_game(%{"rounds" => 7})
       |> GWS.Room.get_state(1)
 
-    assert Map.drop(state[:game_state], [:question]) == %{
-      "player-id-1" => %{id: "player-id-1", name: "Harold"},
-      "player-id-2" => %{id: "player-id-2", name: "Bob"},
-      "player-id-3" => %{id: "player-id-3", name: "Andy"}
-    }
-    |> YouBet.initial_state(%{"rounds" => 7})
-    |> YouBet.sanitize_state("player-id-1")
-    |> Map.drop([:question])
+    assert Map.drop(state[:game_state], [:question]) ==
+             %{
+               "player-id-1" => %{id: "player-id-1", name: "Harold"},
+               "player-id-2" => %{id: "player-id-2", name: "Bob"},
+               "player-id-3" => %{id: "player-id-3", name: "Andy"}
+             }
+             |> YouBet.initial_state(%{"rounds" => 7})
+             |> YouBet.sanitize_state("player-id-1")
+             |> Map.drop([:question])
 
     assert state[:players_in_game] == [
-      %{id: "player-id-3", name: "Andy"},
-      %{id: "player-id-2", name: "Bob"},
-      %{id: "player-id-1", name: "Harold"}
-    ]
+             %{id: "player-id-3", name: "Andy"},
+             %{id: "player-id-2", name: "Bob"},
+             %{id: "player-id-1", name: "Harold"}
+           ]
   end
 
   test "restarts game", %{room: room} do
@@ -53,7 +54,7 @@ defmodule GWS.RoomTest do
       |> GWS.Room.add_player("player-id-2", "Bob", 2)
       |> GWS.Room.add_player("player-id-3", "Andy", 3)
       |> GWS.Room.start_game(%{"rounds" => 7})
-      |> GWS.Room.restart_game
+      |> GWS.Room.restart_game()
       |> GWS.Room.get_state(1)
 
     assert state[:game_state] == nil
@@ -98,15 +99,16 @@ defmodule GWS.RoomTest do
       |> GWS.Room.make_play("player-id-1", "guess", "20")
       |> GWS.Room.get_state(1)
 
-    assert Map.drop(game_state, [:question]) == %{
-      "player-id-1" => %{id: "player-id-1", name: "Harold"},
-      "player-id-2" => %{id: "player-id-2", name: "Bob"},
-      "player-id-3" => %{id: "player-id-3", name: "Andy"}
-    }
-    |> YouBet.initial_state(%{"rounds" => 7})
-    |> YouBet.play("player-id-1", "guess", "20")
-    |> YouBet.sanitize_state("player-id-1")
-    |> Map.drop([:question])
+    assert Map.drop(game_state, [:question]) ==
+             %{
+               "player-id-1" => %{id: "player-id-1", name: "Harold"},
+               "player-id-2" => %{id: "player-id-2", name: "Bob"},
+               "player-id-3" => %{id: "player-id-3", name: "Andy"}
+             }
+             |> YouBet.initial_state(%{"rounds" => 7})
+             |> YouBet.play("player-id-1", "guess", "20")
+             |> YouBet.sanitize_state("player-id-1")
+             |> Map.drop([:question])
   end
 
   test "adds players", %{room: room} do
@@ -141,7 +143,7 @@ defmodule GWS.RoomTest do
       room
       |> GWS.Room.add_player("player-id-1", "Harold", 1)
       |> GWS.Room.remove_player_by_channel(1)
-      |> GWS.Room.get_state
+      |> GWS.Room.get_state()
 
     assert state[:you] == nil
     assert state[:others] == []
@@ -153,7 +155,7 @@ defmodule GWS.RoomTest do
       |> GWS.Room.add_player("player-id-1", "Harold", 1)
       |> GWS.Room.add_player("player-id-2", "Bob", 2)
       |> GWS.Room.remove_player_by_channel(1)
-      |> GWS.Room.get_state
+      |> GWS.Room.get_state()
 
     assert state[:others] == [%{id: "player-id-2", name: "Bob", is_moderator: true}]
   end

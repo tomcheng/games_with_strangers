@@ -3,7 +3,7 @@ defmodule GWSTest do
   doctest GWS
 
   test "creates a room and returns a room code" do
-    {:ok, code} = GWS.create_room
+    {:ok, code} = GWS.create_room()
 
     assert String.match?(code, ~r/[A-Z]{4}/)
 
