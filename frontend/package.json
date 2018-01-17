@@ -25,6 +25,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -b build -d build"
+    "deploy": "gh-pages -b frontend-build -d build"
   }
 }
