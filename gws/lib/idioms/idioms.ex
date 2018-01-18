@@ -3,7 +3,12 @@ defmodule Idioms do
 
   def initial_state(players, _options \\ nil) do
     %{
-      players: players
+      players: players,
+      stage: :set_order,
+      scores: [
+        %{player: %{name: "Team A"}, score: 0},
+        %{player: %{name: "Team B"}, score: 0}
+      ]
     }
   end
 
