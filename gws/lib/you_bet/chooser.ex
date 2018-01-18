@@ -12,7 +12,8 @@ defmodule YouBet.Chooser do
   defp do_choose([{_, last}], _) do
     last.()
   end
-  defp do_choose([{w, func}|tail], random) do
+
+  defp do_choose([{w, func} | tail], random) do
     if random <= w do
       func.()
     else

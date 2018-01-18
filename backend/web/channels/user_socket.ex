@@ -1,9 +1,9 @@
 defmodule GamesWithStrangers.UserSocket do
   use Phoenix.Socket
 
-  channel "room:*", GamesWithStrangers.RoomChannel
+  channel("room:*", GamesWithStrangers.RoomChannel)
 
-  transport :websocket, Phoenix.Transports.WebSocket
+  transport(:websocket, Phoenix.Transports.WebSocket)
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After

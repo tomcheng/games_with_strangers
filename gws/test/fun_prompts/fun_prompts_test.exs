@@ -10,6 +10,7 @@ defmodule FunPromptsTest do
       "2" => %{id: "2", name: "bar"},
       "3" => %{id: "3", name: "baz"}
     }
+
     %{players: players}
   end
 
@@ -46,6 +47,7 @@ defmodule FunPromptsTest do
       |> FunPrompts.initial_state(%{"rounds" => 3})
       |> FunPrompts.play("1", "answer", %{"id" => 1, "answer" => "player 1, answer 1"})
       |> FunPrompts.play("1", "answer", %{"id" => 2, "answer" => "player 1, answer 2"})
+
     your_state = FunPrompts.sanitize_state(state, "1")
     others_state = FunPrompts.sanitize_state(state, "2")
 
@@ -142,7 +144,6 @@ defmodule FunPromptsTest do
     assert choice_2[:votes] == []
   end
 
-
   test "shows scores after all votes are in", %{players: players} do
     state =
       players
@@ -153,11 +154,12 @@ defmodule FunPromptsTest do
 
     assert state[:round] == 1
     assert state[:stage] == :show_scores
+
     assert state[:scores] == [
-      %{player: %{id: "1", name: "foo"}, score: 200},
-      %{player: %{id: "2", name: "bar"}, score: 100},
-      %{player: %{id: "3", name: "baz"}, score: 0}
-    ]
+             %{player: %{id: "1", name: "foo"}, score: 200},
+             %{player: %{id: "2", name: "bar"}, score: 100},
+             %{player: %{id: "3", name: "baz"}, score: 0}
+           ]
   end
 
   test "goes to next round after advancing from showing scores", %{players: players} do
@@ -189,11 +191,12 @@ defmodule FunPromptsTest do
 
     assert state[:round] == 2
     assert state[:stage] == :show_scores
+
     assert state[:scores] == [
-      %{player: %{id: "1", name: "foo"}, score: 600},
-      %{player: %{id: "2", name: "bar"}, score: 300},
-      %{player: %{id: "3", name: "baz"}, score: 0}
-    ]
+             %{player: %{id: "1", name: "foo"}, score: 600},
+             %{player: %{id: "2", name: "bar"}, score: 300},
+             %{player: %{id: "3", name: "baz"}, score: 0}
+           ]
   end
 
   test "ends game after 3 rounds", %{players: players} do

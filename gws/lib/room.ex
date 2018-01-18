@@ -13,6 +13,7 @@ defmodule GWS.Room do
       |> Map.put(:game, game)
       |> Map.put(:minimum_players, game |> get_module |> apply(:minimum_players, []))
     end)
+
     room
   end
 
@@ -27,10 +28,11 @@ defmodule GWS.Room do
       Agent.update(room, fn state ->
         state
         |> Map.update!(:players, fn ps ->
-          Map.put(ps, player_id, %{ id: player_id, name: name, channel: channel })
+          Map.put(ps, player_id, %{id: player_id, name: name, channel: channel})
         end)
         |> update_moderator
       end)
+
       room
     end
   end
@@ -45,6 +47,7 @@ defmodule GWS.Room do
       end)
       |> update_moderator
     end)
+
     room
   end
 
@@ -54,9 +57,10 @@ defmodule GWS.Room do
     else
       new_moderator =
         players
-        |> Map.values
-        |> List.first
+        |> Map.values()
+        |> List.first()
         |> Map.get(:id)
+
       Map.put(state, :moderator, new_moderator)
     end
   end
@@ -66,18 +70,20 @@ defmodule GWS.Room do
   end
 
   def get_state(room, channel \\ nil) do
-    {:ok, Agent.get(room, fn state ->
-      player_id = get_player_id_from_channel(state, channel)
+    {:ok,
+     Agent.get(room, fn state ->
+       player_id = get_player_id_from_channel(state, channel)
 
-      state
-      |> sanitize_game_state(player_id)
-      |> normalize_players
-      |> split_players_between_you_and_others(player_id)
-      |> Map.drop([:moderator])
-    end)}
+       state
+       |> sanitize_game_state(player_id)
+       |> normalize_players
+       |> split_players_between_you_and_others(player_id)
+       |> Map.drop([:moderator])
+     end)}
   end
 
   defp get_player_id_from_channel(_, nil), do: nil
+
   defp get_player_id_from_channel(state, channel) do
     state
     |> Map.get(:players)
@@ -89,18 +95,26 @@ defmodule GWS.Room do
     new_players =
       players
       |> Enum.map(fn {id, player} ->
-        {id, player
-          |> Map.put(:is_moderator, id == moderator)
-          |> Map.drop([:channel])}
+        {id,
+         player
+         |> Map.put(:is_moderator, id == moderator)
+         |> Map.drop([:channel])}
       end)
       |> Enum.into(%{})
+
     Map.put(state, :players, new_players)
   end
 
   defp split_players_between_you_and_others(%{players: players} = state, player_id) do
     state
-    |> Map.put(:you, players |> Enum.find({nil, nil}, fn {id, _} -> id == player_id end) |> elem(1))
-    |> Map.put(:others, players |> Enum.reject(fn {id, _} -> id == player_id end) |> Enum.map(&elem(&1, 1)))
+    |> Map.put(
+      :you,
+      players |> Enum.find({nil, nil}, fn {id, _} -> id == player_id end) |> elem(1)
+    )
+    |> Map.put(
+      :others,
+      players |> Enum.reject(fn {id, _} -> id == player_id end) |> Enum.map(&elem(&1, 1))
+    )
     |> Map.drop([:players])
   end
 
@@ -115,23 +129,33 @@ defmodule GWS.Room do
   def start_game(room, options) do
     Agent.update(room, fn %{game: game} = state ->
       %{players: normal_players} = normalize_players(state)
+
       state
       |> Map.put(
         :players_in_game,
         normal_players
-        |> Map.values
+        |> Map.values()
         |> Enum.map(&Map.drop(&1, [:is_moderator]))
         |> Enum.sort_by(&Map.get(&1, :name))
       )
-      |> Map.put(:game_state, game |> get_module |> apply(:initial_state, [normal_players, options]))
+      |> Map.put(
+        :game_state,
+        game |> get_module |> apply(:initial_state, [normal_players, options])
+      )
     end)
+
     room
   end
 
   def make_play(room, player_id, type, payload) do
     Agent.update(room, fn %{game: game, game_state: game_state} = state ->
-      Map.put(state, :game_state, game |> get_module |> apply(:play, [game_state, player_id, type, payload]))
+      Map.put(
+        state,
+        :game_state,
+        game |> get_module |> apply(:play, [game_state, player_id, type, payload])
+      )
     end)
+
     room
   end
 
@@ -141,6 +165,7 @@ defmodule GWS.Room do
       |> Map.put(:game_state, nil)
       |> Map.put(:players_in_game, nil)
     end)
+
     room
   end
 

@@ -4,11 +4,11 @@ defmodule GamesWithStrangers.Mixfile do
   def project do
     [
       app: :games_with_strangers,
-      version: "0.0.1",
-      elixir: "~> 1.4",
-      elixirc_paths: elixirc_paths(Mix.env),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers,
-      start_permanent: Mix.env == :prod,
+      version: "0.0.3",
+      elixir: "~> 1.5",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
   end
@@ -19,13 +19,13 @@ defmodule GamesWithStrangers.Mixfile do
   def application do
     [
       mod: {GamesWithStrangers, []},
-      extra_applications: [:logger, :gws]
+      extra_applications: [:logger, :gws, :edeliver]
     ]
   end
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "web", "test/support"]
-  defp elixirc_paths(_),     do: ["lib", "web"]
+  defp elixirc_paths(_), do: ["lib", "web"]
 
   # Specifies your project dependencies.
   #
@@ -38,7 +38,9 @@ defmodule GamesWithStrangers.Mixfile do
       {:cowboy, "~> 1.0"},
       {:cors_plug, "~> 1.1"},
       {:uuid, "~> 1.1"},
-      {:gws, path: "../gws"}
+      {:gws, path: "../gws"},
+      {:edeliver, "~> 1.4.2"},
+      {:distillery, "~> 1.4"}
     ]
   end
 end

@@ -8,6 +8,7 @@ defmodule YouBetTest do
       "2" => %{id: "2", name: "bar"},
       "3" => %{id: "3", name: "baz"}
     }
+
     %{players: players}
   end
 
@@ -27,11 +28,12 @@ defmodule YouBetTest do
     assert state[:answer] == nil
     assert state[:your_guess] == nil
     assert state[:awaiting_guess] == [%{id: "2", name: "bar"}, %{id: "3", name: "baz"}]
+
     assert state[:scores] == [
-      %{player: %{id: "2", name: "bar"}, score: 200},
-      %{player: %{id: "3", name: "baz"}, score: 200},
-      %{player: %{id: "1", name: "foo"}, score: 200}
-    ]
+             %{player: %{id: "2", name: "bar"}, score: 200},
+             %{player: %{id: "3", name: "baz"}, score: 200},
+             %{player: %{id: "1", name: "foo"}, score: 200}
+           ]
   end
 
   test "makes an empty play", %{players: players} do
@@ -89,17 +91,20 @@ defmodule YouBetTest do
     assert String.match?(state[:question], ~r/.*\?$/)
     assert state[:your_guess] == nil
     assert state[:your_bets] == nil
+
     assert state[:bet_options] == [
-      %{guess: "less", odds: 4, bets: []},
-      %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}], bets: []},
-      %{guess: 20, odds: 2, players: [%{id: "2", name: "bar"}], bets: []},
-      %{guess: 30, odds: 3, players: [%{id: "1", name: "foo"}], bets: []}
-    ]
+             %{guess: "less", odds: 4, bets: []},
+             %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}], bets: []},
+             %{guess: 20, odds: 2, players: [%{id: "2", name: "bar"}], bets: []},
+             %{guess: 30, odds: 3, players: [%{id: "1", name: "foo"}], bets: []}
+           ]
+
     assert state[:scores] == [
-      %{player: %{id: "2", name: "bar"}, score: 200},
-      %{player: %{id: "3", name: "baz"}, score: 200},
-      %{player: %{id: "1", name: "foo"}, score: 200}
-    ]
+             %{player: %{id: "2", name: "bar"}, score: 200},
+             %{player: %{id: "3", name: "baz"}, score: 200},
+             %{player: %{id: "1", name: "foo"}, score: 200}
+           ]
+
     assert state[:your_score] == 200
   end
 
@@ -113,10 +118,15 @@ defmodule YouBetTest do
       |> YouBet.sanitize_state("1")
 
     assert state[:bet_options] == [
-      %{guess: "less", odds: 4, bets: []},
-      %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}], bets: []},
-      %{guess: 20, odds: 3, players: [%{id: "2", name: "bar"}, %{id: "1", name: "foo"}], bets: []},
-    ]
+             %{guess: "less", odds: 4, bets: []},
+             %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}], bets: []},
+             %{
+               guess: 20,
+               odds: 3,
+               players: [%{id: "2", name: "bar"}, %{id: "1", name: "foo"}],
+               bets: []
+             }
+           ]
   end
 
   test "handles bets", %{players: players} do
@@ -128,16 +138,26 @@ defmodule YouBetTest do
       |> YouBet.play("3", "guess", "10")
       |> YouBet.play("1", "bet", [
         %{"guess" => 20, "base_wager" => 100, "extra_wager" => 0},
-        %{"guess" => 30, "base_wager" => 100, "extra_wager" => 0},
+        %{"guess" => 30, "base_wager" => 100, "extra_wager" => 0}
       ])
       |> YouBet.sanitize_state("1")
 
     assert state[:bet_options] == [
-      %{guess: "less", odds: 4, bets: []},
-      %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}], bets: []},
-      %{guess: 20, odds: 2, players: [%{id: "2", name: "bar"}], bets: [%{player: %{id: "1", name: "foo"}, amount: 100}]},
-      %{guess: 30, odds: 3, players: [%{id: "1", name: "foo"}], bets: [%{player: %{id: "1", name: "foo"}, amount: 100}]}
-    ]
+             %{guess: "less", odds: 4, bets: []},
+             %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}], bets: []},
+             %{
+               guess: 20,
+               odds: 2,
+               players: [%{id: "2", name: "bar"}],
+               bets: [%{player: %{id: "1", name: "foo"}, amount: 100}]
+             },
+             %{
+               guess: 30,
+               odds: 3,
+               players: [%{id: "1", name: "foo"}],
+               bets: [%{player: %{id: "1", name: "foo"}, amount: 100}]
+             }
+           ]
   end
 
   test "handles betting on less", %{players: players} do
@@ -149,16 +169,21 @@ defmodule YouBetTest do
       |> YouBet.play("3", "guess", "10")
       |> YouBet.play("1", "bet", [
         %{"guess" => "less", "base_wager" => 100, "extra_wager" => 0},
-        %{"guess" => 30, "base_wager" => 100, "extra_wager" => 0},
+        %{"guess" => 30, "base_wager" => 100, "extra_wager" => 0}
       ])
       |> YouBet.sanitize_state("1")
 
     assert state[:bet_options] == [
-      %{guess: "less", odds: 4, bets: [%{player: %{id: "1", name: "foo"}, amount: 100}]},
-      %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}], bets: []},
-      %{guess: 20, odds: 2, players: [%{id: "2", name: "bar"}], bets: []},
-      %{guess: 30, odds: 3, players: [%{id: "1", name: "foo"}], bets: [%{player: %{id: "1", name: "foo"}, amount: 100}]}
-    ]
+             %{guess: "less", odds: 4, bets: [%{player: %{id: "1", name: "foo"}, amount: 100}]},
+             %{guess: 10, odds: 3, players: [%{id: "3", name: "baz"}], bets: []},
+             %{guess: 20, odds: 2, players: [%{id: "2", name: "bar"}], bets: []},
+             %{
+               guess: 30,
+               odds: 3,
+               players: [%{id: "1", name: "foo"}],
+               bets: [%{player: %{id: "1", name: "foo"}, amount: 100}]
+             }
+           ]
   end
 
   test "handles finalizing bets", %{players: players} do
@@ -170,7 +195,7 @@ defmodule YouBetTest do
       |> YouBet.play("3", "guess", "10")
       |> YouBet.play("1", "finalize_bets", [
         %{"guess" => 20, "base_wager" => 100, "extra_wager" => 0},
-        %{"guess" => 30, "base_wager" => 100, "extra_wager" => 0},
+        %{"guess" => 30, "base_wager" => 100, "extra_wager" => 0}
       ])
 
     your_state = YouBet.sanitize_state(state, "1")
@@ -178,9 +203,10 @@ defmodule YouBetTest do
     others_state = YouBet.sanitize_state(state, "2")
 
     assert your_state[:your_bets] == [
-      %{guess: 20, base_wager: 100, extra_wager: 0},
-      %{guess: 30, base_wager: 100, extra_wager: 0}
-    ]
+             %{guess: 20, base_wager: 100, extra_wager: 0},
+             %{guess: 30, base_wager: 100, extra_wager: 0}
+           ]
+
     assert your_state[:awaiting_bet] == [%{id: "2", name: "bar"}, %{id: "3", name: "baz"}]
 
     assert others_state[:your_bets] == nil
@@ -211,17 +237,18 @@ defmodule YouBetTest do
     assert String.match?(state[:question], ~r/.*\?$/)
     assert is_integer(state[:answer])
     assert state[:closest_guess] == 1
+
     assert state[:payouts] == [
-      %{player: %{id: "2", name: "bar"}, delta: 900, closest: true},
-      %{player: %{id: "1", name: "foo"}, delta: 600, closest: true},
-      %{player: %{id: "3", name: "baz"}, delta: 0, closest: false}
-    ]
+             %{player: %{id: "2", name: "bar"}, delta: 900, closest: true},
+             %{player: %{id: "1", name: "foo"}, delta: 600, closest: true},
+             %{player: %{id: "3", name: "baz"}, delta: 0, closest: false}
+           ]
 
     assert state[:scores] == [
-      %{player: %{id: "2", name: "bar"}, score: 1100},
-      %{player: %{id: "1", name: "foo"}, score: 800},
-      %{player: %{id: "3", name: "baz"}, score: 200}
-    ]
+             %{player: %{id: "2", name: "bar"}, score: 1100},
+             %{player: %{id: "1", name: "foo"}, score: 800},
+             %{player: %{id: "3", name: "baz"}, score: 200}
+           ]
   end
 
   test "updates score when someone guesses less correctly", %{players: players} do
@@ -248,17 +275,18 @@ defmodule YouBetTest do
     assert String.match?(state[:question], ~r/.*\?$/)
     assert is_integer(state[:answer])
     assert state[:closest_guess] == nil
+
     assert state[:payouts] == [
-      %{player: %{id: "1", name: "foo"}, delta: 300, closest: false},
-      %{player: %{id: "2", name: "bar"}, delta: 0, closest: false},
-      %{player: %{id: "3", name: "baz"}, delta: 0, closest: false}
-    ]
+             %{player: %{id: "1", name: "foo"}, delta: 300, closest: false},
+             %{player: %{id: "2", name: "bar"}, delta: 0, closest: false},
+             %{player: %{id: "3", name: "baz"}, delta: 0, closest: false}
+           ]
 
     assert state[:scores] == [
-      %{player: %{id: "1", name: "foo"}, score: 500},
-      %{player: %{id: "2", name: "bar"}, score: 200},
-      %{player: %{id: "3", name: "baz"}, score: 200}
-    ]
+             %{player: %{id: "1", name: "foo"}, score: 500},
+             %{player: %{id: "2", name: "bar"}, score: 200},
+             %{player: %{id: "3", name: "baz"}, score: 200}
+           ]
   end
 
   test "handles when all bets are higher than actual answer", %{players: players} do
@@ -284,17 +312,18 @@ defmodule YouBetTest do
     assert String.match?(state[:question], ~r/.*\?$/)
     assert is_integer(state[:answer])
     assert state[:closest_guess] == nil
+
     assert state[:payouts] == [
-      %{player: %{id: "2", name: "bar"}, delta: 0, closest: false},
-      %{player: %{id: "3", name: "baz"}, delta: 0, closest: false},
-      %{player: %{id: "1", name: "foo"}, delta: 0, closest: false}
-    ]
+             %{player: %{id: "2", name: "bar"}, delta: 0, closest: false},
+             %{player: %{id: "3", name: "baz"}, delta: 0, closest: false},
+             %{player: %{id: "1", name: "foo"}, delta: 0, closest: false}
+           ]
 
     assert state[:scores] == [
-      %{player: %{id: "2", name: "bar"}, score: 200},
-      %{player: %{id: "3", name: "baz"}, score: 200},
-      %{player: %{id: "1", name: "foo"}, score: 200}
-    ]
+             %{player: %{id: "2", name: "bar"}, score: 200},
+             %{player: %{id: "3", name: "baz"}, score: 200},
+             %{player: %{id: "1", name: "foo"}, score: 200}
+           ]
   end
 
   test "advances to next round", %{players: players} do
