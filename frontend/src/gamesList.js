@@ -41,7 +41,7 @@ const gamesList = [
   {
     id: "idioms",
     displayName: "Idioms",
-    description: "Get your teammates to say the adage without saying it yourself.",
+    description: "Get your teammates to say a word or phrase without saying it yourself.",
     component: Idioms
   }
 ];
