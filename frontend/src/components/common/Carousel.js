@@ -63,13 +63,11 @@ class Carousel extends React.Component {
     this.setDimensions();
     window.addEventListener("resize", this.setDimensions);
     window.addEventListener("orientationchange", this.setDimensions);
-    window.addEventListener("keydown", this.handleKeyDown);
   }
 
   componentWillUnmount() {
     window.removeEventListener("resize", this.setDimensions);
     window.removeEventListener("orientationchange", this.setDimensions);
-    window.removeEventListener("keydown", this.handleKeyDown);
   }
 
   setDimensions = () => {
@@ -80,19 +78,6 @@ class Carousel extends React.Component {
       frameWidth: Math.max(frameWidth, 1),
       scrollPos: -frameWidth * currentPane
     });
-  };
-
-  handleKeyDown = evt => {
-    switch (evt.code) {
-      case "ArrowRight":
-        this.goToNextPane();
-        break;
-      case "ArrowLeft":
-        this.goToPrevPane();
-        break;
-      default:
-        break;
-    }
   };
 
   getCurrentPane = (state = this.state) => {
@@ -122,7 +107,6 @@ class Carousel extends React.Component {
 
   animateToPane = (pane, duration, easing) => {
     this.animation = animate({
-      name: "horizontalPan-" + this.props.title,
       start: this.state.scrollPos,
       end: -this.state.frameWidth * pane,
       duration,
@@ -158,7 +142,7 @@ class Carousel extends React.Component {
 
     if (!isDragging) {
       if (this.animation) {
-        this.animation.stop("horizontalPan-" + this.props.title);
+        this.animation.stop();
       }
 
       this.setState({
