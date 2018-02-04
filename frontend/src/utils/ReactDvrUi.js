@@ -1,5 +1,17 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import styled from "styled-components";
+
+const Container = styled.div`
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  z-index: 999999;
+  background-color: rgba(0,0,0,0.8);
+  border: 2px solid #000;
+  padding: 15px;
+  border-radius: 4px;
+`;
 
 class ReactDvrUi extends Component {
   static propTypes = {
@@ -11,7 +23,8 @@ class ReactDvrUi extends Component {
         props: PropTypes.object.isRequired
       })
     ).isRequired,
-    onSaveProps: PropTypes.func.isRequired,
+    onAddState: PropTypes.func.isRequired,
+    onRemoveState: PropTypes.func.isRequired,
     onSetActiveState: PropTypes.func.isRequired,
     activeState: PropTypes.string
   };
@@ -25,11 +38,11 @@ class ReactDvrUi extends Component {
   handleSubmit = event => {
     event.preventDefault();
 
-    this.props.onSaveProps({ name: this.state.name });
+    this.props.onAddState(this.state.name);
   };
 
   render() {
-    const { isShowing, activeState, states, onSetActiveState } = this.props;
+    const { isShowing, activeState, states, onSetActiveState, onRemoveState } = this.props;
     const { name } = this.state;
 
     if (!isShowing) {
@@ -37,7 +50,7 @@ class ReactDvrUi extends Component {
     }
 
     return (
-      <div>
+      <Container>
         <div>
           <label>
             <input
@@ -60,7 +73,7 @@ class ReactDvrUi extends Component {
                   onSetActiveState(name);
                 }}
               />{" "}
-              {name}
+              {name} <span onClick={() => { onRemoveState(name) }}>remove</span>
             </label>
           </div>
         ))}
@@ -73,7 +86,7 @@ class ReactDvrUi extends Component {
           />
           <button>Save Props</button>
         </form>
-      </div>
+      </Container>
     );
   }
 }

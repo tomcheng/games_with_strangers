@@ -34,7 +34,7 @@ const reactDvr = options => Target =>
       }
     };
 
-    handleSaveProps = ({ name }) => {
+    handleAddState = name => {
       if (!name) {
         return;
       }
@@ -45,8 +45,16 @@ const reactDvr = options => Target =>
       }));
     };
 
+    handleRemoveState = name => {
+      this.setLocalStorageState(state => ({
+        ...state,
+        states: state.states.filter(s => s.name !== name),
+        activeState: state.activeState === name ? null : state.activeState
+      }));
+    };
+
     handleSetActiveState = name => {
-      this.setLocalStorageState(({ activeState: name }));
+      this.setLocalStorageState({ activeState: name });
     };
 
     getLocalStorageState = () => {
@@ -95,7 +103,8 @@ const reactDvr = options => Target =>
           activeState={activeState}
           states={states}
           onSetActiveState={this.handleSetActiveState}
-          onSaveProps={this.handleSaveProps}
+          onAddState={this.handleAddState}
+          onRemoveState={this.handleRemoveState}
         />,
         this.overlayTarget
       );
