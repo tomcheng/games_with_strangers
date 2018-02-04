@@ -41,7 +41,7 @@ class ReactDvrUi extends Component {
     activeState: PropTypes.string
   };
 
-  state = { name: "", isAdding: false };
+  state = { name: "", isAdding: false, addError: null };
 
   handleClickAdd = () => {
     this.setState({ isAdding: true });
@@ -51,15 +51,38 @@ class ReactDvrUi extends Component {
     this.setState({ [event.target.name]: event.target.value });
   };
 
-  handleSubmit = event => {
+  handleSubmitAdd = event => {
     event.preventDefault();
 
-    this.props.onAddState(this.state.name);
+    const { states } = this.props;
+    const name = this.state.name.trim();
+
+    if (name === "") {
+      this.setState({ addError: "Name is required" });
+      return;
+    }
+
+    if (states.some(s => s.name === name)) {
+      this.setState({ addError: "Name is already used" });
+      return;
+    }
+
+    this.props.onAddState(name);
+  };
+
+  handleClickCancelAdd = () => {
+    this.setState({ isAdding: false });
   };
 
   render() {
-    const { isShowing, activeState, states, onSetActiveState, onRemoveState } = this.props;
-    const { name, isAdding } = this.state;
+    const {
+      isShowing,
+      activeState,
+      states,
+      onSetActiveState,
+      onRemoveState
+    } = this.props;
+    const { name, isAdding, addError } = this.state;
 
     if (!isShowing) {
       return <noscript />;
@@ -77,7 +100,7 @@ class ReactDvrUi extends Component {
                 onSetActiveState(null);
               }}
             />{" "}
-            None
+            Not using saved state
           </label>
         </div>
         {states.map(({ name }) => (
@@ -90,12 +113,19 @@ class ReactDvrUi extends Component {
                   onSetActiveState(name);
                 }}
               />{" "}
-              {name} <span onClick={() => { onRemoveState(name) }}>remove</span>
+              {name}{" "}
+              <span
+                onClick={() => {
+                  onRemoveState(name);
+                }}
+              >
+                remove
+              </span>
             </label>
           </div>
         ))}
         {isAdding ? (
-          <form onSubmit={this.handleSubmit}>
+          <form onSubmit={this.handleSubmitAdd}>
             <input
               type="text"
               name="name"
@@ -103,10 +133,14 @@ class ReactDvrUi extends Component {
               value={name}
               onChange={this.handleChange}
             />
+            {addError && <div>{addError}</div>}
             <button>Save Props</button>
+            <button onClick={this.handleClickCancelAdd}>Cancel</button>
           </form>
         ) : (
-          <button onClick={this.handleClickAdd}>Add State</button>
+          <button onClick={this.handleClickAdd} disabled={!!activeState}>
+            Add State
+          </button>
         )}
       </Container>
     );
