@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import AddStateForm from "./AddStateForm";
 
 const Container = styled.div`
   position: fixed;
@@ -41,36 +42,25 @@ class ReactDvrUi extends Component {
     activeState: PropTypes.string
   };
 
-  state = { name: "", isAdding: false, addError: null };
+  state = { isAdding: false };
 
   handleClickAdd = () => {
     this.setState({ isAdding: true });
   };
 
-  handleChange = event => {
-    this.setState({ [event.target.name]: event.target.value });
+  handleClickCancelAdd = () => {
+    this.setState({ isAdding: false });
   };
 
-  handleSubmitAdd = event => {
-    event.preventDefault();
-
+  handleAddState = ({ name, onError }) => {
     const { states } = this.props;
-    const name = this.state.name.trim();
-
-    if (name === "") {
-      this.setState({ addError: "Name is required" });
-      return;
-    }
 
     if (states.some(s => s.name === name)) {
-      this.setState({ addError: "Name is already used" });
+      onError({ message: "Name is already used" });
       return;
     }
 
     this.props.onAddState(name);
-  };
-
-  handleClickCancelAdd = () => {
     this.setState({ isAdding: false });
   };
 
@@ -82,7 +72,7 @@ class ReactDvrUi extends Component {
       onSetActiveState,
       onRemoveState
     } = this.props;
-    const { name, isAdding, addError } = this.state;
+    const { isAdding } = this.state;
 
     if (!isShowing) {
       return <noscript />;
@@ -125,18 +115,10 @@ class ReactDvrUi extends Component {
           </div>
         ))}
         {isAdding ? (
-          <form onSubmit={this.handleSubmitAdd}>
-            <input
-              type="text"
-              name="name"
-              placeholder="Name this State"
-              value={name}
-              onChange={this.handleChange}
-            />
-            {addError && <div>{addError}</div>}
-            <button>Save Props</button>
-            <button onClick={this.handleClickCancelAdd}>Cancel</button>
-          </form>
+          <AddStateForm
+            onSubmit={this.handleAddState}
+            onCancel={this.handleClickCancelAdd}
+          />
         ) : (
           <button onClick={this.handleClickAdd} disabled={!!activeState}>
             Add State
