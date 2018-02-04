@@ -4,6 +4,7 @@ import AppHeader from "./AppHeader";
 import Home from "./Home";
 import Room from "./Room";
 import FlashMessage from "./FlashMessage";
+import reactDvr from "../utils/reactDvr";
 import "./App.css";
 
 const Container = styled.div`
@@ -66,4 +67,4 @@ const App = ({
   </Container>
 );
 
-export default App;
+export default reactDvr()(App);
