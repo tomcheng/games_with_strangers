@@ -11,6 +11,7 @@ const Container = styled.div`
   border: 2px solid #000;
   padding: 15px;
   border-radius: 4px;
+  color: #fff;
 `;
 
 class ReactDvrUi extends Component {
@@ -29,7 +30,11 @@ class ReactDvrUi extends Component {
     activeState: PropTypes.string
   };
 
-  state = { name: "" };
+  state = { name: "", isAdding: false };
+
+  handleClickAdd = () => {
+    this.setState({ isAdding: true });
+  };
 
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
@@ -43,7 +48,7 @@ class ReactDvrUi extends Component {
 
   render() {
     const { isShowing, activeState, states, onSetActiveState, onRemoveState } = this.props;
-    const { name } = this.state;
+    const { name, isAdding } = this.state;
 
     if (!isShowing) {
       return <noscript />;
@@ -77,15 +82,20 @@ class ReactDvrUi extends Component {
             </label>
           </div>
         ))}
-        <form onSubmit={this.handleSubmit}>
-          <input
-            type="text"
-            name="name"
-            value={name}
-            onChange={this.handleChange}
-          />
-          <button>Save Props</button>
-        </form>
+        {isAdding ? (
+          <form onSubmit={this.handleSubmit}>
+            <input
+              type="text"
+              name="name"
+              placeholder="Name this State"
+              value={name}
+              onChange={this.handleChange}
+            />
+            <button>Save Props</button>
+          </form>
+        ) : (
+          <button onClick={this.handleClickAdd}>Add State</button>
+        )}
       </Container>
     );
   }
