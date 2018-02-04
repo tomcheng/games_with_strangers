@@ -4,14 +4,25 @@ import styled from "styled-components";
 
 const Container = styled.div`
   position: fixed;
-  bottom: 10px;
-  left: 10px;
+  bottom: 15px;
+  left: 15px;
   z-index: 999999;
-  background-color: rgba(0,0,0,0.8);
+  background-color: rgba(0, 0, 0, 0.8);
   border: 2px solid #000;
-  padding: 15px;
+  padding: 12px 15px 15px;
   border-radius: 4px;
   color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  line-height: 24px;
+  -webkit-font-smoothing: antialiased;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+`;
+
+const Title = styled.div`
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 5px;
 `;
 
 class ReactDvrUi extends Component {
@@ -56,6 +67,7 @@ class ReactDvrUi extends Component {
 
     return (
       <Container>
+        <Title>React DVR</Title>
         <div>
           <label>
             <input
