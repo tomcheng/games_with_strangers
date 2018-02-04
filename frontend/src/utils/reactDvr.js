@@ -1,29 +1,6 @@
 import React, { Component } from "react";
 import { render, unmountComponentAtNode } from "react-dom";
-
-const ReactDVR = ({
-  isShowing,
-  isOverriding,
-  onSaveProps,
-  onToggleOverriding
-}) =>
-  isShowing ? (
-    <div>
-      <div>
-        <label>
-          <input
-            type="checkbox"
-            value={isOverriding}
-            onChange={onToggleOverriding}
-          />{" "}
-          Is overriding
-        </label>
-      </div>
-      <button onClick={onSaveProps}>Save Props</button>
-    </div>
-  ) : (
-    <noscript />
-  );
+import ReactDvrUi from "./ReactDvrUi";
 
 const defaultOptions = {
   toggleKeyCode: "Backquote",
@@ -50,27 +27,32 @@ const reactDvr = options => Target =>
 
     handleKeyUp = event => {
       if (event.code === this.options.toggleKeyCode) {
-        this.setLocalStorageState(state => ({ ...state, isShowingUI: !state.isShowingUI }));
+        this.setLocalStorageState(state => ({
+          ...state,
+          isShowingUI: !state.isShowingUI
+        }));
       }
     };
 
-    handleSaveProps = () => {
-      localStorage.setItem(
-        this.options.localStorageKey,
-        JSON.stringify(this.props)
-      );
-    };
+    handleSaveProps = ({ name }) => {
+      if (!name) {
+        return;
+      }
 
-    handleToggleOverriding = () => {
       this.setLocalStorageState(state => ({
         ...state,
-        isOverriding: !state.isOverriding
+        states: (state.states || []).concat([{ name, props: this.props }])
       }));
+    };
+
+    handleSetActiveState = name => {
+      this.setLocalStorageState(({ activeState: name }));
     };
 
     getLocalStorageState = () => {
       const json = localStorage.getItem(this.options.localStorageKey);
-      return json ? JSON.parse(json) : {};
+      const localStorageState = json ? JSON.parse(json) : {};
+      return { states: [], ...localStorageState };
     };
 
     setLocalStorageState = updates => {
@@ -94,7 +76,12 @@ const reactDvr = options => Target =>
         return;
       }
 
-      const { isShowingUI, isOverriding } = this.getLocalStorageState();
+      const {
+        isShowingUI,
+        isOverriding,
+        states,
+        activeState
+      } = this.getLocalStorageState();
 
       if (!this.overlayTarget) {
         this.overlayTarget = document.createElement("div");
@@ -102,22 +89,23 @@ const reactDvr = options => Target =>
       }
 
       render(
-        <ReactDVR
+        <ReactDvrUi
           isShowing={isShowingUI}
           isOverriding={isOverriding}
-          props={this.props}
+          activeState={activeState}
+          states={states}
+          onSetActiveState={this.handleSetActiveState}
           onSaveProps={this.handleSaveProps}
-          onToggleOverriding={this.handleToggleOverriding}
         />,
         this.overlayTarget
       );
     };
 
     render() {
-      const { isOverriding } = this.getLocalStorageState();
-      const json = localStorage.getItem(this.options.localStorageKey);
-      const propsOverride =
-        json && isOverriding ? JSON.parse(json) : {};
+      const { states, activeState } = this.getLocalStorageState();
+      const propsOverride = activeState
+        ? states.find(({ name }) => name === activeState).props
+        : {};
 
       return <Target {...this.props} {...propsOverride} />;
     }
