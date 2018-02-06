@@ -4,7 +4,6 @@ import AppHeader from "./AppHeader";
 import Home from "./Home";
 import Room from "./Room";
 import FlashMessage from "./FlashMessage";
-import reactDvr from "../utils/reactDvr";
 import "./App.css";
 
 const Container = styled.div`
@@ -67,4 +66,12 @@ const App = ({
   </Container>
 );
 
-export default reactDvr()(App);
+let ReactDvrApp;
+
+if (process.env.NODE_ENV === "development") {
+  const reactDvr = require("react-dvr").default;
+  ReactDvrApp = reactDvr()(App);
+}
+
+export default ReactDvrApp || App;
+
