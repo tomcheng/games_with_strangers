@@ -13,8 +13,9 @@
     "react-dnd": "2.5.4",
     "react-dnd-touch-backend": "0.3.19",
     "react-dom": "16.2.0",
+    "react-dvr": "0.0.5",
     "react-textarea-autosize": "5.2.1",
-    "styled-components": "2.4.0"
+    "styled-components": "3.1.6"
   },
   "devDependencies": {
     "gh-pages": "1.1.0",

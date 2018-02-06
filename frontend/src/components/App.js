@@ -66,4 +66,12 @@ const App = ({
   </Container>
 );
 
-export default App;
+let ReactDvrApp;
+
+if (process.env.NODE_ENV === "development") {
+  const reactDvr = require("react-dvr").default;
+  ReactDvrApp = reactDvr()(App);
+}
+
+export default ReactDvrApp || App;
+
