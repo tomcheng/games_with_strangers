@@ -9,11 +9,11 @@ import SecondaryText from "../common/SecondaryText";
 import Carousel from "../common/Carousel";
 
 const Container = styled.div`
-  margin: 0 -${props => props.theme.appPadding};
+  margin: 0 -${props => props.theme.appPadding}px;
 `;
 
 const StyledForm = styled.form`
-  padding: 0 ${props => props.theme.appPadding};
+  padding: 0 ${props => props.theme.appPadding}px;
 `;
 
 class FunPromptsWriting extends Component {

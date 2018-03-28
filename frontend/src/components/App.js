@@ -9,7 +9,7 @@ import "./App.css";
 const Container = styled.div`
   display: flex;
   justify-content: center;
-  padding: ${props => props.theme.appPadding};
+  padding: ${props => props.theme.appPadding}px;
 `;
 
 const Content = styled.div`

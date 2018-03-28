@@ -6,7 +6,7 @@ import AppContainer from "./components/AppContainer";
 // import registerServiceWorker from "./registerServiceWorker";
 
 render(
-  <ThemeProvider theme={{ appPadding: "24px" }}><AppContainer /></ThemeProvider>,
+  <ThemeProvider theme={{ appPadding: 24 }}><AppContainer /></ThemeProvider>,
   document.getElementById("root")
 );
 
