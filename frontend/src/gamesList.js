@@ -1,7 +1,16 @@
 import YouBet from "./components/youBet/YouBet";
 import FunPrompts from "./components/funPrompts/FunPrompts";
+import Socks from "./components/socks/Socks";
 
 const gamesList = [
+  {
+    id: "socks",
+    displayName: "Socks",
+    description:
+      "Find matching socks",
+    options: [],
+    component: Socks
+  },
   {
     id: "fun_prompts",
     displayName: "Fun Prompts",

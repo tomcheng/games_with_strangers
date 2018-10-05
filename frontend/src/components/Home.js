@@ -110,7 +110,13 @@ class Home extends Component {
     setPlayerName(playerName);
 
     this.setState({ startGameClicked: gameId });
-    onCreateRoom({ playerName, gameId });
+    onCreateRoom({
+      playerName,
+      gameId,
+      onError: () => {
+        this.setState({ startGameClicked: null });
+      }
+    });
   };
 
   setNameError = () => {

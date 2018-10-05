@@ -1,5 +1,6 @@
 defmodule GWS.Room do
   use Agent, restart: :temporary
+  @valid_games ["fun_prompts", "you_bet"]
 
   def start_link(_opts) do
     Agent.start_link(fn ->
@@ -8,13 +9,18 @@ defmodule GWS.Room do
   end
 
   def set_game(room, game) do
-    Agent.update(room, fn state ->
-      state
-      |> Map.put(:game, game)
-      |> Map.put(:minimum_players, game |> get_module |> apply(:minimum_players, []))
-    end)
+    cond do
+      Enum.member?(@valid_games, game) ->
+        Agent.update(room, fn state ->
+          state
+          |> Map.put(:game, game)
+          |> Map.put(:minimum_players, game |> get_module |> apply(:minimum_players, []))
+        end)
 
-    room
+        room
+      true ->
+        {:error, "Invalid game"}
+    end
   end
 
   defp get_module(game), do: String.to_atom("Elixir." <> Macro.camelize(game))

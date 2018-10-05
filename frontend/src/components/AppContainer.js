@@ -57,8 +57,14 @@ class AppContainer extends Component {
     this.leaveRoom();
   };
 
-  handleCreateRoom = ({ playerName, gameId }) => {
-    POST("/rooms", { game: gameId }).then(({ room_code }) => {
+  handleCreateRoom = ({ playerName, gameId, onError }) => {
+    POST("/rooms", { game: gameId }).then(({ room_code, error }) => {
+      if (error) {
+        this.setState({ flashMessage: error });
+        onError();
+        return;
+      }
+
       this.setState({ gameId });
       this.handleJoinRoom({ playerName, roomCode: room_code });
     });

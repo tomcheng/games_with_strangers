@@ -19,6 +19,11 @@ defmodule GWS.RoomTest do
     assert state[:minimum_players] == YouBet.minimum_players()
   end
 
+  test "handles invalid game", %{room: room} do
+    {:error, message} = GWS.Room.set_game(room, "foo")
+    assert message == "Invalid game"
+  end
+
   test "starts game", %{room: room} do
     {:ok, state} =
       room
