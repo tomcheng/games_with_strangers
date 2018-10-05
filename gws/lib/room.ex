@@ -1,6 +1,6 @@
 defmodule GWS.Room do
   use Agent, restart: :temporary
-  @valid_games ["fun_prompts", "you_bet"]
+  @valid_games ["fun_prompts", "you_bet", "socks"]
 
   def start_link(_opts) do
     Agent.start_link(fn ->
@@ -18,6 +18,7 @@ defmodule GWS.Room do
         end)
 
         room
+
       true ->
         {:error, "Invalid game"}
     end
