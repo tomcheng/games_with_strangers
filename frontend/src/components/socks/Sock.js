@@ -1,9 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
-import SockSmall from "../../svgs/SockSmall";
-import SockMedium from "../../svgs/SockMedium";
-import SockLarge from "../../svgs/SockLarge";
+import SockDrawing from "./SockDrawing";
 
 const Container = styled.div`
   user-select: none;
@@ -11,13 +9,7 @@ const Container = styled.div`
 
 const Sock = ({ onClick, length, color }) => (
   <Container onClick={onClick}>
-    {length === 1 ? (
-      <SockSmall color={color} />
-    ) : length === 2 ? (
-      <SockMedium color={color} />
-    ) : (
-      <SockLarge color={color} />
-    )}
+    <SockDrawing color={color} length={length} />
   </Container>
 );
 
