@@ -6,13 +6,15 @@ import concat from "lodash/concat";
 import flatten from "lodash/flatten";
 import omit from "lodash/omit";
 import values from "lodash/values";
-import FullHeightContainer from "../common/FullHeightContainer";
+import Bin from "./Bin";
 import Sock from "./Sock";
 
-const Container = styled(FullHeightContainer)`
-  background-color: #fff;
+const Container = styled.div`
+  background-color: #f7f7f7;
   color: #333;
-  padding: 24px;
+  height: 100vh;
+  overflow: auto;
+  position: relative;
 `;
 
 const Row = styled.div`
@@ -57,24 +59,26 @@ class Socks extends Component {
 
     return (
       <Container>
-        {chunk(socks, 3).map((group, index) => (
-          <Row key={index}>
-            {group.map(({ id, color, length, pattern, smell }) => (
-              <Sock
-                key={id}
-                onClick={() => {
-                  onPlay({ type: "select_sock", payload: { sock_id: id } });
-                }}
-                color={color}
-                length={length}
-                pattern={pattern}
-                smell={smell}
-                youSelected={yourSelections.includes(id)}
-                otherSelected={otherSelections.includes(id)}
-              />
-            ))}
-          </Row>
-        ))}
+        <Bin>
+          {chunk(socks, 3).map((group, index) => (
+            <Row key={index}>
+              {group.map(({ id, color, length, pattern, smell }) => (
+                <Sock
+                  key={id}
+                  onClick={() => {
+                    onPlay({ type: "select_sock", payload: { sock_id: id } });
+                  }}
+                  color={color}
+                  length={length}
+                  pattern={pattern}
+                  smell={smell}
+                  youSelected={yourSelections.includes(id)}
+                  otherSelected={otherSelections.includes(id)}
+                />
+              ))}
+            </Row>
+          ))}
+        </Bin>
       </Container>
     );
   }

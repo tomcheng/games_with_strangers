@@ -6,10 +6,10 @@ const gamesList = [
   {
     id: "socks",
     displayName: "Socks",
-    description:
-      "Find matching socks",
+    description: "Find matching socks",
     options: [],
-    component: Socks
+    component: Socks,
+    fullScreen: true
   },
   {
     id: "fun_prompts",
@@ -27,7 +27,8 @@ const gamesList = [
         defaultValue: 3
       }
     ],
-    component: FunPrompts
+    component: FunPrompts,
+    fullScreen: false
   },
   {
     id: "you_bet",
@@ -44,7 +45,8 @@ const gamesList = [
         defaultValue: 7
       }
     ],
-    component: YouBet
+    component: YouBet,
+    fullScreen: false
   }
 ];
 
