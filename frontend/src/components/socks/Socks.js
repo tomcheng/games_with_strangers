@@ -17,13 +17,17 @@ const Container = styled.div`
   position: relative;
 `;
 
+const Rows = styled.div`
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: space-around;
+`;
+
 const Row = styled.div`
   display: flex;
   justify-content: space-around;
   align-items: center;
-  & + & {
-    margin-top: 12px;
-  }
 `;
 
 class Socks extends Component {
@@ -60,25 +64,28 @@ class Socks extends Component {
     return (
       <Container>
         <Bin>
-          {chunk(socks, 3).map((group, rowIndex) => (
-            <Row key={rowIndex}>
-              {group.map(({ id, color, length, pattern, smell }, cellIndex) => (
-                <Sock
-                  key={id}
-                  position={{ x: cellIndex, y: rowIndex }}
-                  onClick={() => {
-                    onPlay({ type: "select_sock", payload: { sock_id: id } });
-                  }}
-                  color={color}
-                  length={length}
-                  pattern={pattern}
-                  smell={smell}
-                  youSelected={yourSelections.includes(id)}
-                  otherSelected={otherSelections.includes(id)}
-                />
-              ))}
-            </Row>
-          ))}
+          <Rows>
+            {chunk(socks, 3).map((group, rowIndex) => (
+              <Row key={rowIndex}>
+                {group.map(({ id, color, length, pattern, smell }, cellIndex) => (
+                  <Sock
+                    key={id}
+                    position={{ x: cellIndex, y: rowIndex }}
+                    onClick={() => {
+                      onPlay({ type: "select_sock", payload: { sock_id: id } });
+                    }}
+                    color={color}
+                    length={length}
+                    pattern={pattern}
+                    smell={smell}
+                    youSelected={yourSelections.includes(id)}
+                    otherSelected={otherSelections.includes(id)}
+                  />
+                ))}
+              </Row>
+            ))}
+
+          </Rows>
         </Bin>
       </Container>
     );

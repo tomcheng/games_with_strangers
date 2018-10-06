@@ -91,9 +91,9 @@ class Sock extends Component {
         {(youSelected || otherSelected) && (
           <HandContainer
             style={{
-              transform: `translate(${
+              transform: `translate3d(${
                 TRANSLATIONS[length]
-              }) rotate(${handAngle}deg)`
+              }, 0) rotate3d(0,0,1,${handAngle}deg)`
             }}
           >
             <Hand />

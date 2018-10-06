@@ -22,6 +22,9 @@ const Content = styled.div`
   padding: ${DEPTH + 20}px ${DEPTH}px;
   position: relative;
   z-index: 1;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
 `;
 
 class Bin extends Component {
