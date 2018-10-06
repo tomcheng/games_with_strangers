@@ -72,6 +72,7 @@ const Room = ({
   return (
     <GameComponent
       gameState={gameState}
+      you={you}
       youAreModerator={youAreModerator}
       moderator={moderator}
       onPlay={onPlay}
