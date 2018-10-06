@@ -60,11 +60,12 @@ class Socks extends Component {
     return (
       <Container>
         <Bin>
-          {chunk(socks, 3).map((group, index) => (
-            <Row key={index}>
-              {group.map(({ id, color, length, pattern, smell }) => (
+          {chunk(socks, 3).map((group, rowIndex) => (
+            <Row key={rowIndex}>
+              {group.map(({ id, color, length, pattern, smell }, cellIndex) => (
                 <Sock
                   key={id}
+                  position={{ x: cellIndex, y: rowIndex }}
                   onClick={() => {
                     onPlay({ type: "select_sock", payload: { sock_id: id } });
                   }}

@@ -20,6 +20,8 @@ const getNaturalBezier = (fromX, fromY, toX, toY) => {
 
 const Content = styled.div`
   padding: ${DEPTH + 20}px ${DEPTH}px;
+  position: relative;
+  z-index: 1;
 `;
 
 class Bin extends Component {
