@@ -13,22 +13,30 @@ class Socks extends Component {
     gameState: PropTypes.shape({
       socks: PropTypes.arrayOf(
         PropTypes.shape({
+          id: PropTypes.string.isRequired,
           color: PropTypes.number.isRequired,
           length: PropTypes.number.isRequired,
           pattern: PropTypes.number.isRequired,
           smell: PropTypes.number.isRequired
         })
       ).isRequired
-    }).isRequired
+    }).isRequired,
+    onPlay: PropTypes.func.isRequired
   };
 
   render() {
-    const { socks } = this.props.gameState;
+    const { onPlay, gameState } = this.props;
+    const { socks } = gameState;
 
     return (
       <Container>
-        {socks.map(({ color, length, pattern, smell }) => (
-          <div key={`${color}${length}${pattern}${smell}`}>
+        {socks.map(({ id, color, length, pattern, smell }) => (
+          <div
+            key={`${color}${length}${pattern}${smell}`}
+            onClick={() => {
+              onPlay({ sockId: `${color}${length}${pattern}${smell}`, type: "select_sock" });
+            }}
+          >
             {color} {length} {pattern} {smell}
           </div>
         ))}
