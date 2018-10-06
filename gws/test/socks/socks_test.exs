@@ -26,4 +26,19 @@ defmodule SocksTest do
     assert state[:stage] == :guessing
     assert Enum.count(state[:socks]) == 9
   end
+
+  test "selects a sock", %{players: players} do
+    initial_state = Socks.initial_state(players, %{})
+    sock_to_select = hd(initial_state[:socks])
+
+    state =
+      initial_state
+      |> Socks.play("1", "select_sock", %{"sock_id" => sock_to_select[:id]})
+      |> Socks.sanitize_state("1")
+
+    assert state[:selected_socks] == %{
+             "1" => MapSet.new([sock_to_select[:id]]),
+             "2" => MapSet.new()
+           }
+  end
 end

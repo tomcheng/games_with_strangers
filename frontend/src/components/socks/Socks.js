@@ -32,9 +32,9 @@ class Socks extends Component {
       <Container>
         {socks.map(({ id, color, length, pattern, smell }) => (
           <div
-            key={`${color}${length}${pattern}${smell}`}
+            key={id}
             onClick={() => {
-              onPlay({ sockId: `${color}${length}${pattern}${smell}`, type: "select_sock" });
+              onPlay({ type: "select_sock", payload: { sock_id: id } });
             }}
           >
             {color} {length} {pattern} {smell}

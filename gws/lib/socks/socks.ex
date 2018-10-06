@@ -21,8 +21,10 @@ defmodule Socks do
     %{
       players: players,
       scores: Enum.reduce(players, %{}, fn {id, _}, acc -> Map.put(acc, id, 0) end),
+      selected_socks:
+        Enum.reduce(players, %{}, fn {id, _}, acc -> Map.put(acc, id, MapSet.new()) end),
       stage: :guessing,
-      used_sock_ids: Enum.map(socks, &(&1[:id])),
+      used_sock_ids: Enum.map(socks, & &1[:id]),
       socks: socks
     }
   end
@@ -37,13 +39,13 @@ defmodule Socks do
       |> Enum.sort_by(fn s -> s[:player][:name] end)
       |> Enum.sort_by(fn s -> -s[:score] end)
     end)
-    |> Map.take([:players, :scores, :stage, :socks])
+    |> Map.take([:players, :scores, :stage, :socks, :selected_socks])
   end
 
-  def play(state, player_id, "select_sock", payload) do
+  def play(state, player_id, "select_sock", %{"sock_id" => sock_id}) do
     state
-    |> Map.update!(:socks, fn socks ->
-      Enum.concat(socks, [%{pattern: 2, color: 2, length: 2, smell: 2}])
+    |> Map.update!(:selected_socks, fn selected ->
+      Map.update!(selected, player_id, &MapSet.put(&1, sock_id))
     end)
   end
 
