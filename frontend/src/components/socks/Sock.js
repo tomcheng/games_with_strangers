@@ -25,7 +25,7 @@ const getTranslation = ({ length, showHand, handAngle, handDistance }) => {
   }
 
   return `${x - handDistance * Math.sin((handAngle * Math.PI) / 180)}px, ${y +
-  handDistance * Math.cos((handAngle * Math.PI) / 180)}px`;
+    handDistance * Math.cos((handAngle * Math.PI) / 180)}px`;
 };
 
 const Container = styled.div`
@@ -67,31 +67,31 @@ class Sock extends Component {
 
     if (x === 0 && y === 0) {
       handAngle = random(90 - ANGLE_OVERSHOOT, 180 + ANGLE_OVERSHOOT);
-      handDistance = Math.max(windowWidth, windowHeight)/4;
+      handDistance = Math.max(windowWidth, windowHeight) / 4;
     } else if (x === 1 && y === 0) {
       handAngle = random(180 - ANGLE_OVERSHOOT, 180 + ANGLE_OVERSHOOT);
-      handDistance = windowHeight/4;
+      handDistance = windowHeight / 4;
     } else if (x === 2 && y === 0) {
       handAngle = random(180 - ANGLE_OVERSHOOT, 270 + ANGLE_OVERSHOOT);
-      handDistance = Math.max(windowWidth, windowHeight)/4;
+      handDistance = Math.max(windowWidth, windowHeight) / 4;
     } else if (x === 0 && y === 1) {
       handAngle = random(90 - ANGLE_OVERSHOOT, 90 + ANGLE_OVERSHOOT);
-      handDistance = windowWidth/4;
+      handDistance = windowWidth / 4;
     } else if (x === 1 && y === 1) {
       handAngle = sample([60, 120, 240, 300]);
       handDistance = windowWidth * 0.6;
     } else if (x === 2 && y === 1) {
       handAngle = random(270 - ANGLE_OVERSHOOT, 270 + ANGLE_OVERSHOOT);
-      handDistance = windowWidth/4;
+      handDistance = windowWidth / 4;
     } else if (x === 0 && y === 2) {
       handAngle = random(-ANGLE_OVERSHOOT, 90 + ANGLE_OVERSHOOT);
-      handDistance = Math.max(windowWidth, windowHeight)/4;
+      handDistance = Math.max(windowWidth, windowHeight) / 4;
     } else if (x === 1 && y === 2) {
       handAngle = random(-ANGLE_OVERSHOOT, ANGLE_OVERSHOOT);
-      handDistance = windowHeight/4;
+      handDistance = windowHeight / 4;
     } else if (x === 2 && y === 2) {
       handAngle = random(270 - ANGLE_OVERSHOOT, 360 + ANGLE_OVERSHOOT);
-      handDistance = Math.max(windowWidth, windowHeight)/4;
+      handDistance = Math.max(windowWidth, windowHeight) / 4;
     }
 
     this.state = { handAngle, handDistance: handDistance + DISTANCE_BUFFER };
@@ -123,7 +123,7 @@ class Sock extends Component {
             })}, 0) rotate3d(0,0,1,${handAngle}deg)`
           }}
         >
-          <Hand />
+          <Hand owner={youSelected ? "you" : "other"} />
         </HandContainer>
       </Container>
     );
