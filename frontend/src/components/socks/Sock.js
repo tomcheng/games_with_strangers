@@ -2,14 +2,19 @@ import React from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import SockDrawing from "./SockDrawing";
+import Smell from "./Smell";
 
 const Container = styled.div`
   user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 `;
 
-const Sock = ({ onClick, length, color }) => (
+const Sock = ({ color, length, pattern, smell, onClick }) => (
   <Container onClick={onClick}>
-    <SockDrawing color={color} length={length} />
+    <Smell smell={smell} length={length} />
+    <SockDrawing color={color} length={length} pattern={pattern} />
   </Container>
 );
 
