@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import chunk from "lodash/chunk";
@@ -8,6 +8,7 @@ import omit from "lodash/omit";
 import values from "lodash/values";
 import Bin from "./Bin";
 import Sock from "./Sock";
+import SuspendedModal from "./SuspendedModal";
 
 const Container = styled.div`
   background-color: #f7f7f7;
@@ -43,7 +44,11 @@ class Socks extends Component {
         })
       ).isRequired,
       selected_socks: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string))
-        .isRequired
+        .isRequired,
+      state: PropTypes.string.isRequired,
+      set_result: PropTypes.shape({
+        socks: PropTypes.arrayOf(PropTypes.string).isRequired
+      })
     }).isRequired,
     playerColors: PropTypes.objectOf(PropTypes.string).isRequired,
     you: PropTypes.shape({
@@ -59,40 +64,48 @@ class Socks extends Component {
 
   render() {
     const { gameState, you } = this.props;
-    const { socks, selected_socks } = gameState;
+    const { socks, selected_socks, state, set_result } = gameState;
     const yourSelections = selected_socks[you.id];
     const otherSelections = flatten(
       concat(values(omit(selected_socks, you.id)))
     );
+    const isSuspended = state === "suspended";
 
     return (
-      <Container>
-        <Bin>
-          <Rows>
-            {chunk(socks, 3).map((group, rowIndex) => (
-              <Row key={rowIndex}>
-                {group.map(
-                  ({ id, color, length, pattern, smell }, cellIndex) => (
-                    <Sock
-                      key={id}
-                      position={{ x: cellIndex, y: rowIndex }}
-                      onClick={() => {
-                        this.handleClickSock(id);
-                      }}
-                      color={color}
-                      length={length}
-                      pattern={pattern}
-                      smell={smell}
-                      youSelected={yourSelections.includes(id)}
-                      otherSelected={otherSelections.includes(id)}
-                    />
-                  )
-                )}
-              </Row>
-            ))}
-          </Rows>
-        </Bin>
-      </Container>
+      <Fragment>
+        <Container>
+          <Bin>
+            <Rows>
+              {chunk(socks, 3).map((group, rowIndex) => (
+                <Row key={rowIndex}>
+                  {group.map(
+                    ({ id, color, length, pattern, smell }, cellIndex) => (
+                      <Sock
+                        key={id}
+                        position={{ x: cellIndex, y: rowIndex }}
+                        onClick={() => {
+                          this.handleClickSock(id);
+                        }}
+                        color={color}
+                        length={length}
+                        pattern={pattern}
+                        smell={smell}
+                        youSelected={
+                          isSuspended
+                            ? set_result.socks.includes(id)
+                            : yourSelections.includes(id)
+                        }
+                        otherSelected={otherSelections.includes(id)}
+                      />
+                    )
+                  )}
+                </Row>
+              ))}
+            </Rows>
+          </Bin>
+        </Container>
+        <SuspendedModal open={isSuspended} />
+      </Fragment>
     );
   }
 }
