@@ -80,8 +80,7 @@ defmodule Socks do
   defp add_set_result(state, player_id, room_code) do
     if selected_count(state, player_id) === 3 do
       if is_set?(state[:selected_socks][player_id]) do
-        # to be added later
-        state
+        add_correct_result(state, player_id)
       else
         if room_code,
           do:
@@ -102,6 +101,15 @@ defmodule Socks do
     )
     |> Map.update!(:selected_socks, &Map.put(&1, player_id, MapSet.new()))
     |> Map.update!(:player_states, &Map.put(&1, player_id, :suspended))
+  end
+
+  defp add_correct_result(state, player_id) do
+    state
+    |> Map.update!(
+      :set_results,
+      &Map.put(&1, player_id, %{is_set: true, socks: state[:selected_socks][player_id]})
+    )
+    |> Map.update!(:selected_socks, &Map.put(&1, player_id, MapSet.new()))
   end
 
   def cancel_selection(player_id, room_code) do
@@ -130,6 +138,16 @@ defmodule Socks do
   end
 
   defp is_set?(guess) do
-    false
+    socks = MapSet.to_list(guess)
+
+    [:color, :length, :pattern, :smell]
+    |> Enum.all?(fn prop ->
+      uniques =
+        socks
+        |> Enum.uniq_by(&Map.get(&1, prop))
+        |> Enum.count()
+
+      uniques == 1 || uniques == 3
+    end)
   end
 end

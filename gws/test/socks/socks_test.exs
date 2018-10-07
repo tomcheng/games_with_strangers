@@ -135,4 +135,27 @@ defmodule SocksTest do
 
     assert state[:state] === :guessing
   end
+
+  test "getting set right", %{players: players} do
+    initial_state = Socks.initial_state(players, %{})
+    %{socks: socks} = initial_state
+
+    state =
+      initial_state
+      |> Socks.play("1", "select_sock", %{
+        "sock_id" => Enum.at(socks, 1),
+        room_code: nil
+      })
+      |> Socks.play("1", "select_sock", %{
+        "sock_id" => Enum.at(socks, 4),
+        room_code: nil
+      })
+      |> Socks.play("1", "select_sock", %{
+        "sock_id" => Enum.at(socks, 8),
+        room_code: nil
+      })
+      |> Socks.sanitize_state("1")
+
+    assert state[:set_result][:is_set] == true
+  end
 end
