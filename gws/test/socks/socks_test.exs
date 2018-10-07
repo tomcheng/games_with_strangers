@@ -111,4 +111,28 @@ defmodule SocksTest do
     assert state[:state] === :suspended
     assert state[:selected_socks]["1"] == MapSet.new()
   end
+
+  test "cancels suspension", %{players: players} do
+    initial_state = Socks.initial_state(players, %{})
+    socks_to_select = Enum.take(initial_state[:socks], 3)
+
+    state =
+      initial_state
+      |> Socks.play("1", "select_sock", %{
+        "sock_id" => Enum.at(socks_to_select, 0),
+        room_code: nil
+      })
+      |> Socks.play("1", "select_sock", %{
+        "sock_id" => Enum.at(socks_to_select, 1),
+        room_code: nil
+      })
+      |> Socks.play("1", "select_sock", %{
+        "sock_id" => Enum.at(socks_to_select, 2),
+        room_code: nil
+      })
+      |> Socks.play("1", "cancel_suspension", nil)
+      |> Socks.sanitize_state("1")
+
+    assert state[:state] === :guessing
+  end
 end
