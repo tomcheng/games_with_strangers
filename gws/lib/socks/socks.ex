@@ -14,6 +14,9 @@ defmodule Socks do
                    pattern: p,
                    smell: s
                  }
+  @all_socks_by_id Enum.reduce(@all_socks, %{}, fn sock, acc ->
+                     Map.put(acc, sock[:id], sock)
+                   end)
 
   def minimum_players, do: 2
 
@@ -43,6 +46,13 @@ defmodule Socks do
       |> Enum.sort_by(fn s -> s[:player][:name] end)
       |> Enum.sort_by(fn s -> -s[:score] end)
     end)
+    |> Map.update!(:selected_socks, fn selected ->
+      selected
+      |> Enum.map(fn {id, socks} ->
+        {id, Enum.map(socks, &Map.get(&1, :id))}
+      end)
+      |> Enum.into(%{})
+    end)
     |> Map.take([:players, :scores, :stage, :socks, :selected_socks])
     |> Map.put(:set_result, state[:set_results][player_id])
     |> Map.put(:state, state[:player_states][player_id])
@@ -61,7 +71,7 @@ defmodule Socks do
         state
         |> Map.update!(:selected_socks, fn selected ->
           selected
-          |> Map.update!(player_id, &MapSet.put(&1, sock_id))
+          |> Map.update!(player_id, &MapSet.put(&1, Map.get(@all_socks_by_id, sock_id)))
         end)
         |> add_set_result(player_id, room_code)
     end

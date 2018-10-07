@@ -37,8 +37,8 @@ defmodule SocksTest do
       |> Socks.sanitize_state("1")
 
     assert state[:selected_socks] == %{
-             "1" => MapSet.new([sock_to_select[:id]]),
-             "2" => MapSet.new()
+             "1" => [sock_to_select[:id]],
+             "2" => []
            }
   end
 
@@ -53,8 +53,8 @@ defmodule SocksTest do
       |> Socks.sanitize_state("1")
 
     assert state[:selected_socks] == %{
-             "1" => MapSet.new(),
-             "2" => MapSet.new()
+             "1" => [],
+             "2" => []
            }
   end
 
@@ -65,22 +65,22 @@ defmodule SocksTest do
     state =
       initial_state
       |> Socks.play("1", "select_sock", %{
-        "sock_id" => Enum.at(socks_to_select, 0),
+        "sock_id" => Enum.at(socks_to_select, 0)[:id],
         room_code: nil
       })
       |> Socks.play("1", "select_sock", %{
-        "sock_id" => Enum.at(socks_to_select, 1),
+        "sock_id" => Enum.at(socks_to_select, 1)[:id],
         room_code: nil
       })
       |> Socks.play("1", "select_sock", %{
-        "sock_id" => Enum.at(socks_to_select, 2),
+        "sock_id" => Enum.at(socks_to_select, 2)[:id],
         room_code: nil
       })
       |> Socks.sanitize_state("1")
 
     assert state[:set_result][:is_set] == false
     assert state[:set_result][:socks] == MapSet.new(socks_to_select)
-    assert state[:selected_socks]["1"] == MapSet.new()
+    assert state[:selected_socks]["1"] == []
     assert state[:state] === :suspended
   end
 
@@ -91,25 +91,25 @@ defmodule SocksTest do
     state =
       initial_state
       |> Socks.play("1", "select_sock", %{
-        "sock_id" => Enum.at(socks_to_select, 0),
+        "sock_id" => Enum.at(socks_to_select, 0)[:id],
         room_code: nil
       })
       |> Socks.play("1", "select_sock", %{
-        "sock_id" => Enum.at(socks_to_select, 1),
+        "sock_id" => Enum.at(socks_to_select, 1)[:id],
         room_code: nil
       })
       |> Socks.play("1", "select_sock", %{
-        "sock_id" => Enum.at(socks_to_select, 2),
+        "sock_id" => Enum.at(socks_to_select, 2)[:id],
         room_code: nil
       })
       |> Socks.play("1", "select_sock", %{
-        "sock_id" => Enum.at(socks_to_select, 0),
+        "sock_id" => Enum.at(socks_to_select, 0)[:id],
         room_code: nil
       })
       |> Socks.sanitize_state("1")
 
     assert state[:state] === :suspended
-    assert state[:selected_socks]["1"] == MapSet.new()
+    assert state[:selected_socks]["1"] == []
   end
 
   test "cancels suspension", %{players: players} do
@@ -119,15 +119,15 @@ defmodule SocksTest do
     state =
       initial_state
       |> Socks.play("1", "select_sock", %{
-        "sock_id" => Enum.at(socks_to_select, 0),
+        "sock_id" => Enum.at(socks_to_select, 0)[:id],
         room_code: nil
       })
       |> Socks.play("1", "select_sock", %{
-        "sock_id" => Enum.at(socks_to_select, 1),
+        "sock_id" => Enum.at(socks_to_select, 1)[:id],
         room_code: nil
       })
       |> Socks.play("1", "select_sock", %{
-        "sock_id" => Enum.at(socks_to_select, 2),
+        "sock_id" => Enum.at(socks_to_select, 2)[:id],
         room_code: nil
       })
       |> Socks.play("1", "cancel_suspension", nil)
@@ -143,15 +143,15 @@ defmodule SocksTest do
     state =
       initial_state
       |> Socks.play("1", "select_sock", %{
-        "sock_id" => Enum.at(socks, 1),
+        "sock_id" => Enum.at(socks, 1)[:id],
         room_code: nil
       })
       |> Socks.play("1", "select_sock", %{
-        "sock_id" => Enum.at(socks, 4),
+        "sock_id" => Enum.at(socks, 4)[:id],
         room_code: nil
       })
       |> Socks.play("1", "select_sock", %{
-        "sock_id" => Enum.at(socks, 8),
+        "sock_id" => Enum.at(socks, 8)[:id],
         room_code: nil
       })
       |> Socks.sanitize_state("1")
