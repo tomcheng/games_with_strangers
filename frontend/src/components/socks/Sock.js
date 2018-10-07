@@ -38,6 +38,7 @@ const Container = styled.div`
 const HandContainer = styled.div`
   position: absolute;
   z-index: 1;
+  pointer-events: none;
   transform-origin: ${HAND_MIDDLE_X}px ${HAND_MIDDLE_Y}px;
   transition: transform 0.12s ease-out;
 `;

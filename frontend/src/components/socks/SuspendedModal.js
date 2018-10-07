@@ -1,10 +1,19 @@
-import React from "react";
+import React, { Component } from "react";
+import Modal from "./Modal";
 import PropTypes from "prop-types";
 
-const SuspendedModal = ({ open }) => <div>{open && "WRONG!"}</div>;
+class SuspendedModal extends Component {
+  static propTypes = {
+    open: PropTypes.bool.isRequired
+  };
 
-SuspendedModal.propTypes = {
-  open: PropTypes.bool.isRequired
-};
+  render() {
+    return (
+      <Modal open={this.props.open} title="Wrong!">
+        You're on a time-out for 5&nbsp;seconds.
+      </Modal>
+    );
+  }
+}
 
 export default SuspendedModal;
