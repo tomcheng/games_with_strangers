@@ -106,9 +106,7 @@ class Socks extends Component {
                       <Sock
                         key={cellIndex}
                         position={{ x: cellIndex, y: rowIndex }}
-                        onClick={() => {
-                          this.handleClickSock(id);
-                        }}
+                        id={id}
                         color={color}
                         length={length}
                         pattern={pattern}
@@ -119,6 +117,9 @@ class Socks extends Component {
                             : yourSelections.includes(id)
                         }
                         otherSelected={otherSelections.includes(id)}
+                        onClick={() => {
+                          this.handleClickSock(id);
+                        }}
                       />
                     )
                   )}

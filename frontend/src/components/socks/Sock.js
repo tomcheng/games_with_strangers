@@ -177,7 +177,7 @@ class Sock extends Component {
         <HandContainer
           style={{
             transform: `translate3d(${getHandTranslation({
-              show: youSelected,
+              show: youSelected || isRemoving,
               length,
               handAngle,
               handDistance
