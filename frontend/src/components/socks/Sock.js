@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import pick from "lodash/pick";
 import random from "lodash/random";
 import sample from "lodash/sample";
 import SockDrawing from "./SockDrawing";
@@ -18,9 +19,19 @@ const TRANSLATIONS = {
   3: { x: -4, y: 80 }
 };
 
-const getTranslation = ({ length, showHand, handAngle, handDistance }) => {
+const getContainerTranslation = ({ length, show, handAngle, handDistance }) => {
+  if (show) {
+    return `0px, 0px`;
+  }
+
+  return `${-handDistance *
+    Math.sin((handAngle * Math.PI) / 180)}px, ${handDistance *
+    Math.cos((handAngle * Math.PI) / 180)}px`;
+};
+
+const getHandTranslation = ({ length, show, handAngle, handDistance }) => {
   const { x, y } = TRANSLATIONS[length];
-  if (showHand) {
+  if (show) {
     return `${x}px, ${y}px`;
   }
 
@@ -33,6 +44,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  transition: transform 0.12s ease-out;
 `;
 
 const HandContainer = styled.div`
@@ -45,7 +57,7 @@ const HandContainer = styled.div`
 
 class Sock extends Component {
   static propTypes = {
-    onClick: PropTypes.func.isRequired,
+    id: PropTypes.string.isRequired,
     color: PropTypes.oneOf([1, 2, 3]).isRequired,
     length: PropTypes.oneOf([1, 2, 3]).isRequired,
     pattern: PropTypes.oneOf([1, 2, 3]).isRequired,
@@ -55,7 +67,8 @@ class Sock extends Component {
       y: PropTypes.oneOf([0, 1, 2])
     }).isRequired,
     youSelected: PropTypes.bool.isRequired,
-    otherSelected: PropTypes.bool.isRequired
+    otherSelected: PropTypes.bool.isRequired,
+    onClick: PropTypes.func.isRequired
   };
 
   constructor(props) {
@@ -95,29 +108,76 @@ class Sock extends Component {
       handDistance = Math.max(windowWidth, windowHeight) / 4;
     }
 
-    this.state = { handAngle, handDistance: handDistance + DISTANCE_BUFFER };
+    this.state = {
+      handAngle,
+      handDistance: handDistance + DISTANCE_BUFFER,
+      previousAttributes: null,
+      isRemoving: false,
+      isReplacing: false
+    };
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.id !== this.props.id) {
+      this.setState({
+        previousAttributes: pick(prevProps, [
+          "color",
+          "length",
+          "pattern",
+          "smell"
+        ]),
+        isRemoving: true
+      });
+    }
+  }
+
+  handleTransitionEndContainer = () => {
+    if (this.state.isRemoving) {
+      setTimeout(() => {
+        this.setState({
+          isRemoving: false,
+          isReplacing: true
+        });
+      }, 300);
+    } else if (this.state.isReplacing) {
+      setTimeout(() => {
+        this.setState({ isReplacing: false });
+      }, 200);
+    }
+  };
+
   render() {
+    const { youSelected, otherSelected, onClick } = this.props;
     const {
-      color,
-      length,
-      pattern,
-      smell,
-      youSelected,
-      otherSelected,
-      onClick
-    } = this.props;
-    const { handAngle, handDistance } = this.state;
+      handAngle,
+      handDistance,
+      isRemoving,
+      previousAttributes
+    } = this.state;
+
+    const { color, length, pattern, smell } = isRemoving
+      ? previousAttributes
+      : this.props;
 
     return (
-      <Container onClick={onClick}>
+      <Container
+        onClick={onClick}
+        style={{
+          transform: `translate3d(${getContainerTranslation({
+            show: !isRemoving,
+            length,
+            handAngle,
+            handDistance
+          })}, 0)`
+        }}
+        onTransitionEnd={this.handleTransitionEndContainer}
+      >
         <Smell smell={smell} length={length} />
         <SockDrawing color={color} length={length} pattern={pattern} />
         <HandContainer
           style={{
-            transform: `translate3d(${getTranslation({
-              showHand: youSelected,
+            transform: `translate3d(${getHandTranslation({
+              show: youSelected,
               length,
               handAngle,
               handDistance
@@ -128,8 +188,8 @@ class Sock extends Component {
         </HandContainer>
         <HandContainer
           style={{
-            transform: `translate3d(${getTranslation({
-              showHand: otherSelected,
+            transform: `translate3d(${getHandTranslation({
+              show: otherSelected,
               length,
               handAngle,
               handDistance

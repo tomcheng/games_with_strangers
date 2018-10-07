@@ -157,5 +157,7 @@ defmodule SocksTest do
       |> Socks.sanitize_state("1")
 
     assert state[:set_result][:is_set] == true
+    assert state[:scores] == %{"1" => 1, "2" => 0}
+    assert Enum.at(state[:socks], 1) !== Enum.at(socks, 1)
   end
 end

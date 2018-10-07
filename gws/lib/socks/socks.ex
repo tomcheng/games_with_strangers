@@ -31,21 +31,13 @@ defmodule Socks do
       set_results: Enum.reduce(players, %{}, fn {id, _}, acc -> Map.put(acc, id, nil) end),
       player_states: Enum.reduce(players, %{}, fn {id, _}, acc -> Map.put(acc, id, :guessing) end),
       stage: :guessing,
-      used_sock_ids: Enum.map(socks, & &1[:id]),
+      used_sock_ids: socks |> Enum.map(& &1[:id]) |> MapSet.new(),
       socks: socks
     }
   end
 
   def sanitize_state(state, player_id) do
-    %{players: players} = state
-
     state
-    |> Map.update!(:scores, fn scores ->
-      scores
-      |> Enum.map(fn {id, score} -> %{score: score, player: players[id]} end)
-      |> Enum.sort_by(fn s -> s[:player][:name] end)
-      |> Enum.sort_by(fn s -> -s[:score] end)
-    end)
     |> Map.update!(:selected_socks, fn selected ->
       selected
       |> Enum.map(fn {id, socks} ->
@@ -90,13 +82,16 @@ defmodule Socks do
   defp add_set_result(state, player_id, room_code) do
     if selected_count(state, player_id) === 3 do
       if is_set?(state[:selected_socks][player_id]) do
-        add_correct_result(state, player_id)
+        state
+        |> add_correct_result(player_id)
+        |> replace_selected_socks(player_id)
+        |> reset_selected_socks(player_id)
+        |> increment_score(player_id)
       else
-        if room_code,
-          do:
-            :timer.apply_after(@wrong_time_out, Socks, :cancel_suspension, [player_id, room_code])
-
-        add_wrong_result(state, player_id)
+        state
+        |> add_wrong_result(player_id)
+        |> reset_selected_socks(player_id)
+        |> suspend_player(player_id, @wrong_time_out, room_code)
       end
     else
       state
@@ -109,17 +104,33 @@ defmodule Socks do
       :set_results,
       &Map.put(&1, player_id, %{is_set: false, socks: state[:selected_socks][player_id]})
     )
-    |> Map.update!(:selected_socks, &Map.put(&1, player_id, MapSet.new()))
-    |> Map.update!(:player_states, &Map.put(&1, player_id, :suspended))
+  end
+
+  defp suspend_player(state, player_id, time, room_code) do
+    if room_code do
+      :timer.apply_after(time, Socks, :cancel_suspension, [player_id, room_code])
+    end
+
+    Map.update!(state, :player_states, &Map.put(&1, player_id, :suspended))
   end
 
   defp add_correct_result(state, player_id) do
-    state
-    |> Map.update!(
+    Map.update!(
+      state,
       :set_results,
       &Map.put(&1, player_id, %{is_set: true, socks: state[:selected_socks][player_id]})
     )
-    |> Map.update!(:selected_socks, &Map.put(&1, player_id, MapSet.new()))
+  end
+
+  defp replace_selected_socks(state, player_id) do
+  end
+
+  defp reset_selected_socks(state, player_id) do
+    Map.update!(state, :selected_socks, &Map.put(&1, player_id, MapSet.new()))
+  end
+
+  defp increment_score(state, player_id) do
+    Map.update!(state, :scores, &Map.update!(&1, player_id, fn score -> score + 1 end))
   end
 
   def cancel_selection(player_id, room_code) do

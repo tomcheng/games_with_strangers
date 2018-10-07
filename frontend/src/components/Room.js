@@ -98,7 +98,7 @@ Room.propTypes = {
   onStartGame: PropTypes.func.isRequired,
   gameState: PropTypes.shape({
     stage: PropTypes.string.isRequired,
-    scores: PropTypes.array.isRequired
+    scores: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired
   }),
   playersInGame: PropTypes.arrayOf(
     PropTypes.shape({
