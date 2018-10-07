@@ -60,26 +60,26 @@ defmodule SocksTest do
 
   test "getting set wrong", %{players: players} do
     initial_state = Socks.initial_state(players, %{})
-    socks_to_select = Enum.take(initial_state[:socks], 3)
+    socks_to_select = Enum.take(initial_state[:socks], 3) |> Enum.map(&Map.get(&1, :id))
 
     state =
       initial_state
       |> Socks.play("1", "select_sock", %{
-        "sock_id" => Enum.at(socks_to_select, 0)[:id],
+        "sock_id" => Enum.at(socks_to_select, 0),
         room_code: nil
       })
       |> Socks.play("1", "select_sock", %{
-        "sock_id" => Enum.at(socks_to_select, 1)[:id],
+        "sock_id" => Enum.at(socks_to_select, 1),
         room_code: nil
       })
       |> Socks.play("1", "select_sock", %{
-        "sock_id" => Enum.at(socks_to_select, 2)[:id],
+        "sock_id" => Enum.at(socks_to_select, 2),
         room_code: nil
       })
       |> Socks.sanitize_state("1")
 
     assert state[:set_result][:is_set] == false
-    assert state[:set_result][:socks] == MapSet.new(socks_to_select)
+    assert state[:set_result][:socks] == MapSet.new(["1232", "1233", "2133"])
     assert state[:selected_socks]["1"] == []
     assert state[:state] === :suspended
   end

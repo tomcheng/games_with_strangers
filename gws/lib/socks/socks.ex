@@ -49,7 +49,7 @@ defmodule Socks do
     |> Map.update!(:selected_socks, fn selected ->
       selected
       |> Enum.map(fn {id, socks} ->
-        {id, Enum.map(socks, &Map.get(&1, :id))}
+        {id, MapSet.to_list(socks)}
       end)
       |> Enum.into(%{})
     end)
@@ -71,7 +71,7 @@ defmodule Socks do
         state
         |> Map.update!(:selected_socks, fn selected ->
           selected
-          |> Map.update!(player_id, &MapSet.put(&1, Map.get(@all_socks_by_id, sock_id)))
+          |> Map.update!(player_id, &MapSet.put(&1, sock_id))
         end)
         |> add_set_result(player_id, room_code)
     end
@@ -148,7 +148,10 @@ defmodule Socks do
   end
 
   defp is_set?(guess) do
-    socks = MapSet.to_list(guess)
+    socks =
+      guess
+      |> MapSet.to_list()
+      |> Enum.map(&Map.get(@all_socks_by_id, &1))
 
     [:color, :length, :pattern, :smell]
     |> Enum.all?(fn prop ->
