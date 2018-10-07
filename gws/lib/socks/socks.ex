@@ -123,6 +123,21 @@ defmodule Socks do
   end
 
   defp replace_selected_socks(state, player_id) do
+    selected_socks = Map.get(state[:selected_socks], player_id) |> MapSet.to_list()
+    new_socks = select_socks(3, state[:used_sock_ids])
+
+    state
+    |> Map.update!(:socks, fn socks ->
+      Enum.reduce(new_socks, socks, fn new_sock, ss ->
+        new_sock_index = Enum.find_index(new_socks, &(&1 == new_sock))
+        sock_to_replace = Enum.at(selected_socks, new_sock_index)
+        sock_index = Enum.find_index(ss, &(&1[:id] == sock_to_replace))
+        List.replace_at(ss, sock_index, new_sock)
+      end)
+    end)
+    |> Map.update!(:used_sock_ids, fn used ->
+      MapSet.union(used, MapSet.new(Enum.map(new_socks, & &1[:id])))
+    end)
   end
 
   defp reset_selected_socks(state, player_id) do
@@ -145,8 +160,9 @@ defmodule Socks do
     GWS.broadcast_state(room_code, room)
   end
 
-  defp select_socks(num) do
+  defp select_socks(num, used_sock_ids \\ MapSet.new()) do
     @all_socks
+    |> Enum.reject(&MapSet.member?(used_sock_ids, &1[:id]))
     |> Enum.shuffle()
     |> Enum.take(num)
   end
