@@ -116,14 +116,26 @@ class Sock extends Component {
         <HandContainer
           style={{
             transform: `translate3d(${getTranslation({
-              showHand: youSelected || otherSelected,
+              showHand: youSelected,
               length,
               handAngle,
               handDistance
             })}, 0) rotate3d(0,0,1,${handAngle}deg)`
           }}
         >
-          <Hand owner={youSelected ? "you" : "other"} />
+          <Hand owner="you" />
+        </HandContainer>
+        <HandContainer
+          style={{
+            transform: `translate3d(${getTranslation({
+              showHand: otherSelected,
+              length,
+              handAngle,
+              handDistance
+            })}, 0) rotate3d(0,0,1,${handAngle}deg)`
+          }}
+        >
+          <Hand owner="other" />
         </HandContainer>
       </Container>
     );

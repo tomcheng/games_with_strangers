@@ -53,8 +53,12 @@ class Socks extends Component {
     onPlay: PropTypes.func.isRequired
   };
 
+  handleClickSock = id => {
+    this.props.onPlay({ type: "select_sock", payload: { sock_id: id } });
+  };
+
   render() {
-    const { onPlay, gameState, you } = this.props;
+    const { gameState, you } = this.props;
     const { socks, selected_socks } = gameState;
     const yourSelections = selected_socks[you.id];
     const otherSelections = flatten(
@@ -67,24 +71,25 @@ class Socks extends Component {
           <Rows>
             {chunk(socks, 3).map((group, rowIndex) => (
               <Row key={rowIndex}>
-                {group.map(({ id, color, length, pattern, smell }, cellIndex) => (
-                  <Sock
-                    key={id}
-                    position={{ x: cellIndex, y: rowIndex }}
-                    onClick={() => {
-                      onPlay({ type: "select_sock", payload: { sock_id: id } });
-                    }}
-                    color={color}
-                    length={length}
-                    pattern={pattern}
-                    smell={smell}
-                    youSelected={yourSelections.includes(id)}
-                    otherSelected={otherSelections.includes(id)}
-                  />
-                ))}
+                {group.map(
+                  ({ id, color, length, pattern, smell }, cellIndex) => (
+                    <Sock
+                      key={id}
+                      position={{ x: cellIndex, y: rowIndex }}
+                      onClick={() => {
+                        this.handleClickSock(id);
+                      }}
+                      color={color}
+                      length={length}
+                      pattern={pattern}
+                      smell={smell}
+                      youSelected={yourSelections.includes(id)}
+                      otherSelected={otherSelections.includes(id)}
+                    />
+                  )
+                )}
               </Row>
             ))}
-
           </Rows>
         </Bin>
       </Container>

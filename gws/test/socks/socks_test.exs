@@ -33,11 +33,27 @@ defmodule SocksTest do
 
     state =
       initial_state
-      |> Socks.play("1", "select_sock", %{"sock_id" => sock_to_select[:id]})
+      |> Socks.play("1", "select_sock", %{"sock_id" => sock_to_select[:id], room_code: nil})
       |> Socks.sanitize_state("1")
 
     assert state[:selected_socks] == %{
              "1" => MapSet.new([sock_to_select[:id]]),
+             "2" => MapSet.new()
+           }
+  end
+
+  test "cancels a selection", %{players: players} do
+    initial_state = Socks.initial_state(players, %{})
+    sock_to_select = hd(initial_state[:socks])
+
+    state =
+      initial_state
+      |> Socks.play("1", "select_sock", %{"sock_id" => sock_to_select[:id], room_code: nil})
+      |> Socks.play("1", "cancel_selection", nil)
+      |> Socks.sanitize_state("1")
+
+    assert state[:selected_socks] == %{
+             "1" => MapSet.new(),
              "2" => MapSet.new()
            }
   end
