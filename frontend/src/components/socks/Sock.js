@@ -80,39 +80,67 @@ class Sock extends PureComponent {
     const { positionX: x, positionY: y } = props;
     const { innerWidth: windowWidth, innerHeight: windowHeight } = window;
     let handAngle = 0;
+    let employeeHandAngle = 0;
+    let otherHandAngle = 0;
     let handDistance = 0;
 
     if (x === 0 && y === 0) {
       handAngle = random(90 - ANGLE_OVERSHOOT, 180 + ANGLE_OVERSHOOT);
+      employeeHandAngle = random(90 - ANGLE_OVERSHOOT, 180 + ANGLE_OVERSHOOT);
+      otherHandAngle = random(90 - ANGLE_OVERSHOOT, 180 + ANGLE_OVERSHOOT);
       handDistance = Math.max(windowWidth, windowHeight) / 4;
     } else if (x === 1 && y === 0) {
       handAngle = random(180 - ANGLE_OVERSHOOT, 180 + ANGLE_OVERSHOOT);
+      employeeHandAngle = random(180 - ANGLE_OVERSHOOT, 180 + ANGLE_OVERSHOOT);
+      otherHandAngle = random(180 - ANGLE_OVERSHOOT, 180 + ANGLE_OVERSHOOT);
       handDistance = windowHeight / 4;
     } else if (x === 2 && y === 0) {
       handAngle = random(180 - ANGLE_OVERSHOOT, 270 + ANGLE_OVERSHOOT);
+      employeeHandAngle = random(180 - ANGLE_OVERSHOOT, 270 + ANGLE_OVERSHOOT);
+      otherHandAngle = random(180 - ANGLE_OVERSHOOT, 270 + ANGLE_OVERSHOOT);
       handDistance = Math.max(windowWidth, windowHeight) / 4;
     } else if (x === 0 && y === 1) {
       handAngle = random(90 - ANGLE_OVERSHOOT, 90 + ANGLE_OVERSHOOT);
+      employeeHandAngle = random(90 - ANGLE_OVERSHOOT, 90 + ANGLE_OVERSHOOT);
+      otherHandAngle = random(90 - ANGLE_OVERSHOOT, 90 + ANGLE_OVERSHOOT);
       handDistance = windowWidth / 4;
     } else if (x === 1 && y === 1) {
       handAngle = sample([60, 120, 240, 300]);
+      employeeHandAngle = sample(
+        [60, 120, 240, 300].filter(a => a !== handAngle)
+      );
+      otherHandAngle = sample(
+        [60, 120, 240, 300].filter(
+          a => ![handAngle, employeeHandAngle].includes(a)
+        )
+      );
       handDistance = windowWidth * 0.6;
     } else if (x === 2 && y === 1) {
       handAngle = random(270 - ANGLE_OVERSHOOT, 270 + ANGLE_OVERSHOOT);
+      employeeHandAngle = random(270 - ANGLE_OVERSHOOT, 270 + ANGLE_OVERSHOOT);
+      otherHandAngle = random(270 - ANGLE_OVERSHOOT, 270 + ANGLE_OVERSHOOT);
       handDistance = windowWidth / 4;
     } else if (x === 0 && y === 2) {
       handAngle = random(-ANGLE_OVERSHOOT, 90 + ANGLE_OVERSHOOT);
+      employeeHandAngle = random(-ANGLE_OVERSHOOT, 90 + ANGLE_OVERSHOOT);
+      otherHandAngle = random(-ANGLE_OVERSHOOT, 90 + ANGLE_OVERSHOOT);
       handDistance = Math.max(windowWidth, windowHeight) / 4;
     } else if (x === 1 && y === 2) {
       handAngle = random(-ANGLE_OVERSHOOT, ANGLE_OVERSHOOT);
+      employeeHandAngle = random(-ANGLE_OVERSHOOT, ANGLE_OVERSHOOT);
+      otherHandAngle = random(-ANGLE_OVERSHOOT, ANGLE_OVERSHOOT);
       handDistance = windowHeight / 4;
     } else if (x === 2 && y === 2) {
       handAngle = random(270 - ANGLE_OVERSHOOT, 360 + ANGLE_OVERSHOOT);
+      employeeHandAngle = random(270 - ANGLE_OVERSHOOT, 360 + ANGLE_OVERSHOOT);
+      otherHandAngle = random(270 - ANGLE_OVERSHOOT, 360 + ANGLE_OVERSHOOT);
       handDistance = Math.max(windowWidth, windowHeight) / 4;
     }
 
     this.state = {
       handAngle,
+      employeeHandAngle,
+      otherHandAngle,
       handDistance: handDistance + DISTANCE_BUFFER,
       previousAttributes: null,
       replacementState: null
@@ -139,8 +167,15 @@ class Sock extends PureComponent {
   handleTransitionEndContainer = () => {
     if (this.state.replacementState === "removing") {
       setTimeout(() => {
+        this.setState({ replacementState: "retrieving" });
+      }, 300);
+      return;
+    }
+
+    if (this.state.replacementState === "retrieving") {
+      setTimeout(() => {
         this.setState({ replacementState: "replacing" });
-      }, 600);
+      }, 300);
       return;
     }
 
@@ -162,6 +197,8 @@ class Sock extends PureComponent {
     } = this.props;
     const {
       handAngle,
+      employeeHandAngle,
+      otherHandAngle,
       handDistance,
       replacementState,
       previousAttributes
@@ -181,11 +218,14 @@ class Sock extends PureComponent {
         }}
         style={{
           transform: `translate3d(${getContainerTranslation({
-            show: replacementState !== "removing",
+            show: !["removing", "retrieving"].includes(replacementState),
             length,
-            handAngle,
+            handAngle: ["pending", "removing"].includes(replacementState)
+              ? handAngle
+              : employeeHandAngle,
             handDistance
           })}, 0)`,
+          opacity: replacementState === "retrieving" ? 0 : 1,
           position: "relative",
           zIndex: isMiddle ? 1 : null
         }}
@@ -196,11 +236,16 @@ class Sock extends PureComponent {
         <HandContainer
           style={{
             transform: `translate3d(${getHandTranslation({
-              show: youSelected || ["pending", "removing"].includes(replacementState),
+              show:
+                youSelected ||
+                ["pending", "removing"].includes(replacementState),
               length,
               handAngle,
               handDistance
-            })}, 0) rotate3d(0,0,1,${handAngle}deg)`
+            })}, 0) rotate3d(0,0,1,${handAngle}deg)`,
+            opacity: ["retrieving", "replacing"].includes(replacementState)
+              ? 0
+              : 1
           }}
         >
           <Hand owner="you" />
@@ -210,9 +255,12 @@ class Sock extends PureComponent {
             transform: `translate3d(${getHandTranslation({
               show: replacementState === "replacing",
               length,
-              handAngle,
+              handAngle: employeeHandAngle,
               handDistance
-            })}, 0) rotate3d(0,0,1,${handAngle}deg)`
+            })}, 0) rotate3d(0,0,1,${employeeHandAngle}deg)`,
+            opacity: ["removing", "retrieving"].includes(replacementState)
+              ? 0
+              : 1
           }}
         >
           <Hand owner="employee" />
@@ -222,9 +270,10 @@ class Sock extends PureComponent {
             transform: `translate3d(${getHandTranslation({
               show: otherSelected,
               length,
-              handAngle,
+              handAngle: otherHandAngle,
               handDistance
-            })}, 0) rotate3d(0,0,1,${handAngle}deg)`
+            })}, 0) rotate3d(0,0,1,${otherHandAngle}deg)`,
+            opacity: replacementState ? 0 : 1
           }}
         >
           <Hand owner="other" />
