@@ -4,6 +4,9 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 import { Transition, config } from "react-spring";
 
+const SPEECH_BUBBLE_DELAY = 300;
+const SPEECH_BUBBLE_DURATION = 1200;
+
 const Container = styled.div`
   position: fixed;
   z-index: 1;
@@ -28,7 +31,8 @@ const Text = styled.div`
 
 class CorrectSpeechBubble extends Component {
   static propTypes = {
-    open: PropTypes.bool.isRequired
+    open: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired
   };
 
   el = document.createElement("div");
@@ -46,6 +50,9 @@ class CorrectSpeechBubble extends Component {
   componentDidUpdate(prevProps) {
     if (!prevProps.open && this.props.open) {
       this.drawBubble(this.textEl.offsetWidth);
+      setTimeout(() => {
+        this.props.onClose();
+      }, SPEECH_BUBBLE_DELAY + SPEECH_BUBBLE_DURATION);
     }
   }
 
@@ -91,12 +98,16 @@ class CorrectSpeechBubble extends Component {
 
   render() {
     const { open } = this.props;
+
     return createPortal(
       <Transition
         from={{ transform: "translate3d(0, -100px, 0)" }}
         enter={{ transform: "translate3d(0, 0, 0)" }}
         leave={{ transform: "translate3d(0, -100px, 0)" }}
-        config={config.stiff}
+        config={(_, type) => ({
+          ...config.stiff,
+          ...(type === "enter" && { delay: SPEECH_BUBBLE_DELAY })
+        })}
       >
         {open &&
           (style => (

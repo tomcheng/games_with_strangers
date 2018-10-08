@@ -7,9 +7,6 @@ import Sock from "./Sock";
 import SuspendedModal from "./SuspendedModal";
 import CorrectSpeechBubble from "./CorrectSpeechBubble";
 
-const SPEECH_BUBBLE_DURATION = 1200;
-const SPEECH_BUBBLE_DELAY = 300;
-
 const Container = styled.div`
   background-color: #f7f7f7;
   color: #333;
@@ -63,22 +60,28 @@ class Socks extends Component {
     showCorrectBubble: false
   };
 
-  componentDidUpdate(prevProps) {
-    const { scores: prevScores } = prevProps.gameState;
-    const { gameState, you } = this.props;
+  static getDerivedStateFromProps(props, state) {
+    const { gameState, you } = props;
+    const { scores: newScores } = gameState;
+    const { scores: currentScores } = state;
 
-    if (prevScores[you.id] !== gameState.scores[you.id]) {
-      setTimeout(() => {
-        this.setState({ showCorrectBubble: true });
-      }, SPEECH_BUBBLE_DELAY);
-      setTimeout(() => {
-        this.setState({ showCorrectBubble: false });
-      }, SPEECH_BUBBLE_DELAY + SPEECH_BUBBLE_DURATION);
+    if (!currentScores) {
+      return { scores: newScores };
     }
+
+    if (currentScores[you.id] !== newScores[you.id]) {
+      return { scores: newScores, showCorrectBubble: true };
+    }
+
+    return null;
   }
 
   handleClickSock = id => {
     this.props.onPlay({ type: "select_sock", payload: { sock_id: id } });
+  };
+
+  handleCloseBubble = () => {
+    this.setState({ showCorrectBubble: false });
   };
 
   render() {
@@ -123,7 +126,7 @@ class Socks extends Component {
           </Bin>
         </Container>
         <SuspendedModal open={isSuspended} />
-        <CorrectSpeechBubble open={showCorrectBubble} />
+        <CorrectSpeechBubble open={showCorrectBubble} onClose={this.handleCloseBubble} />
       </Fragment>
     );
   }
