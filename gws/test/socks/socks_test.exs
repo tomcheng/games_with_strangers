@@ -161,6 +161,13 @@ defmodule SocksTest do
     assert Enum.at(state[:socks], 1) !== Enum.at(socks, 1)
   end
 
-#  test "guarantees a set to start", %{players: players} do
-#  end
+  test "guarantees a set to start", %{players: players} do
+    %{socks: socks_1} = Socks.initial_state(players, %{})
+    %{socks: socks_2} = Socks.initial_state(players, %{})
+    %{socks: socks_3} = Socks.initial_state(players, %{})
+
+    assert SocksChecker.has_match?(socks_1)
+    assert SocksChecker.has_match?(socks_2)
+    assert SocksChecker.has_match?(socks_3)
+  end
 end

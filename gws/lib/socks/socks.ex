@@ -168,10 +168,23 @@ defmodule Socks do
   end
 
   defp select_socks(num, used_sock_ids \\ MapSet.new()) do
-    @all_socks
-    |> Enum.reject(&MapSet.member?(used_sock_ids, &1[:id]))
-    |> Enum.shuffle()
-    |> Enum.take(num)
+    socks =
+      used_sock_ids
+      |> get_remaining_socks()
+      |> Enum.shuffle()
+      |> Enum.take(num)
+
+    cond do
+      SocksChecker.has_match?(socks) ->
+        socks
+
+      true ->
+        select_socks(num, used_sock_ids)
+    end
+  end
+
+  defp get_remaining_socks(used_sock_ids) do
+    Enum.reject(@all_socks, &MapSet.member?(used_sock_ids, &1[:id]))
   end
 
   defp selected_count(state, player_id) do
