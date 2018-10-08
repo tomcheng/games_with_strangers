@@ -2,10 +2,6 @@ import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import chunk from "lodash/chunk";
-import concat from "lodash/concat";
-import flatten from "lodash/flatten";
-import omit from "lodash/omit";
-import values from "lodash/values";
 import Bin from "./Bin";
 import Sock from "./Sock";
 import SuspendedModal from "./SuspendedModal";
@@ -92,9 +88,6 @@ class Socks extends Component {
     const { socks, selected_socks, state, set_result } = gameState;
 
     const yourSelections = selected_socks[you.id];
-    const otherSelections = flatten(
-      concat(values(omit(selected_socks, you.id)))
-    );
     const isSuspended = state === "suspended";
 
     return (
@@ -120,7 +113,6 @@ class Socks extends Component {
                             ? set_result.socks.includes(id)
                             : yourSelections.includes(id)
                         }
-                        otherSelected={otherSelections.includes(id)}
                         onClick={this.handleClickSock}
                       />
                     )

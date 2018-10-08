@@ -70,7 +70,6 @@ class Sock extends PureComponent {
     positionX: PropTypes.number.isRequired,
     positionY: PropTypes.number.isRequired,
     youSelected: PropTypes.bool.isRequired,
-    otherSelected: PropTypes.bool.isRequired,
     onClick: PropTypes.func.isRequired
   };
 
@@ -189,7 +188,6 @@ class Sock extends PureComponent {
   render() {
     const {
       youSelected,
-      otherSelected,
       onClick,
       id,
       positionX,
@@ -272,7 +270,7 @@ class Sock extends PureComponent {
         <HandContainer
           style={{
             transform: `translate3d(${getHandTranslation({
-              show: otherSelected,
+              show: false,
               length,
               handAngle: otherHandAngle,
               handDistance
