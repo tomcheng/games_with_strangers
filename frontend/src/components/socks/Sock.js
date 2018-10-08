@@ -70,7 +70,8 @@ class Sock extends PureComponent {
     positionX: PropTypes.number.isRequired,
     positionY: PropTypes.number.isRequired,
     youSelected: PropTypes.bool.isRequired,
-    onClick: PropTypes.func.isRequired
+    onClick: PropTypes.func.isRequired,
+    lastCorrect: PropTypes.oneOf(["you", "other"])
   };
 
   constructor(props) {
@@ -142,7 +143,8 @@ class Sock extends PureComponent {
       otherHandAngle,
       handDistance: handDistance + DISTANCE_BUFFER,
       previousAttributes: null,
-      replacementState: null
+      replacementState: null,
+      replacementPerson: null
     };
   }
 
@@ -155,11 +157,12 @@ class Sock extends PureComponent {
           "pattern",
           "smell"
         ]),
-        replacementState: "pending"
+        replacementState: "pending",
+        replacementPerson: this.props.lastCorrect
       });
       setTimeout(() => {
         this.setState({ replacementState: "removing" });
-      }, 1500);
+      }, this.props.lastCorrect === "you" ? 1500 : 600);
     }
   }
 
@@ -180,25 +183,20 @@ class Sock extends PureComponent {
 
     if (this.state.replacementState === "replacing") {
       setTimeout(() => {
-        this.setState({ replacementState: null });
+        this.setState({ replacementState: null, replacementPerson: null });
       }, 300);
     }
   };
 
   render() {
-    const {
-      youSelected,
-      onClick,
-      id,
-      positionX,
-      positionY
-    } = this.props;
+    const { youSelected, onClick, id, positionX, positionY } = this.props;
     const {
       handAngle,
       employeeHandAngle,
       otherHandAngle,
       handDistance,
       replacementState,
+      replacementPerson,
       previousAttributes
     } = this.state;
 
@@ -223,7 +221,9 @@ class Sock extends PureComponent {
             show: !["removing", "retrieving"].includes(replacementState),
             length,
             handAngle: ["pending", "removing"].includes(replacementState)
-              ? handAngle
+              ? replacementPerson === "you"
+                ? handAngle
+                : otherHandAngle
               : employeeHandAngle,
             handDistance
           })}, 0)`,
@@ -240,14 +240,17 @@ class Sock extends PureComponent {
             transform: `translate3d(${getHandTranslation({
               show:
                 youSelected ||
-                ["pending", "removing"].includes(replacementState),
+                (["pending", "removing"].includes(replacementState) &&
+                  replacementPerson === "you"),
               length,
               handAngle,
               handDistance
             })}, 0) rotate3d(0,0,1,${handAngle}deg)`,
-            opacity: ["retrieving", "replacing"].includes(replacementState)
-              ? 0
-              : 1
+            opacity:
+              ["retrieving", "replacing"].includes(replacementState) ||
+              replacementPerson === "other"
+                ? 0
+                : 1
           }}
         >
           <Hand owner="you" />
@@ -270,12 +273,18 @@ class Sock extends PureComponent {
         <HandContainer
           style={{
             transform: `translate3d(${getHandTranslation({
-              show: false,
+              show:
+                ["pending", "removing"].includes(replacementState) &&
+                replacementPerson === "other",
               length,
               handAngle: otherHandAngle,
               handDistance
             })}, 0) rotate3d(0,0,1,${otherHandAngle}deg)`,
-            opacity: replacementState ? 0 : 1
+            opacity:
+              ["retrieving", "replacing"].includes(replacementState) ||
+              replacementPerson === "you"
+                ? 0
+                : 1
           }}
         >
           <Hand owner="other" />

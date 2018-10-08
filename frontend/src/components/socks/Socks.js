@@ -2,6 +2,8 @@ import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import chunk from "lodash/chunk";
+import values from "lodash/values";
+import sum from "lodash/sum";
 import Bin from "./Bin";
 import Sock from "./Sock";
 import SuspendedModal from "./SuspendedModal";
@@ -57,7 +59,8 @@ class Socks extends Component {
   };
 
   state = {
-    showCorrectBubble: false
+    showCorrectBubble: false,
+    lastCorrect: null
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -70,7 +73,11 @@ class Socks extends Component {
     }
 
     if (currentScores[you.id] !== newScores[you.id]) {
-      return { scores: newScores, showCorrectBubble: true };
+      return { scores: newScores, showCorrectBubble: true, lastCorrect: "you" };
+    }
+
+    if (sum(values(currentScores)) !== sum(values(newScores))) {
+      return { scores: newScores, lastCorrect: "other" };
     }
 
     return null;
@@ -86,7 +93,7 @@ class Socks extends Component {
 
   render() {
     const { gameState, you } = this.props;
-    const { showCorrectBubble } = this.state;
+    const { showCorrectBubble, lastCorrect } = this.state;
 
     const { socks, selected_socks, state, set_result } = gameState;
 
@@ -116,6 +123,7 @@ class Socks extends Component {
                             ? set_result.socks.includes(id)
                             : yourSelections.includes(id)
                         }
+                        lastCorrect={lastCorrect}
                         onClick={this.handleClickSock}
                       />
                     )
