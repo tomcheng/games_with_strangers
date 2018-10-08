@@ -1,32 +1,16 @@
 defmodule Socks do
   @selection_time_limit 3000
   @wrong_time_out 7000
-  @all_socks for c <- [1, 2, 3],
-                 l <- [1, 2, 3],
-                 p <- [1, 2, 3],
-                 s <- [1, 2, 3],
-                 do: %{
-                   id:
-                     Integer.to_string(c) <>
-                       Integer.to_string(l) <> Integer.to_string(p) <> Integer.to_string(s),
-                   color: c,
-                   length: l,
-                   pattern: p,
-                   smell: s
-                 }
-  @all_socks_by_id Enum.reduce(@all_socks, %{}, fn sock, acc ->
-                     Map.put(acc, sock[:id], sock)
-                   end)
 
   def minimum_players, do: 2
 
   def initial_state(players, %{}) do
-    socks = select_socks(9)
+    socks = SocksChecker.get_initial_socks()
 
     %{
       players: players,
       scores: Enum.reduce(players, %{}, fn {id, _}, acc -> Map.put(acc, id, 0) end),
-      selected_socks:
+      selected_sock_ids:
         Enum.reduce(players, %{}, fn {id, _}, acc -> Map.put(acc, id, MapSet.new()) end),
       set_results: Enum.reduce(players, %{}, fn {id, _}, acc -> Map.put(acc, id, nil) end),
       player_states: Enum.reduce(players, %{}, fn {id, _}, acc -> Map.put(acc, id, :guessing) end),
@@ -38,19 +22,19 @@ defmodule Socks do
 
   def sanitize_state(state, player_id) do
     state
-    |> Map.update!(:selected_socks, fn selected ->
+    |> Map.update!(:selected_sock_ids, fn selected ->
       selected
-      |> Enum.map(fn {id, socks} ->
-        {id, socks |> MapSet.to_list() |> Enum.map(& &1[:id])}
+      |> Enum.map(fn {id, sock_ids} ->
+        {id, MapSet.to_list(sock_ids)}
       end)
       |> Enum.into(%{})
     end)
-    |> Map.take([:players, :scores, :stage, :socks, :selected_socks])
+    |> Map.take([:players, :scores, :stage, :socks, :selected_sock_ids])
     |> Map.put(
       :set_result,
       if(
         state[:set_results][player_id],
-        do: Map.update!(state[:set_results][player_id], :socks, &Enum.map(&1, fn s -> s[:id] end)),
+        do: Map.update!(state[:set_results][player_id], :sock_ids, &MapSet.to_list/1),
         else: nil
       )
     )
@@ -68,9 +52,9 @@ defmodule Socks do
 
       true ->
         state
-        |> Map.update!(:selected_socks, fn selected ->
+        |> Map.update!(:selected_sock_ids, fn selected ->
           selected
-          |> Map.update!(player_id, &MapSet.put(&1, Map.get(@all_socks_by_id, sock_id)))
+          |> Map.update!(player_id, &MapSet.put(&1, sock_id))
         end)
         |> add_set_result(player_id, room_code)
     end
@@ -78,7 +62,7 @@ defmodule Socks do
 
   def play(state, player_id, "cancel_selection", _) do
     state
-    |> Map.update!(:selected_socks, &Map.put(&1, player_id, MapSet.new()))
+    |> Map.update!(:selected_sock_ids, &Map.put(&1, player_id, MapSet.new()))
   end
 
   def play(state, player_id, "cancel_suspension", _) do
@@ -88,7 +72,7 @@ defmodule Socks do
 
   defp add_set_result(state, player_id, room_code) do
     if selected_count(state, player_id) === 3 do
-      if SocksChecker.is_set?(state[:selected_socks][player_id]) do
+      if SocksChecker.is_set?(state[:selected_sock_ids][player_id]) do
         state
         |> add_correct_result(player_id)
         |> replace_selected_socks(player_id)
@@ -105,11 +89,19 @@ defmodule Socks do
     end
   end
 
+  defp add_correct_result(state, player_id) do
+    Map.update!(
+      state,
+      :set_results,
+      &Map.put(&1, player_id, %{is_set: true, sock_ids: state[:selected_sock_ids][player_id]})
+    )
+  end
+
   defp add_wrong_result(state, player_id) do
     state
     |> Map.update!(
       :set_results,
-      &Map.put(&1, player_id, %{is_set: false, socks: state[:selected_socks][player_id]})
+      &Map.put(&1, player_id, %{is_set: false, sock_ids: state[:selected_sock_ids][player_id]})
     )
   end
 
@@ -121,24 +113,19 @@ defmodule Socks do
     Map.update!(state, :player_states, &Map.put(&1, player_id, :suspended))
   end
 
-  defp add_correct_result(state, player_id) do
-    Map.update!(
-      state,
-      :set_results,
-      &Map.put(&1, player_id, %{is_set: true, socks: state[:selected_socks][player_id]})
-    )
-  end
-
   defp replace_selected_socks(state, player_id) do
-    selected_socks = Map.get(state[:selected_socks], player_id) |> MapSet.to_list()
-    new_socks = select_socks(3, state[:used_sock_ids])
+    selected_sock_ids =
+      state[:selected_sock_ids]
+      |> Map.get(player_id)
+      |> MapSet.to_list()
+    new_socks = SocksChecker.select_socks(state[:used_sock_ids])
 
     state
     |> Map.update!(:socks, fn socks ->
       Enum.reduce(new_socks, socks, fn new_sock, ss ->
         new_sock_index = Enum.find_index(new_socks, &(&1 == new_sock))
-        sock_to_replace = Enum.at(selected_socks, new_sock_index)
-        sock_index = Enum.find_index(ss, &(&1 == sock_to_replace))
+        sock_id_to_replace = Enum.at(selected_sock_ids, new_sock_index)
+        sock_index = Enum.find_index(ss, &(&1[:id] == sock_id_to_replace))
         List.replace_at(ss, sock_index, new_sock)
       end)
     end)
@@ -148,7 +135,7 @@ defmodule Socks do
   end
 
   defp reset_selected_socks(state, player_id) do
-    Map.update!(state, :selected_socks, &Map.put(&1, player_id, MapSet.new()))
+    Map.update!(state, :selected_sock_ids, &Map.put(&1, player_id, MapSet.new()))
   end
 
   defp increment_score(state, player_id) do
@@ -189,7 +176,7 @@ defmodule Socks do
 
   defp selected_count(state, player_id) do
     state
-    |> Map.get(:selected_socks)
+    |> Map.get(:selected_sock_ids)
     |> Map.get(player_id)
     |> MapSet.size()
   end

@@ -36,7 +36,7 @@ defmodule SocksTest do
       |> Socks.play("1", "select_sock", %{"sock_id" => sock_to_select[:id], room_code: nil})
       |> Socks.sanitize_state("1")
 
-    assert state[:selected_socks] == %{
+    assert state[:selected_sock_ids] == %{
              "1" => [sock_to_select[:id]],
              "2" => []
            }
@@ -52,7 +52,7 @@ defmodule SocksTest do
       |> Socks.play("1", "cancel_selection", nil)
       |> Socks.sanitize_state("1")
 
-    assert state[:selected_socks] == %{
+    assert state[:selected_sock_ids] == %{
              "1" => [],
              "2" => []
            }
@@ -79,8 +79,8 @@ defmodule SocksTest do
       |> Socks.sanitize_state("1")
 
     assert state[:set_result][:is_set] == false
-    assert state[:set_result][:socks] == ["1232", "1233", "2133"]
-    assert state[:selected_socks]["1"] == []
+    assert state[:set_result][:sock_ids] == ["1232", "1233", "2133"]
+    assert state[:selected_sock_ids]["1"] == []
     assert state[:state] === :suspended
   end
 
@@ -109,7 +109,7 @@ defmodule SocksTest do
       |> Socks.sanitize_state("1")
 
     assert state[:state] === :suspended
-    assert state[:selected_socks]["1"] == []
+    assert state[:selected_sock_ids]["1"] == []
   end
 
   test "cancels suspension", %{players: players} do

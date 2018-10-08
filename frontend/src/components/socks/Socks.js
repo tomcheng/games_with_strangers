@@ -43,11 +43,11 @@ class Socks extends Component {
           smell: PropTypes.number.isRequired
         })
       ).isRequired,
-      selected_socks: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string))
+      selected_sock_ids: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string))
         .isRequired,
       state: PropTypes.string.isRequired,
       set_result: PropTypes.shape({
-        socks: PropTypes.arrayOf(PropTypes.string).isRequired
+        sock_ids: PropTypes.arrayOf(PropTypes.string).isRequired
       })
     }).isRequired,
     playerColors: PropTypes.objectOf(PropTypes.string).isRequired,
@@ -95,9 +95,9 @@ class Socks extends Component {
     const { gameState, you } = this.props;
     const { showCorrectBubble, lastCorrect } = this.state;
 
-    const { socks, selected_socks, state, set_result } = gameState;
+    const { socks, selected_sock_ids, state, set_result } = gameState;
 
-    const yourSelections = selected_socks[you.id];
+    const yourSelections = selected_sock_ids[you.id];
     const isSuspended = state === "suspended";
 
     return (
@@ -120,7 +120,7 @@ class Socks extends Component {
                         smell={smell}
                         youSelected={
                           isSuspended
-                            ? set_result.socks.includes(id)
+                            ? set_result.sock_ids.includes(id)
                             : yourSelections.includes(id)
                         }
                         lastCorrect={lastCorrect}
