@@ -9,7 +9,7 @@ import values from "lodash/values";
 import Bin from "./Bin";
 import Sock from "./Sock";
 import SuspendedModal from "./SuspendedModal";
-import CorrectModal from "./CorrectModal";
+import CorrectSpeechBubble from "./CorrectSpeechBubble";
 
 const TIME_TO_SHOW_CORRECT_MODAL = 2000;
 
@@ -129,7 +129,7 @@ class Socks extends Component {
           </Bin>
         </Container>
         <SuspendedModal open={isSuspended} />
-        <CorrectModal open={showCorrectModal} />
+        <CorrectSpeechBubble open={showCorrectModal} />
       </Fragment>
     );
   }
