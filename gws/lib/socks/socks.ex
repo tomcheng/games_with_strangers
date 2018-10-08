@@ -118,20 +118,33 @@ defmodule Socks do
       state[:selected_sock_ids]
       |> Map.get(player_id)
       |> MapSet.to_list()
-    new_socks = SocksChecker.select_socks(state[:used_sock_ids])
 
-    state
-    |> Map.update!(:socks, fn socks ->
-      Enum.reduce(new_socks, socks, fn new_sock, ss ->
-        new_sock_index = Enum.find_index(new_socks, &(&1 == new_sock))
-        sock_id_to_replace = Enum.at(selected_sock_ids, new_sock_index)
-        sock_index = Enum.find_index(ss, &(&1[:id] == sock_id_to_replace))
-        List.replace_at(ss, sock_index, new_sock)
-      end)
-    end)
-    |> Map.update!(:used_sock_ids, fn used ->
-      MapSet.union(used, MapSet.new(Enum.map(new_socks, & &1[:id])))
-    end)
+    current_sock_ids =
+      state[:socks]
+      |> Enum.map(& &1[:id])
+      |> Enum.reject(&Enum.member?(selected_sock_ids, &1))
+      |> MapSet.new()
+
+    new_socks = SocksChecker.select_socks(state[:used_sock_ids], current_sock_ids)
+
+    cond do
+      Enum.count(new_socks) == 0 ->
+        Map.put(state, :stage, :end)
+
+      true ->
+        state
+        |> Map.update!(:socks, fn socks ->
+          Enum.reduce(new_socks, socks, fn new_sock, ss ->
+            new_sock_index = Enum.find_index(new_socks, &(&1 == new_sock))
+            sock_id_to_replace = Enum.at(selected_sock_ids, new_sock_index)
+            sock_index = Enum.find_index(ss, &(&1[:id] == sock_id_to_replace))
+            List.replace_at(ss, sock_index, new_sock)
+          end)
+        end)
+        |> Map.update!(:used_sock_ids, fn used ->
+          MapSet.union(used, MapSet.new(Enum.map(new_socks, & &1[:id])))
+        end)
+    end
   end
 
   defp reset_selected_socks(state, player_id) do
@@ -152,26 +165,6 @@ defmodule Socks do
     {:ok, room} = GWS.get_room(room_code)
     GWS.Room.make_play(room, player_id, "cancel_suspension", nil)
     GWS.broadcast_state(room_code, room)
-  end
-
-  defp select_socks(num, used_sock_ids \\ MapSet.new()) do
-    socks =
-      used_sock_ids
-      |> get_remaining_socks()
-      |> Enum.shuffle()
-      |> Enum.take(num)
-
-    cond do
-      SocksChecker.has_match?(socks) ->
-        socks
-
-      true ->
-        select_socks(num, used_sock_ids)
-    end
-  end
-
-  defp get_remaining_socks(used_sock_ids) do
-    Enum.reject(@all_socks, &MapSet.member?(used_sock_ids, &1[:id]))
   end
 
   defp selected_count(state, player_id) do

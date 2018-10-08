@@ -23,23 +23,40 @@ defmodule SocksChecker do
       |> Enum.shuffle()
       |> Enum.take(9)
 
-    if SocksChecker.has_match?(socks) do
+    if has_match?(socks) do
       socks
     else
       get_initial_socks()
     end
   end
 
-  def select_socks(used_sock_ids) do
-    @all_socks
-    |> Enum.reject(fn sock -> Enum.member?(used_sock_ids, sock[:id]) end)
-    |> Enum.shuffle()
-    |> Enum.take(3)
+  def select_socks(used_sock_ids, current_sock_ids, tries \\ 0)
+
+  def select_socks(_, _, 12) do
+    []
+  end
+
+  def select_socks(used_sock_ids, current_sock_ids, tries) do
+    current_socks =
+      current_sock_ids
+      |> MapSet.to_list()
+      |> Enum.map(&Map.get(@all_socks_by_id, &1))
+
+    new_socks =
+      @all_socks
+      |> Enum.reject(fn sock -> Enum.member?(used_sock_ids, sock[:id]) end)
+      |> Enum.shuffle()
+      |> Enum.take(3)
+
+    cond do
+      has_match?(Enum.concat(current_socks, new_socks)) -> new_socks
+      true -> select_socks(used_sock_ids, current_sock_ids, tries + 1)
+    end
   end
 
   def has_match?(socks) do
     count = Enum.count(socks)
-    sock_ids = Enum.map(socks, &(&1[:id]))
+    sock_ids = Enum.map(socks, & &1[:id])
 
     cond do
       count < 3 ->
