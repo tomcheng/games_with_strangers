@@ -2,10 +2,22 @@ import React, { Component } from "react";
 import { createPortal } from "react-dom";
 import styled from "styled-components";
 import PropTypes from "prop-types";
+import sample from "lodash/sample";
 import { Transition, config } from "react-spring";
 
 const SPEECH_BUBBLE_DELAY = 300;
 const SPEECH_BUBBLE_DURATION = 1200;
+
+const MESSAGES = [
+  "Great Work!",
+  "Nice Find!",
+  "Good Job!",
+  "Way To Go!",
+  "Wooo!",
+  "Huzzah!",
+  "Wowza!",
+  "Woot Woot!"
+];
 
 const Container = styled.div`
   position: fixed;
@@ -25,7 +37,7 @@ const Text = styled.div`
   font-size: 36px;
   position: absolute;
   white-space: nowrap;
-  padding: 35px 27px 0;
+  padding: 36px 27px 0;
   text-align: center;
 `;
 
@@ -39,6 +51,8 @@ class CorrectSpeechBubble extends Component {
   textEl = null;
   canvasEl = null;
 
+  state = { message: null };
+
   componentDidMount() {
     document.body.appendChild(this.el);
   }
@@ -49,14 +63,18 @@ class CorrectSpeechBubble extends Component {
 
   componentDidUpdate(prevProps) {
     if (!prevProps.open && this.props.open) {
-      this.drawBubble(this.textEl.offsetWidth);
+      this.setState({ message: sample(MESSAGES) });
+
+      requestAnimationFrame(this.drawBubble);
+
       setTimeout(() => {
         this.props.onClose();
       }, SPEECH_BUBBLE_DELAY + SPEECH_BUBBLE_DURATION);
     }
   }
 
-  drawBubble = width => {
+  drawBubble = () => {
+    const width = this.textEl.offsetWidth;
     const canvas = this.canvasEl;
     const dpr = window.devicePixelRatio || 1;
 
@@ -98,6 +116,7 @@ class CorrectSpeechBubble extends Component {
 
   render() {
     const { open } = this.props;
+    const { message } = this.state;
 
     return createPortal(
       <Transition
@@ -122,7 +141,7 @@ class CorrectSpeechBubble extends Component {
                   this.textEl = el;
                 }}
               >
-                Great Work!
+                {message}
               </Text>
             </Container>
           ))}
