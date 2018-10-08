@@ -214,6 +214,10 @@ class Sock extends PureComponent {
     return (
       <Container
         onClick={() => {
+          if (replacementState) {
+            return;
+          }
+
           onClick(id);
         }}
         style={{
