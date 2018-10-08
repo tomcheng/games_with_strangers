@@ -79,7 +79,7 @@ defmodule SocksTest do
       |> Socks.sanitize_state("1")
 
     assert state[:set_result][:is_set] == false
-    assert state[:set_result][:socks] == MapSet.new(["1232", "1233", "2133"])
+    assert state[:set_result][:socks] == ["1232", "1233", "2133"]
     assert state[:selected_socks]["1"] == []
     assert state[:state] === :suspended
   end
@@ -160,4 +160,7 @@ defmodule SocksTest do
     assert state[:scores] == %{"1" => 1, "2" => 0}
     assert Enum.at(state[:socks], 1) !== Enum.at(socks, 1)
   end
+
+#  test "guarantees a set to start", %{players: players} do
+#  end
 end

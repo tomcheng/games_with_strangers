@@ -41,12 +41,19 @@ defmodule Socks do
     |> Map.update!(:selected_socks, fn selected ->
       selected
       |> Enum.map(fn {id, socks} ->
-        {id, MapSet.to_list(socks)}
+        {id, socks |> MapSet.to_list() |> Enum.map(& &1[:id])}
       end)
       |> Enum.into(%{})
     end)
     |> Map.take([:players, :scores, :stage, :socks, :selected_socks])
-    |> Map.put(:set_result, state[:set_results][player_id])
+    |> Map.put(
+      :set_result,
+      if(
+        state[:set_results][player_id],
+        do: Map.update!(state[:set_results][player_id], :socks, &Enum.map(&1, fn s -> s[:id] end)),
+        else: nil
+      )
+    )
     |> Map.put(:state, state[:player_states][player_id])
   end
 
@@ -63,7 +70,7 @@ defmodule Socks do
         state
         |> Map.update!(:selected_socks, fn selected ->
           selected
-          |> Map.update!(player_id, &MapSet.put(&1, sock_id))
+          |> Map.update!(player_id, &MapSet.put(&1, Map.get(@all_socks_by_id, sock_id)))
         end)
         |> add_set_result(player_id, room_code)
     end
@@ -81,7 +88,7 @@ defmodule Socks do
 
   defp add_set_result(state, player_id, room_code) do
     if selected_count(state, player_id) === 3 do
-      if is_set?(state[:selected_socks][player_id]) do
+      if SocksChecker.is_set?(state[:selected_socks][player_id]) do
         state
         |> add_correct_result(player_id)
         |> replace_selected_socks(player_id)
@@ -131,7 +138,7 @@ defmodule Socks do
       Enum.reduce(new_socks, socks, fn new_sock, ss ->
         new_sock_index = Enum.find_index(new_socks, &(&1 == new_sock))
         sock_to_replace = Enum.at(selected_socks, new_sock_index)
-        sock_index = Enum.find_index(ss, &(&1[:id] == sock_to_replace))
+        sock_index = Enum.find_index(ss, &(&1 == sock_to_replace))
         List.replace_at(ss, sock_index, new_sock)
       end)
     end)
@@ -172,22 +179,5 @@ defmodule Socks do
     |> Map.get(:selected_socks)
     |> Map.get(player_id)
     |> MapSet.size()
-  end
-
-  defp is_set?(guess) do
-    socks =
-      guess
-      |> MapSet.to_list()
-      |> Enum.map(&Map.get(@all_socks_by_id, &1))
-
-    [:color, :length, :pattern, :smell]
-    |> Enum.all?(fn prop ->
-      uniques =
-        socks
-        |> Enum.uniq_by(&Map.get(&1, prop))
-        |> Enum.count()
-
-      uniques == 1 || uniques == 3
-    end)
   end
 end
