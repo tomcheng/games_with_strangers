@@ -10,7 +10,7 @@ class SuspendedModal extends Component {
   render() {
     return (
       <Modal open={this.props.open} title="Wrong!">
-        You're on a time-out for 5&nbsp;seconds.
+        You're on a time-out for 7&nbsp;seconds.
       </Modal>
     );
   }

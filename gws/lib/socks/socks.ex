@@ -1,6 +1,6 @@
 defmodule Socks do
   @selection_time_limit 3000
-  @wrong_time_out 5000
+  @wrong_time_out 7000
   @all_socks for c <- [1, 2, 3],
                  l <- [1, 2, 3],
                  p <- [1, 2, 3],
