@@ -14,9 +14,9 @@ const HAND_MIDDLE_Y = 15;
 const DISTANCE_BUFFER = 100;
 
 const TRANSLATIONS = {
-  1: { x: 3, y: 40 },
-  2: { x: 0, y: 58 },
-  3: { x: -4, y: 80 }
+  1: { x: 26, y: 90 },
+  2: { x: 32, y: 87 },
+  3: { x: 32, y: 80 }
 };
 
 const getContainerTranslation = ({ length, show, handAngle, handDistance }) => {
@@ -43,12 +43,17 @@ const Container = styled.div`
   user-select: none;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
   transition: transform 0.12s ease-out;
+  width: 71px;
+  height: 170px;
+  justify-content: center;
 `;
 
 const HandContainer = styled.div`
   position: absolute;
+  left: 0;
+  top: 0;
   z-index: 1;
   pointer-events: none;
   transform-origin: ${HAND_MIDDLE_X}px ${HAND_MIDDLE_Y}px;

@@ -8,9 +8,9 @@ const PATHS = {
 };
 
 const OFFSETS = {
-  1: 5,
-  2: 3,
-  3: 0
+  1: 15,
+  2: 16,
+  3: 21
 };
 
 const Smell = ({ smell, length }) => (
