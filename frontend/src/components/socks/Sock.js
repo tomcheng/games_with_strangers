@@ -67,8 +67,8 @@ class Sock extends PureComponent {
     length: PropTypes.oneOf([1, 2, 3]).isRequired,
     pattern: PropTypes.oneOf([1, 2, 3]).isRequired,
     smell: PropTypes.oneOf([1, 2, 3]).isRequired,
-    positionX: PropTypes.oneOf([0, 1, 2]),
-    positionY: PropTypes.oneOf([0, 1, 2]),
+    positionX: PropTypes.number.isRequired,
+    positionY: PropTypes.number.isRequired,
     youSelected: PropTypes.bool.isRequired,
     otherSelected: PropTypes.bool.isRequired,
     onClick: PropTypes.func.isRequired
@@ -115,9 +115,7 @@ class Sock extends PureComponent {
       handAngle,
       handDistance: handDistance + DISTANCE_BUFFER,
       previousAttributes: null,
-      replacementPending: false,
-      isRemoving: false,
-      isReplacing: false
+      replacementState: null
     };
   }
 
@@ -130,45 +128,51 @@ class Sock extends PureComponent {
           "pattern",
           "smell"
         ]),
-        replacementPending: true
+        replacementState: "pending"
       });
       setTimeout(() => {
-        this.setState({ isRemoving: true });
-      }, 2000);
+        this.setState({ replacementState: "removing" });
+      }, 1500);
     }
   }
 
   handleTransitionEndContainer = () => {
-    if (this.state.isRemoving) {
+    if (this.state.replacementState === "removing") {
       setTimeout(() => {
-        this.setState({
-          isRemoving: false,
-          isReplacing: true
-        });
+        this.setState({ replacementState: "replacing" });
       }, 600);
       return;
     }
 
-    if (this.state.isReplacing) {
+    if (this.state.replacementState === "replacing") {
       setTimeout(() => {
-        this.setState({ isReplacing: false, replacementPending: false });
+        this.setState({ replacementState: null });
       }, 300);
     }
   };
 
   render() {
-    const { youSelected, otherSelected, onClick, id } = this.props;
+    const {
+      youSelected,
+      otherSelected,
+      onClick,
+      id,
+      positionX,
+      positionY
+    } = this.props;
     const {
       handAngle,
       handDistance,
-      replacementPending,
-      isRemoving,
-      isReplacing,
+      replacementState,
       previousAttributes
     } = this.state;
 
-    const { color, length, pattern, smell } =
-      replacementPending && !isReplacing ? previousAttributes : this.props;
+    const { color, length, pattern, smell } = ["pending", "removing"].includes(
+      replacementState
+    )
+      ? previousAttributes
+      : this.props;
+    const isMiddle = positionX === 1 && positionY === 1;
 
     return (
       <Container
@@ -177,13 +181,13 @@ class Sock extends PureComponent {
         }}
         style={{
           transform: `translate3d(${getContainerTranslation({
-            show: !isRemoving,
+            show: replacementState !== "removing",
             length,
             handAngle,
             handDistance
           })}, 0)`,
           position: "relative",
-          zIndex: youSelected || otherSelected || replacementPending ? 1 : null
+          zIndex: isMiddle ? 1 : null
         }}
         onTransitionEnd={this.handleTransitionEndContainer}
       >
@@ -192,7 +196,7 @@ class Sock extends PureComponent {
         <HandContainer
           style={{
             transform: `translate3d(${getHandTranslation({
-              show: youSelected || replacementPending,
+              show: youSelected || ["pending", "removing"].includes(replacementState),
               length,
               handAngle,
               handDistance
@@ -200,6 +204,18 @@ class Sock extends PureComponent {
           }}
         >
           <Hand owner="you" />
+        </HandContainer>
+        <HandContainer
+          style={{
+            transform: `translate3d(${getHandTranslation({
+              show: replacementState === "replacing",
+              length,
+              handAngle,
+              handDistance
+            })}, 0) rotate3d(0,0,1,${handAngle}deg)`
+          }}
+        >
+          <Hand owner="employee" />
         </HandContainer>
         <HandContainer
           style={{
