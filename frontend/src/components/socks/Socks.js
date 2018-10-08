@@ -11,7 +11,8 @@ import Sock from "./Sock";
 import SuspendedModal from "./SuspendedModal";
 import CorrectSpeechBubble from "./CorrectSpeechBubble";
 
-const TIME_TO_SHOW_CORRECT_MODAL = 2000;
+const SPEECH_BUBBLE_DURATION = 1200;
+const SPEECH_BUBBLE_DELAY = 300;
 
 const Container = styled.div`
   background-color: #f7f7f7;
@@ -63,7 +64,7 @@ class Socks extends Component {
   };
 
   state = {
-    showCorrectModal: false
+    showCorrectBubble: false
   };
 
   componentDidUpdate(prevProps) {
@@ -71,10 +72,12 @@ class Socks extends Component {
     const { gameState, you } = this.props;
 
     if (prevScores[you.id] !== gameState.scores[you.id]) {
-      this.setState({ showCorrectModal: true });
       setTimeout(() => {
-        this.setState({ showCorrectModal: false });
-      }, TIME_TO_SHOW_CORRECT_MODAL);
+        this.setState({ showCorrectBubble: true });
+      }, SPEECH_BUBBLE_DELAY);
+      setTimeout(() => {
+        this.setState({ showCorrectBubble: false });
+      }, SPEECH_BUBBLE_DELAY + SPEECH_BUBBLE_DURATION);
     }
   }
 
@@ -84,7 +87,7 @@ class Socks extends Component {
 
   render() {
     const { gameState, you } = this.props;
-    const { showCorrectModal } = this.state;
+    const { showCorrectBubble } = this.state;
 
     const { socks, selected_socks, state, set_result } = gameState;
 
@@ -105,7 +108,8 @@ class Socks extends Component {
                     ({ id, color, length, pattern, smell }, cellIndex) => (
                       <Sock
                         key={cellIndex}
-                        position={{ x: cellIndex, y: rowIndex }}
+                        positionX={cellIndex}
+                        positionY={rowIndex}
                         id={id}
                         color={color}
                         length={length}
@@ -117,9 +121,7 @@ class Socks extends Component {
                             : yourSelections.includes(id)
                         }
                         otherSelected={otherSelections.includes(id)}
-                        onClick={() => {
-                          this.handleClickSock(id);
-                        }}
+                        onClick={this.handleClickSock}
                       />
                     )
                   )}
@@ -129,7 +131,7 @@ class Socks extends Component {
           </Bin>
         </Container>
         <SuspendedModal open={isSuspended} />
-        <CorrectSpeechBubble open={showCorrectModal} />
+        <CorrectSpeechBubble open={showCorrectBubble} />
       </Fragment>
     );
   }

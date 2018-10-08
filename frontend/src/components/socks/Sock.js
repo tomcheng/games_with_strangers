@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import pick from "lodash/pick";
@@ -11,7 +11,7 @@ import Hand from "./Hand";
 const ANGLE_OVERSHOOT = 15;
 const HAND_MIDDLE_X = 16;
 const HAND_MIDDLE_Y = 15;
-const DISTANCE_BUFFER = 50;
+const DISTANCE_BUFFER = 100;
 
 const TRANSLATIONS = {
   1: { x: 3, y: 40 },
@@ -55,17 +55,15 @@ const HandContainer = styled.div`
   transition: transform 0.12s ease-out;
 `;
 
-class Sock extends Component {
+class Sock extends PureComponent {
   static propTypes = {
     id: PropTypes.string.isRequired,
     color: PropTypes.oneOf([1, 2, 3]).isRequired,
     length: PropTypes.oneOf([1, 2, 3]).isRequired,
     pattern: PropTypes.oneOf([1, 2, 3]).isRequired,
     smell: PropTypes.oneOf([1, 2, 3]).isRequired,
-    position: PropTypes.shape({
-      x: PropTypes.oneOf([0, 1, 2]),
-      y: PropTypes.oneOf([0, 1, 2])
-    }).isRequired,
+    positionX: PropTypes.oneOf([0, 1, 2]),
+    positionY: PropTypes.oneOf([0, 1, 2]),
     youSelected: PropTypes.bool.isRequired,
     otherSelected: PropTypes.bool.isRequired,
     onClick: PropTypes.func.isRequired
@@ -74,7 +72,7 @@ class Sock extends Component {
   constructor(props) {
     super();
 
-    const { x, y } = props.position;
+    const { positionX: x, positionY: y } = props;
     const { innerWidth: windowWidth, innerHeight: windowHeight } = window;
     let handAngle = 0;
     let handDistance = 0;
@@ -112,6 +110,7 @@ class Sock extends Component {
       handAngle,
       handDistance: handDistance + DISTANCE_BUFFER,
       previousAttributes: null,
+      replacementPending: false,
       isRemoving: false,
       isReplacing: false
     };
@@ -126,8 +125,11 @@ class Sock extends Component {
           "pattern",
           "smell"
         ]),
-        isRemoving: true
+        replacementPending: true
       });
+      setTimeout(() => {
+        this.setState({ isRemoving: true });
+      }, 2000);
     }
   }
 
@@ -138,37 +140,45 @@ class Sock extends Component {
           isRemoving: false,
           isReplacing: true
         });
-      }, 300);
-    } else if (this.state.isReplacing) {
+      }, 600);
+      return;
+    }
+
+    if (this.state.isReplacing) {
       setTimeout(() => {
-        this.setState({ isReplacing: false });
-      }, 200);
+        this.setState({ isReplacing: false, replacementPending: false });
+      }, 300);
     }
   };
 
   render() {
-    const { youSelected, otherSelected, onClick } = this.props;
+    const { youSelected, otherSelected, onClick, id } = this.props;
     const {
       handAngle,
       handDistance,
+      replacementPending,
       isRemoving,
+      isReplacing,
       previousAttributes
     } = this.state;
 
-    const { color, length, pattern, smell } = isRemoving
-      ? previousAttributes
-      : this.props;
+    const { color, length, pattern, smell } =
+      replacementPending && !isReplacing ? previousAttributes : this.props;
 
     return (
       <Container
-        onClick={onClick}
+        onClick={() => {
+          onClick(id);
+        }}
         style={{
           transform: `translate3d(${getContainerTranslation({
             show: !isRemoving,
             length,
             handAngle,
             handDistance
-          })}, 0)`
+          })}, 0)`,
+          position: "relative",
+          zIndex: youSelected || otherSelected || replacementPending ? 1 : null
         }}
         onTransitionEnd={this.handleTransitionEndContainer}
       >
@@ -177,7 +187,7 @@ class Sock extends Component {
         <HandContainer
           style={{
             transform: `translate3d(${getHandTranslation({
-              show: youSelected || isRemoving,
+              show: youSelected || replacementPending,
               length,
               handAngle,
               handDistance
