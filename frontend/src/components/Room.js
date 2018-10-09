@@ -5,6 +5,7 @@ import sortBy from "lodash/sortBy";
 import gamesList from "../gamesList";
 import EndStage from "./common/EndStage";
 import Waiting from "./Waiting";
+import ErrorBoundary from "./ErrorBoundary";
 
 const COLORS = [
   "red",
@@ -70,6 +71,7 @@ const Room = ({
   const GameComponent = game.component;
 
   return (
+    <ErrorBoundary>
     <GameComponent
       gameState={gameState}
       you={you}
@@ -79,6 +81,7 @@ const Room = ({
       onSetFlashMessage={onSetFlashMessage}
       playerColors={playerColors}
     />
+    </ErrorBoundary>
   );
 };
 
