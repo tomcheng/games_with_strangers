@@ -9,7 +9,8 @@ const gamesList = [
     description: "Find matching socks",
     options: [],
     component: Socks,
-    fullScreen: true
+    fullScreen: true,
+    customEnd: true
   },
   {
     id: "fun_prompts",
@@ -28,7 +29,8 @@ const gamesList = [
       }
     ],
     component: FunPrompts,
-    fullScreen: false
+    fullScreen: false,
+    customEnd: false
   },
   {
     id: "you_bet",
@@ -46,7 +48,8 @@ const gamesList = [
       }
     ],
     component: YouBet,
-    fullScreen: false
+    fullScreen: false,
+    customEnd: false
   }
 ];
 

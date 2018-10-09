@@ -7,6 +7,7 @@ import sum from "lodash/sum";
 import Bin from "./Bin";
 import Sock from "./Sock";
 import SuspendedModal from "./SuspendedModal";
+import EndModal from "./EndModal";
 import CorrectSpeechBubble from "./CorrectSpeechBubble";
 
 const Container = styled.div`
@@ -46,11 +47,11 @@ class Socks extends Component {
       selected_sock_ids: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string))
         .isRequired,
       state: PropTypes.string.isRequired,
+      stage: PropTypes.oneOf(["guessing", "end"]).isRequired,
       set_result: PropTypes.shape({
         sock_ids: PropTypes.arrayOf(PropTypes.string).isRequired
       })
     }).isRequired,
-    playerColors: PropTypes.objectOf(PropTypes.string).isRequired,
     you: PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired
@@ -95,10 +96,11 @@ class Socks extends Component {
     const { gameState, you } = this.props;
     const { showCorrectBubble, lastCorrect } = this.state;
 
-    const { socks, selected_sock_ids, state, set_result } = gameState;
+    const { socks, selected_sock_ids, state, set_result, stage, scores, players } = gameState;
 
     const yourSelections = selected_sock_ids[you.id];
     const isSuspended = state === "suspended";
+    const isEnd = stage === "end";
 
     return (
       <Fragment>
@@ -134,6 +136,7 @@ class Socks extends Component {
           </Bin>
         </Container>
         <SuspendedModal open={isSuspended} />
+        <EndModal open={isEnd} scores={scores} players={players} />
         <CorrectSpeechBubble open={showCorrectBubble} onClose={this.handleCloseBubble} />
       </Fragment>
     );

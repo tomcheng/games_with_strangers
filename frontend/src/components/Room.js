@@ -54,7 +54,7 @@ const Room = ({
     );
   }
 
-  if (gameState.stage === "end") {
+  if (gameState.stage === "end" && !game.customEnd) {
     return (
       <EndStage
         scores={gameState.scores}
