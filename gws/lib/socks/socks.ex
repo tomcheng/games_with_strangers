@@ -50,13 +50,16 @@ defmodule Socks do
       state[:player_states][player_id] == :suspended ->
         state
 
-      true ->
+      Enum.member?(Enum.map(state[:socks], & &1[:id]), sock_id) ->
         state
         |> Map.update!(:selected_sock_ids, fn selected ->
           selected
           |> Map.update!(player_id, &MapSet.put(&1, sock_id))
         end)
         |> add_set_result(player_id, room_code)
+
+      true ->
+        state
     end
   end
 
@@ -148,7 +151,18 @@ defmodule Socks do
   end
 
   defp reset_selected_socks(state, player_id) do
-    Map.update!(state, :selected_sock_ids, &Map.put(&1, player_id, MapSet.new()))
+    ids_to_remove = Map.get(state[:selected_sock_ids], player_id)
+
+    Map.update!(state, :selected_sock_ids, fn selected ->
+      ids_to_remove
+      |> Enum.reduce(selected, fn id_to_remove, s ->
+        s
+        |> Enum.map(fn {player_id, sock_ids} ->
+          {player_id, MapSet.delete(sock_ids, id_to_remove)}
+        end)
+        |> Enum.into(%{})
+      end)
+    end)
   end
 
   defp increment_score(state, player_id) do

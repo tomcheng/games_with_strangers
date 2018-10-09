@@ -170,4 +170,54 @@ defmodule SocksTest do
     assert SocksChecker.has_match?(socks_2)
     assert SocksChecker.has_match?(socks_3)
   end
+
+  test "handling selecting a sock that's not there", %{players: players} do
+    state =
+      players
+      |> Socks.initial_state(%{})
+      |> Socks.play("1", "select_sock", %{
+        "sock_id" => "4444",
+        room_code: nil
+      })
+      |> Socks.sanitize_state("1")
+
+    assert state[:selected_sock_ids] == %{
+             "1" => [],
+             "2" => []
+           }
+  end
+
+  test "cancelling other selections after correct match", %{players: players} do
+    initial_state = Socks.initial_state(players, %{})
+    %{socks: socks} = initial_state
+
+    state =
+      initial_state
+      |> Socks.play("1", "select_sock", %{
+        "sock_id" => Enum.at(socks, 1)[:id],
+        room_code: nil
+      })
+      |> Socks.play("2", "select_sock", %{
+        "sock_id" => Enum.at(socks, 1)[:id],
+        room_code: nil
+      })
+      |> Socks.play("2", "select_sock", %{
+        "sock_id" => Enum.at(socks, 2)[:id],
+        room_code: nil
+      })
+      |> Socks.play("1", "select_sock", %{
+        "sock_id" => Enum.at(socks, 4)[:id],
+        room_code: nil
+      })
+      |> Socks.play("1", "select_sock", %{
+        "sock_id" => Enum.at(socks, 8)[:id],
+        room_code: nil
+      })
+      |> Socks.sanitize_state("1")
+
+    assert state[:selected_sock_ids] == %{
+             "1" => [],
+             "2" => [Enum.at(socks, 2)[:id]]
+           }
+  end
 end
