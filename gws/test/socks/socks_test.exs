@@ -13,8 +13,8 @@ defmodule SocksTest do
     %{players: players}
   end
 
-  test "minimum of 2 players" do
-    assert Socks.minimum_players() == 2
+  test "minimum of 1 player" do
+    assert Socks.minimum_players() == 1
   end
 
   test "gets initial state", %{players: players} do

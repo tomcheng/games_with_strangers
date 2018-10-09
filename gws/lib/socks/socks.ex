@@ -2,7 +2,7 @@ defmodule Socks do
   @selection_time_limit 3000
   @wrong_time_out 7000
 
-  def minimum_players, do: 2
+  def minimum_players, do: 1
 
   def initial_state(players, %{}) do
     socks = SocksChecker.get_initial_socks()
