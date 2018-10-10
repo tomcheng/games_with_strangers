@@ -19,6 +19,8 @@ const TRANSLATIONS = {
   3: { x: 32, y: 80 }
 };
 
+const HAS_TOUCH = "ontouchstart" in document.documentElement;
+
 const getContainerTranslation = ({ length, show, handAngle, handDistance }) => {
   if (show) {
     return `0px, 0px`;
@@ -209,13 +211,28 @@ class Sock extends PureComponent {
 
     return (
       <Container
-        onClick={() => {
-          if (replacementState) {
-            return;
-          }
+        onTouchStart={
+          HAS_TOUCH
+            ? () => {
+                if (replacementState) {
+                  return;
+                }
 
-          onClick(id);
-        }}
+                onClick(id);
+              }
+            : null
+        }
+        onClick={
+          HAS_TOUCH
+            ? null
+            : () => {
+                if (replacementState) {
+                  return;
+                }
+
+                onClick(id);
+              }
+        }
         style={{
           transform: `translate3d(${getContainerTranslation({
             show: !["removing", "retrieving"].includes(replacementState),
