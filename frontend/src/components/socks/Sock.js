@@ -214,7 +214,8 @@ class Sock extends PureComponent {
       <Container
         onTouchStart={
           HAS_TOUCH
-            ? () => {
+            ? evt => {
+                evt.stopPropagation();
                 if (replacementState) {
                   return;
                 }
@@ -226,7 +227,8 @@ class Sock extends PureComponent {
         onClick={
           HAS_TOUCH
             ? null
-            : () => {
+            : evt => {
+                evt.stopPropagation();
                 if (replacementState) {
                   return;
                 }
