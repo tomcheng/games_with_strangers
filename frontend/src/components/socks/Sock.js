@@ -50,7 +50,6 @@ const Container = styled.div`
   width: 71px;
   height: 170px;
   justify-content: center;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 `;
 
 const HandContainer = styled.div`
@@ -214,8 +213,7 @@ class Sock extends PureComponent {
       <Container
         onTouchStart={
           HAS_TOUCH
-            ? evt => {
-                evt.stopPropagation();
+            ? () => {
                 if (replacementState) {
                   return;
                 }
@@ -227,8 +225,7 @@ class Sock extends PureComponent {
         onClick={
           HAS_TOUCH
             ? null
-            : evt => {
-                evt.stopPropagation();
+            : () => {
                 if (replacementState) {
                   return;
                 }
