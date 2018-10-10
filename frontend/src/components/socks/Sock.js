@@ -50,6 +50,7 @@ const Container = styled.div`
   width: 71px;
   height: 170px;
   justify-content: center;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 `;
 
 const HandContainer = styled.div`
