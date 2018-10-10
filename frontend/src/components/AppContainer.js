@@ -102,6 +102,7 @@ class AppContainer extends Component {
         }
 
         this.handleSetFlashMessage(message);
+        this.leaveRoom();
       });
   };
 
