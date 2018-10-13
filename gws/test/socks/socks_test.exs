@@ -27,6 +27,23 @@ defmodule SocksTest do
     assert Enum.count(state[:socks]) == 9
   end
 
+  test "adds a player", %{players: players} do
+    state =
+      players
+      |> Socks.initial_state(%{})
+      |> Socks.add_player(%{id: "3", name: "baz"})
+      |> Socks.sanitize_state("3")
+
+    assert state[:players] == %{
+             "1" => %{id: "1", name: "foo"},
+             "2" => %{id: "2", name: "bar"},
+             "3" => %{id: "3", name: "baz"}
+           }
+    assert state[:scores] == %{"1" => 0, "2" => 0, "3" => 0}
+    assert state[:selected_sock_ids] == %{"1" => [], "2" => [], "3" => []}
+    assert state[:state] == :guessing
+  end
+
   test "selects a sock", %{players: players} do
     initial_state = Socks.initial_state(players, %{})
     sock_to_select = hd(initial_state[:socks])

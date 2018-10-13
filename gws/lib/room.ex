@@ -1,6 +1,7 @@
 defmodule GWS.Room do
   use Agent, restart: :temporary
   @valid_games ["fun_prompts", "you_bet", "socks"]
+  @joinable_games ["socks"]
 
   def start_link(_opts) do
     Agent.start_link(fn ->
@@ -28,16 +29,42 @@ defmodule GWS.Room do
 
   def add_player(room, player_id, name, channel) do
     game_state = Agent.get(room, &Map.get(&1, :game_state))
+    game = Agent.get(room, &Map.get(&1, :game))
+    game_started = !!game_state
+    existing_player = !!game_state[:players][player_id]
+    new_player = !existing_player && Enum.member?(@joinable_games, game)
 
-    if game_state && !game_state[:players][player_id] do
+    if game_started && !existing_player && !new_player do
       {:error, "Game already started"}
     else
       Agent.update(room, fn state ->
-        state
-        |> Map.update!(:players, fn ps ->
-          Map.put(ps, player_id, %{id: player_id, name: name, channel: channel})
-        end)
-        |> update_moderator
+        cond do
+          !game_started || existing_player ->
+            state
+            |> Map.update!(:players, fn ps ->
+              Map.put(ps, player_id, %{id: player_id, name: name, channel: channel})
+            end)
+            |> update_moderator
+
+          new_player ->
+            state
+            |> Map.update!(:players, fn ps ->
+              Map.put(ps, player_id, %{id: player_id, name: name, channel: channel})
+            end)
+            |> Map.put(
+              :game_state,
+              game |> get_module
+              |> apply(:add_player, [
+                game_state,
+                %{id: player_id, name: name, is_moderator: false}
+              ])
+            )
+            |> update_moderator
+
+          # should be unreachable
+          true ->
+            state
+        end
       end)
 
       room

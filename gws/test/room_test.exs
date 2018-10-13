@@ -79,6 +79,23 @@ defmodule GWS.RoomTest do
     assert result == {:error, "Game already started"}
   end
 
+  test "allow other players to join after game started if game is joinable", %{room: room} do
+    {:ok, state} =
+      room
+      |> GWS.Room.set_game("socks")
+      |> GWS.Room.add_player("player-id-1", "Harold", 1)
+      |> GWS.Room.start_game(%{})
+      |> GWS.Room.add_player("player-id-2", "Bob", 2)
+      |> GWS.Room.get_state(2)
+
+    assert state[:you] == %{id: "player-id-2", name: "Bob", is_moderator: false}
+
+    assert state[:game_state][:players] == %{
+             "player-id-1" => %{id: "player-id-1", is_moderator: true, name: "Harold"},
+             "player-id-2" => %{id: "player-id-2", is_moderator: false, name: "Bob"}
+           }
+  end
+
   test "allows a player to rejoin a room after game started", %{room: room} do
     {:ok, state} =
       room

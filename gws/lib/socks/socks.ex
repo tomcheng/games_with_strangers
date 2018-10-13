@@ -20,6 +20,14 @@ defmodule Socks do
     }
   end
 
+  def add_player(state, player) do
+    state
+    |> Map.update!(:players, &Map.put(&1, player[:id], player))
+    |> Map.update!(:scores, &Map.put(&1, player[:id], 0))
+    |> Map.update!(:selected_sock_ids, &Map.put(&1, player[:id], MapSet.new()))
+    |> Map.update!(:player_states, &Map.put(&1, player[:id], :guessing))
+  end
+
   def sanitize_state(state, player_id) do
     state
     |> Map.update!(:selected_sock_ids, fn selected ->
