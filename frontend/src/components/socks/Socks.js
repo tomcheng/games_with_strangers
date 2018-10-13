@@ -18,20 +18,21 @@ const Container = styled.div`
   height: 100vh;
   overflow: auto;
   position: relative;
+  font-family: "Amatic SC", sans-serif;
+  font-size: 22px;
+  line-height: 30px;
+
+  & strong {
+    color: #222;
+    font-weight: 700;
+  }
 `;
 
 const RoomCode = styled.div`
   position: absolute;
   right: 35px;
   top: 0;
-  font-family: "Amatic SC", sans-serif;
-  font-size: 20px;
-  line-height: 30px;
   z-index: -1;
-  & strong {
-    color: inherit;
-    font-weight: 700;
-  }
 `;
 
 const Rows = styled.div`
@@ -54,9 +55,6 @@ const Scores = styled.div`
   bottom: 0;
   left: 35px;
   right: 35px;
-  font-family: "Amatic SC", sans-serif;
-  font-size: 20px;
-  line-height: 30px;
   z-index: -1;
 `;
 
@@ -206,7 +204,7 @@ class Socks extends Component {
               <ScoresInner>
                 {scoreList.map(({ name, id, score }) => (
                   <Score key={id}>
-                    {name}: {score}
+                    {name}: <strong>{score}</strong>
                   </Score>
                 ))}
               </ScoresInner>
