@@ -18,6 +18,19 @@ const Container = styled.div`
   position: relative;
 `;
 
+const RoomCode = styled.div`
+  position: absolute;
+  right: 40px;
+  top: 0;
+  font-family: "Amatic SC", sans-serif;
+  line-height: 30px;
+  font-size: 20px;
+  & strong {
+    color: inherit;
+    font-weight: 700;
+  }
+`;
+
 const Rows = styled.div`
   display: flex;
   flex-grow: 1;
@@ -52,6 +65,7 @@ class Socks extends Component {
         sock_ids: PropTypes.arrayOf(PropTypes.string).isRequired
       })
     }).isRequired,
+    roomCode: PropTypes.string.isRequired,
     you: PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired
@@ -93,7 +107,7 @@ class Socks extends Component {
   };
 
   render() {
-    const { gameState, you } = this.props;
+    const { gameState, roomCode, you } = this.props;
     const { showCorrectBubble, lastCorrect } = this.state;
 
     const { socks, selected_sock_ids, state, set_result, stage, scores, players } = gameState;
@@ -106,6 +120,7 @@ class Socks extends Component {
       <Fragment>
         <Container>
           <Bin>
+            <RoomCode>Room Code: <strong>{roomCode}</strong></RoomCode>
             <Rows>
               {chunk(socks, 3).map((group, rowIndex) => (
                 <Row key={rowIndex}>

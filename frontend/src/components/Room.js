@@ -29,6 +29,7 @@ const Room = ({
   gameState,
   playersNeeded,
   playersInGame,
+  roomCode,
   you,
   others,
   onStartGame,
@@ -74,6 +75,7 @@ const Room = ({
     <ErrorBoundary>
     <GameComponent
       gameState={gameState}
+      roomCode={roomCode}
       you={you}
       youAreModerator={youAreModerator}
       moderator={moderator}
@@ -93,6 +95,7 @@ Room.propTypes = {
       isModerator: PropTypes.bool.isRequired
     })
   ).isRequired,
+  roomCode: PropTypes.string.isRequired,
   you: PropTypes.shape({
     id: PropTypes.string.isRequired,
     isModerator: PropTypes.bool.isRequired
