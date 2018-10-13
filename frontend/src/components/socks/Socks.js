@@ -27,6 +27,7 @@ const RoomCode = styled.div`
   font-family: "Amatic SC", sans-serif;
   font-size: 20px;
   line-height: 30px;
+  z-index: -1;
   & strong {
     color: inherit;
     font-weight: 700;
@@ -56,6 +57,7 @@ const Scores = styled.div`
   font-family: "Amatic SC", sans-serif;
   font-size: 20px;
   line-height: 30px;
+  z-index: -1;
 `;
 
 const ScoresInner = styled.div`
@@ -66,7 +68,7 @@ const ScoresInner = styled.div`
 
 const Score = styled.div`
   display: inline;
-  font-weight: ${props => (props.isYou ? "700" : "400")};
+
   &:not(:first-child) {
     margin-left: 10px;
   }
@@ -157,10 +159,10 @@ class Socks extends Component {
       ps =>
         ps.map(player => ({
           ...player,
-          score: scores[player.id],
-          isYou: player.id === you.id
+          score: scores[player.id]
         })),
-      ps => sortBy(ps, "name")
+      ps => sortBy(ps, "name"),
+      ps => sortBy(ps, p => p.id === you.id ? 0 : 1)
     ])(players);
     const yourSelections = selected_sock_ids[you.id];
     const isSuspended = state === "suspended";
@@ -202,8 +204,8 @@ class Socks extends Component {
             </Rows>
             <Scores>
               <ScoresInner>
-                {scoreList.map(({ name, id, score, isYou }) => (
-                  <Score key={id} isYou={isYou}>
+                {scoreList.map(({ name, id, score }) => (
+                  <Score key={id}>
                     {name}: {score}
                   </Score>
                 ))}
