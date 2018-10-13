@@ -20,7 +20,7 @@ const Container = styled.div`
 
 const RoomCode = styled.div`
   position: absolute;
-  right: 40px;
+  right: 35px;
   top: 0;
   font-family: "Amatic SC", sans-serif;
   line-height: 30px;
@@ -120,7 +120,7 @@ class Socks extends Component {
       <Fragment>
         <Container>
           <Bin>
-            <RoomCode>Room Code: <strong>{roomCode}</strong></RoomCode>
+            <RoomCode>Room: <strong>{roomCode}</strong></RoomCode>
             <Rows>
               {chunk(socks, 3).map((group, rowIndex) => (
                 <Row key={rowIndex}>
