@@ -2,8 +2,10 @@ import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import chunk from "lodash/chunk";
-import values from "lodash/values";
+import flow from "lodash/flow";
+import sortBy from "lodash/sortBy";
 import sum from "lodash/sum";
+import values from "lodash/values";
 import Bin from "./Bin";
 import Sock from "./Sock";
 import SuspendedModal from "./SuspendedModal";
@@ -23,8 +25,8 @@ const RoomCode = styled.div`
   right: 35px;
   top: 0;
   font-family: "Amatic SC", sans-serif;
-  line-height: 30px;
   font-size: 20px;
+  line-height: 30px;
   & strong {
     color: inherit;
     font-weight: 700;
@@ -44,9 +46,41 @@ const Row = styled.div`
   align-items: center;
 `;
 
+const Scores = styled.div`
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: 0;
+  left: 35px;
+  right: 35px;
+  font-family: "Amatic SC", sans-serif;
+  font-size: 20px;
+  line-height: 30px;
+`;
+
+const ScoresInner = styled.div`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
+const Score = styled.div`
+  display: inline;
+  font-weight: ${props => (props.isYou ? "700" : "400")};
+  &:not(:first-child) {
+    margin-left: 10px;
+  }
+`;
+
 class Socks extends Component {
   static propTypes = {
     gameState: PropTypes.shape({
+      players: PropTypes.objectOf(
+        PropTypes.shape({
+          id: PropTypes.string.isRequired,
+          name: PropTypes.string.isRequired
+        })
+      ).isRequired,
       scores: PropTypes.objectOf(PropTypes.number).isRequired,
       socks: PropTypes.arrayOf(
         PropTypes.shape({
@@ -109,9 +143,25 @@ class Socks extends Component {
   render() {
     const { gameState, roomCode, you } = this.props;
     const { showCorrectBubble, lastCorrect } = this.state;
-
-    const { socks, selected_sock_ids, state, set_result, stage, scores, players } = gameState;
-
+    const {
+      socks,
+      selected_sock_ids,
+      state,
+      set_result,
+      stage,
+      scores,
+      players
+    } = gameState;
+    const scoreList = flow([
+      values,
+      ps =>
+        ps.map(player => ({
+          ...player,
+          score: scores[player.id],
+          isYou: player.id === you.id
+        })),
+      ps => sortBy(ps, "name")
+    ])(players);
     const yourSelections = selected_sock_ids[you.id];
     const isSuspended = state === "suspended";
     const isEnd = stage === "end";
@@ -120,7 +170,9 @@ class Socks extends Component {
       <Fragment>
         <Container>
           <Bin>
-            <RoomCode>Room: <strong>{roomCode}</strong></RoomCode>
+            <RoomCode>
+              Room: <strong>{roomCode}</strong>
+            </RoomCode>
             <Rows>
               {chunk(socks, 3).map((group, rowIndex) => (
                 <Row key={rowIndex}>
@@ -148,11 +200,23 @@ class Socks extends Component {
                 </Row>
               ))}
             </Rows>
+            <Scores>
+              <ScoresInner>
+                {scoreList.map(({ name, id, score, isYou }) => (
+                  <Score key={id} isYou={isYou}>
+                    {name}: {score}
+                  </Score>
+                ))}
+              </ScoresInner>
+            </Scores>
           </Bin>
         </Container>
         <SuspendedModal open={isSuspended} />
         <EndModal open={isEnd} scores={scores} players={players} />
-        <CorrectSpeechBubble open={showCorrectBubble} onClose={this.handleCloseBubble} />
+        <CorrectSpeechBubble
+          open={showCorrectBubble}
+          onClose={this.handleCloseBubble}
+        />
       </Fragment>
     );
   }
