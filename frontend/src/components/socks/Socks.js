@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 import chunk from "lodash/chunk";
 import flow from "lodash/flow";
+import keys from "lodash/keys";
+import omit from "lodash/omit";
 import sortBy from "lodash/sortBy";
 import sum from "lodash/sum";
 import values from "lodash/values";
@@ -11,6 +13,7 @@ import Sock from "./Sock";
 import SuspendedModal from "./SuspendedModal";
 import EndModal from "./EndModal";
 import CorrectSpeechBubble from "./CorrectSpeechBubble";
+import NewPlayerBubble from "./NewPlayerBubble";
 
 const Container = styled.div`
   background-color: #f7f7f7;
@@ -109,16 +112,18 @@ class Socks extends Component {
 
   state = {
     showCorrectBubble: false,
-    lastCorrect: null
+    showNewPlayerBubble: false,
+    lastCorrect: null,
+    newPlayerName: null
   };
 
   static getDerivedStateFromProps(props, state) {
     const { gameState, you } = props;
-    const { scores: newScores } = gameState;
-    const { scores: currentScores } = state;
+    const { scores: newScores, players: newPlayers } = gameState;
+    const { scores: currentScores, players: currentPlayers } = state;
 
-    if (!currentScores) {
-      return { scores: newScores };
+    if (!currentScores || !currentPlayers) {
+      return { scores: newScores, players: newPlayers };
     }
 
     if (currentScores[you.id] !== newScores[you.id]) {
@@ -129,6 +134,15 @@ class Socks extends Component {
       return { scores: newScores, lastCorrect: "other" };
     }
 
+    if (values(newPlayers).length === values(currentPlayers).length + 1) {
+      const newPlayer = values(omit(newPlayers, keys(currentPlayers)))[0];
+      return {
+        players: newPlayers,
+        newPlayerName: newPlayer.name,
+        showNewPlayerBubble: true
+      };
+    }
+
     return null;
   }
 
@@ -136,13 +150,22 @@ class Socks extends Component {
     this.props.onPlay({ type: "select_sock", payload: { sock_id: id } });
   };
 
-  handleCloseBubble = () => {
+  handleCloseCorrectBubble = () => {
     this.setState({ showCorrectBubble: false });
+  };
+
+  handleCloseNewPlayerBubble = () => {
+    this.setState({ showNewPlayerBubble: false });
   };
 
   render() {
     const { gameState, roomCode, you } = this.props;
-    const { showCorrectBubble, lastCorrect } = this.state;
+    const {
+      showCorrectBubble,
+      showNewPlayerBubble,
+      lastCorrect,
+      newPlayerName
+    } = this.state;
     const {
       socks,
       selected_sock_ids,
@@ -160,7 +183,7 @@ class Socks extends Component {
           score: scores[player.id]
         })),
       ps => sortBy(ps, "name"),
-      ps => sortBy(ps, p => p.id === you.id ? 0 : 1)
+      ps => sortBy(ps, p => (p.id === you.id ? 0 : 1))
     ])(players);
     const yourSelections = selected_sock_ids[you.id];
     const isSuspended = state === "suspended";
@@ -215,7 +238,12 @@ class Socks extends Component {
         <EndModal open={isEnd} scores={scores} players={players} />
         <CorrectSpeechBubble
           open={showCorrectBubble}
-          onClose={this.handleCloseBubble}
+          onClose={this.handleCloseCorrectBubble}
+        />
+        <NewPlayerBubble
+          open={showNewPlayerBubble}
+          newPlayerName={newPlayerName}
+          onClose={this.handleCloseNewPlayerBubble}
         />
       </Fragment>
     );
