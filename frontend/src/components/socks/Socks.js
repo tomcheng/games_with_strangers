@@ -183,6 +183,7 @@ class Socks extends Component {
           score: scores[player.id]
         })),
       ps => sortBy(ps, "name"),
+      ps => sortBy(ps, p => -p.score),
       ps => sortBy(ps, p => (p.id === you.id ? 0 : 1))
     ])(players);
     const yourSelections = selected_sock_ids[you.id];
