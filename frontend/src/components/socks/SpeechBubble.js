@@ -37,7 +37,7 @@ class SpeechBubble extends Component {
 
   static defaultProps = {
     duration: 1200,
-    openDelay: 300
+    openDelay: 0
   };
 
   el = document.createElement("div");

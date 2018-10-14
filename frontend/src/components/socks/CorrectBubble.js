@@ -15,7 +15,7 @@ const MESSAGES = [
   "Bazinga!"
 ];
 
-class CorrectSpeechBubble extends Component {
+class CorrectBubble extends Component {
   static propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired
@@ -33,8 +33,15 @@ class CorrectSpeechBubble extends Component {
     const { open, onClose } = this.props;
     const { message } = this.state;
 
-    return <SpeechBubble open={open} text={message} onClose={onClose} />;
+    return (
+      <SpeechBubble
+        open={open}
+        text={message}
+        onClose={onClose}
+        openDelay={300}
+      />
+    );
   }
 }
 
-export default CorrectSpeechBubble;
+export default CorrectBubble;

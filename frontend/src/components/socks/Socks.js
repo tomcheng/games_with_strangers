@@ -12,7 +12,8 @@ import Bin from "./Bin";
 import Sock from "./Sock";
 import SuspendedModal from "./SuspendedModal";
 import EndModal from "./EndModal";
-import CorrectSpeechBubble from "./CorrectSpeechBubble";
+import CorrectBubble from "./CorrectBubble";
+import OtherCorrectBubble from "./OtherCorrectBubble";
 import NewPlayerBubble from "./NewPlayerBubble";
 
 const Container = styled.div`
@@ -112,9 +113,11 @@ class Socks extends Component {
 
   state = {
     showCorrectBubble: false,
+    showOtherCorrectBubble: false,
     showNewPlayerBubble: false,
     lastCorrect: null,
-    newPlayerName: null
+    newPlayerName: null,
+    otherCorrectPlayerName: null
   };
 
   static getDerivedStateFromProps(props, state) {
@@ -131,13 +134,22 @@ class Socks extends Component {
     }
 
     if (sum(values(currentScores)) !== sum(values(newScores))) {
-      return { scores: newScores, lastCorrect: "other" };
+      const correctPlayerId = keys(currentScores).find(
+        key => newScores[key] > currentScores[key]
+      );
+      return {
+        scores: newScores,
+        lastCorrect: "other",
+        showOtherCorrectBubble: true,
+        otherCorrectPlayerName: newPlayers[correctPlayerId].name
+      };
     }
 
     if (values(newPlayers).length === values(currentPlayers).length + 1) {
       const newPlayer = values(omit(newPlayers, keys(currentPlayers)))[0];
       return {
         players: newPlayers,
+        scores: newScores,
         newPlayerName: newPlayer.name,
         showNewPlayerBubble: true
       };
@@ -154,6 +166,10 @@ class Socks extends Component {
     this.setState({ showCorrectBubble: false });
   };
 
+  handleCloseOtherCorrectBubble = () => {
+    this.setState({ showOtherCorrectBubble: false });
+  };
+
   handleCloseNewPlayerBubble = () => {
     this.setState({ showNewPlayerBubble: false });
   };
@@ -163,6 +179,8 @@ class Socks extends Component {
     const {
       showCorrectBubble,
       showNewPlayerBubble,
+      showOtherCorrectBubble,
+      otherCorrectPlayerName,
       lastCorrect,
       newPlayerName
     } = this.state;
@@ -237,13 +255,18 @@ class Socks extends Component {
         </Container>
         <SuspendedModal open={isSuspended} />
         <EndModal open={isEnd} scores={scores} players={players} />
-        <CorrectSpeechBubble
+        <OtherCorrectBubble
+          open={showOtherCorrectBubble}
+          playerName={otherCorrectPlayerName}
+          onClose={this.handleCloseOtherCorrectBubble}
+        />
+        <CorrectBubble
           open={showCorrectBubble}
           onClose={this.handleCloseCorrectBubble}
         />
         <NewPlayerBubble
           open={showNewPlayerBubble}
-          newPlayerName={newPlayerName}
+          playerName={newPlayerName}
           onClose={this.handleCloseNewPlayerBubble}
         />
       </Fragment>

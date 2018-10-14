@@ -2,18 +2,18 @@ import React from "react";
 import PropTypes from "prop-types";
 import SpeechBubble from "./SpeechBubble";
 
-const NewPlayerBubble = ({ open, playerName, onClose }) => (
+const OtherCorrectBubble = ({ open, playerName, onClose }) => (
   <SpeechBubble
     open={open}
-    text={`${playerName} joined`}
+    text={`${playerName} got a match`}
     onClose={onClose}
   />
 );
 
-NewPlayerBubble.propTypes = {
+OtherCorrectBubble.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   playerName: PropTypes.string
 };
 
-export default NewPlayerBubble;
+export default OtherCorrectBubble;
