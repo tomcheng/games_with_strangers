@@ -181,12 +181,12 @@ defmodule GWS.Room do
     room
   end
 
-  def make_play(room, player_id, type, payload) do
+  def make_play(room, player_id, type, %{payload: payload, room_code: room_code}) do
     Agent.update(room, fn %{game: game, game_state: game_state} = state ->
       Map.put(
         state,
         :game_state,
-        game |> get_module |> apply(:play, [game_state, player_id, type, payload])
+        game |> get_module |> apply(:play, [game_state, player_id, type, payload, room_code])
       )
     end)
 

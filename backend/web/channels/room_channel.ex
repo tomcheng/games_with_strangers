@@ -73,7 +73,7 @@ defmodule GamesWithStrangers.RoomChannel do
       ) do
     {:ok, room} = GWS.get_room(room_code)
 
-    GWS.Room.make_play(room, player_id, type, (params["payload"] || %{}) |> Map.put(:room_code, room_code))
+    GWS.Room.make_play(room, player_id, type, %{payload: params["payload"], room_code: room_code})
 
     broadcast(socket, "new_state", %{room: room})
 

@@ -158,7 +158,7 @@ defmodule YouBet do
     |> Enum.map(fn {id, _} -> players[id] end)
   end
 
-  def play(state, player_id, "guess", payload) do
+  def play(state, player_id, "guess", payload, _room_code) do
     case Integer.parse(payload) do
       :error ->
         state
@@ -170,7 +170,7 @@ defmodule YouBet do
     end
   end
 
-  def play(state, player_id, "bet", bets) do
+  def play(state, player_id, "bet", bets, _room_code) do
     state
     |> Map.update!(
       :bets,
@@ -184,7 +184,7 @@ defmodule YouBet do
     )
   end
 
-  def play(state, player_id, "finalize_bets", bets) do
+  def play(state, player_id, "finalize_bets", bets, _room_code) do
     state
     |> Map.update!(
       :final_bets,
@@ -199,7 +199,13 @@ defmodule YouBet do
     |> transition_to_reveal_if_done
   end
 
-  def play(%{round: a, total_rounds: a} = state, _, "advance_round", _) do
+  def play(
+        %{round: a, total_rounds: a} = state,
+        _player_id,
+        "advance_round",
+        _payload,
+        _room_code
+      ) do
     state
     |> Map.put(:round, nil)
     |> Map.put(:stage, :end)
@@ -210,7 +216,7 @@ defmodule YouBet do
     |> Map.put(:final_bets, nil)
   end
 
-  def play(state, _, "advance_round", _) do
+  def play(state, _player_id, "advance_round", _payload, _room_code) do
     %{players: players} = state
 
     {question, answer} = YouBet.Questions.random()
@@ -225,8 +231,8 @@ defmodule YouBet do
     |> Map.put(:final_bets, initial_map(players))
   end
 
+  def play(state, _player_id, _stage, _payload, _room_code), do: state
   def play(state, _, _, _), do: state
-  def play(state, _, _), do: state
 
   defp transition_to_betting_if_done(state) do
     %{guesses: guesses, players: players} = state

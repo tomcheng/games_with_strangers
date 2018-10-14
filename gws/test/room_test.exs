@@ -118,7 +118,7 @@ defmodule GWS.RoomTest do
       |> GWS.Room.add_player("player-id-2", "Bob", 2)
       |> GWS.Room.add_player("player-id-3", "Andy", 3)
       |> GWS.Room.start_game(%{"rounds" => 7})
-      |> GWS.Room.make_play("player-id-1", "guess", "20")
+      |> GWS.Room.make_play("player-id-1", "guess", %{payload: "20", room_code: "AAAA"})
       |> GWS.Room.get_state(1)
 
     assert Map.drop(game_state, [:question]) ==
@@ -128,7 +128,7 @@ defmodule GWS.RoomTest do
                "player-id-3" => %{id: "player-id-3", name: "Andy"}
              }
              |> YouBet.initial_state(%{"rounds" => 7})
-             |> YouBet.play("player-id-1", "guess", "20")
+             |> YouBet.play("player-id-1", "guess", "20", "AAAA")
              |> YouBet.sanitize_state("player-id-1")
              |> Map.drop([:question])
   end

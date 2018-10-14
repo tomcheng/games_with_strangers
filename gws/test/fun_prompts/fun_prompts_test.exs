@@ -35,7 +35,7 @@ defmodule FunPromptsTest do
     state =
       players
       |> FunPrompts.initial_state(%{"rounds" => 3})
-      |> FunPrompts.play("1", "answer", %{"id" => 2, "answer" => "player 1, answer 2"})
+      |> FunPrompts.play("1", "answer", %{"id" => 2, "answer" => "player 1, answer 2"}, "AAAA")
       |> FunPrompts.sanitize_state("1")
 
     assert Enum.count(state[:prompts]) == 1
@@ -45,8 +45,8 @@ defmodule FunPromptsTest do
     state =
       players
       |> FunPrompts.initial_state(%{"rounds" => 3})
-      |> FunPrompts.play("1", "answer", %{"id" => 1, "answer" => "player 1, answer 1"})
-      |> FunPrompts.play("1", "answer", %{"id" => 2, "answer" => "player 1, answer 2"})
+      |> FunPrompts.play("1", "answer", %{"id" => 1, "answer" => "player 1, answer 1"}, "AAAA")
+      |> FunPrompts.play("1", "answer", %{"id" => 2, "answer" => "player 1, answer 2"}, "AAAA")
 
     your_state = FunPrompts.sanitize_state(state, "1")
     others_state = FunPrompts.sanitize_state(state, "2")
@@ -82,7 +82,7 @@ defmodule FunPromptsTest do
       players
       |> FunPrompts.initial_state(%{"rounds" => 3})
       |> everyone_answer
-      |> FunPrompts.play("1", "vote", %{"player_id" => "2"})
+      |> FunPrompts.play("1", "vote", %{"player_id" => "2"}, "AAAA")
 
     player_1_state = FunPrompts.sanitize_state(state, "1")
     player_2_state = FunPrompts.sanitize_state(state, "2")
@@ -108,8 +108,8 @@ defmodule FunPromptsTest do
       players
       |> FunPrompts.initial_state(%{"rounds" => 3})
       |> everyone_answer
-      |> FunPrompts.play("2", "vote", %{"player_id" => "1"})
-      |> FunPrompts.play("2", "vote", %{"player_id" => "1"})
+      |> FunPrompts.play("2", "vote", %{"player_id" => "1"}, "AAAA")
+      |> FunPrompts.play("2", "vote", %{"player_id" => "1"}, "AAAA")
       |> FunPrompts.sanitize_state("1")
 
     [choice_1, choice_2] = state[:choices]
@@ -126,8 +126,8 @@ defmodule FunPromptsTest do
       players
       |> FunPrompts.initial_state(%{"rounds" => 3})
       |> everyone_answer
-      |> FunPrompts.play("2", "vote", %{"player_id" => "1"})
-      |> FunPrompts.play("1", "advance", nil)
+      |> FunPrompts.play("2", "vote", %{"player_id" => "1"}, "AAAA")
+      |> FunPrompts.play("1", "advance", nil, "AAAA")
       |> FunPrompts.sanitize_state("1")
 
     assert state[:round] == 1
@@ -168,7 +168,7 @@ defmodule FunPromptsTest do
       |> FunPrompts.initial_state(%{"rounds" => 3})
       |> everyone_answer
       |> everyone_vote
-      |> FunPrompts.play("1", "advance", nil)
+      |> FunPrompts.play("1", "advance", nil, "AAAA")
       |> FunPrompts.sanitize_state("1")
 
     assert state[:round] == 2
@@ -184,7 +184,7 @@ defmodule FunPromptsTest do
       |> FunPrompts.initial_state(%{"rounds" => 3})
       |> everyone_answer
       |> everyone_vote
-      |> FunPrompts.play("1", "advance", nil)
+      |> FunPrompts.play("1", "advance", nil, "AAAA")
       |> everyone_answer
       |> everyone_vote
       |> FunPrompts.sanitize_state("1")
@@ -205,10 +205,10 @@ defmodule FunPromptsTest do
       |> FunPrompts.initial_state(%{"rounds" => 3})
       |> everyone_answer
       |> everyone_vote
-      |> FunPrompts.play("1", "advance", nil)
+      |> FunPrompts.play("1", "advance", nil, "AAAA")
       |> everyone_answer
       |> everyone_vote
-      |> FunPrompts.play("1", "advance", nil)
+      |> FunPrompts.play("1", "advance", nil, "AAAA")
       |> everyone_answer
       |> everyone_vote
       |> FunPrompts.sanitize_state("1")
@@ -223,7 +223,7 @@ defmodule FunPromptsTest do
       |> FunPrompts.initial_state(%{"rounds" => 2})
       |> everyone_answer
       |> everyone_vote
-      |> FunPrompts.play("1", "advance", nil)
+      |> FunPrompts.play("1", "advance", nil, "AAAA")
       |> everyone_answer
       |> everyone_vote
       |> FunPrompts.sanitize_state("1")
@@ -234,21 +234,21 @@ defmodule FunPromptsTest do
 
   defp everyone_answer(state) do
     state
-    |> FunPrompts.play("1", "answer", %{"id" => 1, "answer" => "player 1, answer 1"})
-    |> FunPrompts.play("1", "answer", %{"id" => 2, "answer" => "player 1, answer 2"})
-    |> FunPrompts.play("2", "answer", %{"id" => 2, "answer" => "player 2, answer 2"})
-    |> FunPrompts.play("2", "answer", %{"id" => 3, "answer" => "player 2, answer 3"})
-    |> FunPrompts.play("3", "answer", %{"id" => 3, "answer" => "player 3, answer 3"})
-    |> FunPrompts.play("3", "answer", %{"id" => 1, "answer" => "player 3, answer 1"})
+    |> FunPrompts.play("1", "answer", %{"id" => 1, "answer" => "player 1, answer 1"}, "AAAA")
+    |> FunPrompts.play("1", "answer", %{"id" => 2, "answer" => "player 1, answer 2"}, "AAAA")
+    |> FunPrompts.play("2", "answer", %{"id" => 2, "answer" => "player 2, answer 2"}, "AAAA")
+    |> FunPrompts.play("2", "answer", %{"id" => 3, "answer" => "player 2, answer 3"}, "AAAA")
+    |> FunPrompts.play("3", "answer", %{"id" => 3, "answer" => "player 3, answer 3"}, "AAAA")
+    |> FunPrompts.play("3", "answer", %{"id" => 1, "answer" => "player 3, answer 1"}, "AAAA")
   end
 
   defp everyone_vote(state) do
     state
-    |> FunPrompts.play("1", "vote", %{"player_id" => "2"})
-    |> FunPrompts.play("1", "advance", nil)
-    |> FunPrompts.play("2", "vote", %{"player_id" => "1"})
-    |> FunPrompts.play("1", "advance", nil)
-    |> FunPrompts.play("3", "vote", %{"player_id" => "1"})
-    |> FunPrompts.play("1", "advance", nil)
+    |> FunPrompts.play("1", "vote", %{"player_id" => "2"}, "AAAA")
+    |> FunPrompts.play("1", "advance", nil, "AAAA")
+    |> FunPrompts.play("2", "vote", %{"player_id" => "1"}, "AAAA")
+    |> FunPrompts.play("1", "advance", nil, "AAAA")
+    |> FunPrompts.play("3", "vote", %{"player_id" => "1"}, "AAAA")
+    |> FunPrompts.play("1", "advance", nil, "AAAA")
   end
 end

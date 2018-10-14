@@ -86,7 +86,7 @@ defmodule FunPrompts do
     |> Map.take([:round, :scores, :stage])
   end
 
-  def play(state, player_id, "answer", payload) do
+  def play(state, player_id, "answer", payload, _room_code) do
     %{"id" => matchup_id, "answer" => answer} = payload
 
     state
@@ -96,7 +96,7 @@ defmodule FunPrompts do
     |> change_to_voting_if_all_answers_in
   end
 
-  def play(state, player_id, "vote", payload) do
+  def play(state, player_id, "vote", payload, _room_code) do
     %{votes: votes} = state
     %{"player_id" => votee_id} = payload
 
@@ -107,7 +107,7 @@ defmodule FunPrompts do
     end
   end
 
-  def play(%{stage: :voting} = state, _, "advance", _) do
+  def play(%{stage: :voting} = state, _, "advance", _, _room_code) do
     %{
       current_matchup_id: current_matchup_id,
       players: players,
@@ -127,7 +127,7 @@ defmodule FunPrompts do
     end
   end
 
-  def play(%{stage: :show_scores} = state, _, "advance", _) do
+  def play(%{stage: :show_scores} = state, _, "advance", _, _room_code) do
     %{players: players} = state
 
     state

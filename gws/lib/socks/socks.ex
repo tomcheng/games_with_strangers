@@ -49,7 +49,7 @@ defmodule Socks do
     |> Map.put(:state, state[:player_states][player_id])
   end
 
-  def play(state, player_id, "select_sock", %{"sock_id" => sock_id, room_code: room_code}) do
+  def play(state, player_id, "select_sock", %{"sock_id" => sock_id}, room_code) do
     if room_code && selected_count(state, player_id) == 0 do
       :timer.apply_after(@selection_time_limit, Socks, :cancel_selection, [player_id, room_code])
     end
@@ -71,12 +71,12 @@ defmodule Socks do
     end
   end
 
-  def play(state, player_id, "cancel_selection", _) do
+  def play(state, player_id, "cancel_selection", _payload, _room_code) do
     state
     |> Map.update!(:selected_sock_ids, &Map.put(&1, player_id, MapSet.new()))
   end
 
-  def play(state, player_id, "cancel_suspension", _) do
+  def play(state, player_id, "cancel_suspension", _payload, _room_code) do
     state
     |> Map.update!(:player_states, &Map.put(&1, player_id, :guessing))
   end
@@ -179,13 +179,13 @@ defmodule Socks do
 
   def cancel_selection(player_id, room_code) do
     {:ok, room} = GWS.get_room(room_code)
-    GWS.Room.make_play(room, player_id, "cancel_selection", nil)
+    GWS.Room.make_play(room, player_id, "cancel_selection", %{payload: nil, room_code: nil})
     GWS.broadcast_state(room_code, room)
   end
 
   def cancel_suspension(player_id, room_code) do
     {:ok, room} = GWS.get_room(room_code)
-    GWS.Room.make_play(room, player_id, "cancel_suspension", nil)
+    GWS.Room.make_play(room, player_id, "cancel_suspension", %{payload: nil, room_code: nil})
     GWS.broadcast_state(room_code, room)
   end
 
