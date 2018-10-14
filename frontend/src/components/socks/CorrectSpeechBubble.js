@@ -16,7 +16,8 @@ const MESSAGES = [
   "Wooo!",
   "Huzzah!",
   "Wowza!",
-  "Woot Woot!"
+  "Woot Woot!",
+  "Bazinga!"
 ];
 
 const Container = styled.div`
